@@ -1,4 +1,4 @@
-def test_redis(mongodb):
+def test_mongo(mongodb):
     test_data = {
         "test1": "test1",
     }
