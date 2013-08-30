@@ -14,14 +14,11 @@ setup(
         'pyaml',
         'pymlconf',
     ],
-    package_data={'pytest_dbfixtures': [
-    ]},
     include_package_data=True,
     entry_points={
         'pytest11': [
             'pytest_dbfixtures = pytest_dbfixtures.pytest_dbfixtures'
         ]},
-    license='',
     keywords='py.test pytest redis mongo',
     classifiers=[
         'Development Status :: 3 - Alpha',
