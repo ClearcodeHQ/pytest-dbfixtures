@@ -4,10 +4,14 @@ pytest-dbfixtures
 Install
 -------
 
+::
+
     python setup.py install
 
 How to use
 ----------
+
+::
 
     def test_redis(redisdb):
         redisdb.set('woof', 'woof')
