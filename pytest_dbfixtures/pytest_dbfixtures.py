@@ -16,12 +16,12 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import importlib
+from subprocess import Popen
 
 from path import path
-
 from pymlconf import ConfigManager
-
 from summon_process.executors import TCPCoordinatedExecutor
 
 
@@ -32,7 +32,8 @@ def try_import(module, request):
     try:
         i = importlib.import_module(module)
     except ImportError:
-        raise ImportError("Please install {0} package.".format(module))
+        raise ImportError('Please install {0} package.\n'
+                          'pip install -U {0}'.format(module))
     else:
         config_name = request.config.getvalue('db_conf')
         config = ConfigManager(files=[config_name])
@@ -63,6 +64,14 @@ def pytest_addoption(parser):
         default=ROOT_DIR / 'pytest_dbfixtures' / 'redis.conf',
         metavar='path',
         dest='redis_conf',
+    )
+
+    parser.addoption(
+        '--rabbit-config',
+        action='store',
+        default=ROOT_DIR / 'pytest_dbfixtures' / 'rabbit.conf',
+        metavar='path',
+        dest='rabbit_conf',
     )
 
 
@@ -126,3 +135,33 @@ def pytest_funcarg__mongodb(request):
 
     request.addfinalizer(drop_and_stop)
     return mongodb
+
+
+def pytest_funcarg__rabbitmq(request):
+    pika, config = try_import('pika', request)
+
+    rabbit_conf = request.config.getvalue('rabbit_conf')
+    for line in open(rabbit_conf):
+        name, value = line[:-1].split('=')
+        os.environ[name] = value
+
+    rabbit_executor = TCPCoordinatedExecutor(
+        '{rabbit_exec}'.format(
+            rabbit_exec=config.rabbit.rabbit_server,
+        ),
+        host=config.rabbit.host,
+        port=config.rabbit.port,
+    )
+    rabbit_executor.start()
+
+    rabbit_params = pika.connection.ConnectionParameters(
+        host=config.rabbit.host,
+        port=config.rabbit.port,
+    )
+    rabbit_connection = pika.BlockingConnection(rabbit_params)
+
+    def stop_and_cleanup():
+        rabbit_executor.stop()
+        Popen([config.rabbit.rabbit_ctl, 'force_reset'])
+    request.addfinalizer(stop_and_cleanup)
+    return rabbit_connection

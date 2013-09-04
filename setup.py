@@ -28,9 +28,10 @@ setup(
     packages=['pytest_dbfixtures'],
     install_requires=[
         'pytest',
-        'summon_process',
+        'summon_process>=0.1.2',
         'pyaml',
         'pymlconf',
+        'path.py>=4.3',
     ],
     include_package_data=True,
     entry_points={
