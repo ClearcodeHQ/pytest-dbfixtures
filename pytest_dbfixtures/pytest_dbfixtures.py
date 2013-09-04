@@ -20,12 +20,18 @@ import os
 import importlib
 from subprocess import Popen
 
+import pytest
 from path import path
 from pymlconf import ConfigManager
 from summon_process.executors import TCPCoordinatedExecutor
 
 
 ROOT_DIR = path(__file__).parent.parent.abspath()
+
+
+def get_config(request):
+    config_name = request.config.getvalue('db_conf')
+    return ConfigManager(files=[config_name])
 
 
 def try_import(module, request):
@@ -35,10 +41,8 @@ def try_import(module, request):
         raise ImportError('Please install {0} package.\n'
                           'pip install -U {0}'.format(module))
     else:
-        config_name = request.config.getvalue('db_conf')
-        config = ConfigManager(files=[config_name])
 
-        return i, config
+        return i, get_config(request)
 
 
 def pytest_addoption(parser):
@@ -75,9 +79,9 @@ def pytest_addoption(parser):
     )
 
 
-def pytest_funcarg__redisdb(request):
-    redis, config = try_import('redis', request)
-
+@pytest.fixture(scope='session')
+def redis_proc(request):
+    config = get_config(request)
     redis_conf = request.config.getvalue('redis_conf')
 
     redis_executor = TCPCoordinatedExecutor(
@@ -90,6 +94,14 @@ def pytest_funcarg__redisdb(request):
     )
     redis_executor.start()
 
+    request.addfinalizer(redis_executor.stop)
+    return redis_executor
+
+
+@pytest.fixture
+def redisdb(request):
+    redis, config = try_import('redis', request)
+
     redis_client = redis.Redis(
         config.redis.host,
         config.redis.port,
@@ -97,17 +109,13 @@ def pytest_funcarg__redisdb(request):
     )
     redis_client.flushall()
 
-    def flush_and_stop():
-        redis_client.flushall()
-        redis_executor.stop()
-
-    request.addfinalizer(flush_and_stop)
+    request.addfinalizer(redis_client.flushall)
     return redis_client
 
 
-def pytest_funcarg__mongodb(request):
-    pymongo, config = try_import('pymongo', request)
-
+@pytest.fixture(scope='session')
+def mongo_proc(request):
+    config = get_config(request)
     mongo_conf = request.config.getvalue('mongo_conf')
 
     mongo_executor = TCPCoordinatedExecutor(
@@ -120,6 +128,16 @@ def pytest_funcarg__mongodb(request):
     )
     mongo_executor.start()
 
+    def stop():
+        mongo_executor.stop()
+    request.addfinalizer(stop)
+    return mongo_executor
+
+
+@pytest.fixture
+def mongodb(request, mongo_proc):
+    pymongo, config = try_import('pymongo', request)
+
     mongo_conn = pymongo.Connection(
         config.mongo.host,
         config.mongo.port
@@ -127,13 +145,13 @@ def pytest_funcarg__mongodb(request):
 
     mongodb = mongo_conn[config.mongo.db]
 
-    def drop_and_stop():
+    def drop():
         for collection_name in mongodb.collection_names():
             if collection_name != 'system.indexes':
                 mongodb[collection_name].drop()
-        mongo_executor.stop()
 
-    request.addfinalizer(drop_and_stop)
+    request.addfinalizer(drop)
+    drop()
     return mongodb
 
 
