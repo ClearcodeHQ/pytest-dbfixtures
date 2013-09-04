@@ -38,7 +38,7 @@ setup(
         'pytest11': [
             'pytest_dbfixtures = pytest_dbfixtures.pytest_dbfixtures'
         ]},
-    keywords='py.test pytest redis mongo',
+    keywords='py.test pytest redis mongo rabbitmq',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
