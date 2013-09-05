@@ -18,7 +18,7 @@ How to use
 
     def test_using_redis(redisdb):
         redisdb.set('woof', 'woof')
-        redis.get('woof')
+        redisdb.get('woof')
 
 
     def test_using_mongo(mongodb):
