@@ -1,7 +1,7 @@
 pytest-dbfixtures
 =================
 
-redis, mongo, rabbitmq py.test fixutres
+py.test fixtures: redis, mongo, rabbitmq 
 
 
 Install
@@ -9,7 +9,7 @@ Install
 
 ::
 
-    python setup.py install
+    pip install pytest-dbfixtures
 
 How to use
 ----------
@@ -20,9 +20,11 @@ How to use
         redisdb.set('woof', 'woof')
         redis.get('woof')
 
+
     def test_using_mongo(mongodb):
         mongodb.test.insert({'woof': 'woof'})
         mongodb.test.find_one()
+
 
     def test_using_rabbit(rabbitmq):
         channel = rabbitmq.channel()
