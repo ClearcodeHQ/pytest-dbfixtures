@@ -99,7 +99,7 @@ def redis_proc(request):
 
 
 @pytest.fixture
-def redisdb(request):
+def redisdb(request, redis_proc):
     redis, config = try_import('redis', request)
 
     redis_client = redis.Redis(
