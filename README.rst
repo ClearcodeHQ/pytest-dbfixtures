@@ -7,14 +7,14 @@ py.test fixtures: redis, mongo, rabbitmq
 Install
 -------
 
-::
+.. sourcecode:: bash
 
-    pip install pytest-dbfixtures
+    $ pip install pytest-dbfixtures
 
 How to use
 ----------
 
-::
+.. sourcecode:: python
 
     def test_using_redis(redisdb):
         redisdb.set('woof', 'woof')
