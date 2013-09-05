@@ -20,7 +20,7 @@ from setuptools import setup
 
 setup(
     name='pytest-dbfixtures',
-    version='0.3',
+    version='0.3.1',
     description='dbfixtures plugin for py.test.',
     author='Clearcode - The A Room',
     author_email='thearoom@clearcode.cc',
@@ -38,7 +38,7 @@ setup(
         'pytest11': [
             'pytest_dbfixtures = pytest_dbfixtures.pytest_dbfixtures'
         ]},
-    keywords='py.test pytest redis mongo rabbitmq',
+    keywords='py.test pytest fixture redis mongo rabbitmq',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',

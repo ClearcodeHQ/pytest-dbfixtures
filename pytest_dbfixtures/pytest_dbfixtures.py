@@ -17,8 +17,8 @@
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import shutil
 import importlib
-from subprocess import Popen
 
 import pytest
 from path import path
@@ -107,8 +107,6 @@ def redisdb(request, redis_proc):
         config.redis.port,
         config.redis.db,
     )
-    redis_client.flushall()
-
     request.addfinalizer(redis_client.flushall)
     return redis_client
 
@@ -155,9 +153,10 @@ def mongodb(request, mongo_proc):
     return mongodb
 
 
-def pytest_funcarg__rabbitmq(request):
+@pytest.fixture
+def rabbitmq(request):
     pika, config = try_import('pika', request)
-
+    
     rabbit_conf = request.config.getvalue('rabbit_conf')
     for line in open(rabbit_conf):
         name, value = line[:-1].split('=')
@@ -172,14 +171,14 @@ def pytest_funcarg__rabbitmq(request):
     )
     rabbit_executor.start()
 
+    def stop_and_reset():
+        rabbit_executor.stop()
+        shutil.rmtree(os.environ['RABBITMQ_MNESIA_BASE'])
+    request.addfinalizer(stop_and_reset)
+
     rabbit_params = pika.connection.ConnectionParameters(
         host=config.rabbit.host,
         port=config.rabbit.port,
     )
     rabbit_connection = pika.BlockingConnection(rabbit_params)
-
-    def stop_and_cleanup():
-        rabbit_executor.stop()
-        Popen([config.rabbit.rabbit_ctl, 'force_reset'])
-    request.addfinalizer(stop_and_cleanup)
     return rabbit_connection
