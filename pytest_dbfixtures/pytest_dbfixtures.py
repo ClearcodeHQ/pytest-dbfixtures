@@ -17,9 +17,9 @@
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import shutil
 import importlib
 import subprocess
+from tempfile import mkdtemp
 
 import pytest
 from path import path
@@ -154,13 +154,34 @@ def mongodb(request, mongo_proc):
     return mongodb
 
 
+def get_rabbit_env(name):
+    return os.environ.get(name) or os.environ.get(name.split('RABBITMQ_')[1])
+
+
+def get_rabbit_path(name):
+    env = get_rabbit_env(name)
+    if not env or not path(env).exists():
+        return
+    return path(env)
+
+
 @pytest.fixture
 def rabbitmq(request):
     pika, config = try_import('pika', request)
 
-    rabbit_conf = request.config.getvalue('rabbit_conf')
-    for line in open(rabbit_conf):
-        name, value = line[:-1].split('=')
+    rabbit_conf = open(request.config.getvalue('rabbit_conf')).readlines()
+    rabbit_conf = dict(line[:-1].split('=') for line in rabbit_conf)
+
+    tmpdir = path(mkdtemp(prefix='rabbitmq_fixture'))
+    rabbit_conf['RABBITMQ_LOG_BASE'] = str(tmpdir)
+    rabbit_conf['RABBITMQ_MNESIA_BASE'] = str(tmpdir)
+
+    # setup environment variables
+    for name, value in rabbit_conf.items():
+        # for new versions of rabbitmq-server:
+        os.environ[name] = value
+        # for older versions of rabbitmq-server:
+        prefix, name = name.split('RABBITMQ_')
         os.environ[name] = value
 
     rabbit_executor = TCPCoordinatedExecutor(
@@ -168,23 +189,27 @@ def rabbitmq(request):
         config.rabbit.host,
         config.rabbit.port,
     )
+    base_path = get_rabbit_path('RABBITMQ_MNESIA_BASE')
 
     def stop_and_reset():
         rabbit_executor.stop()
-        shutil.rmtree(os.environ['RABBITMQ_MNESIA_BASE'])
+        base_path.rmtree()
+        tmpdir.exists() and tmpdir.rmtree()
     request.addfinalizer(stop_and_reset)
 
     rabbit_executor.start()
-    pid_file = os.path.join(os.environ['RABBITMQ_MNESIA_BASE'],
-                            os.environ['RABBITMQ_NODENAME'] + '.pid')
-    wait_cmd = config.rabbit.rabbit_ctl, '-q', 'wait', pid_file
-    subprocess.Popen(wait_cmd).communicate()
 
     rabbit_params = pika.connection.ConnectionParameters(
         host=config.rabbit.host,
         port=config.rabbit.port,
-        connection_attempts=10,
+        connection_attempts=3,
         retry_delay=2,
     )
-    rabbit_connection = pika.BlockingConnection(rabbit_params)
+    pid_file = base_path / get_rabbit_env('RABBITMQ_NODENAME') + '.pid'
+    wait_cmd = config.rabbit.rabbit_ctl, '-q', 'wait', pid_file
+    subprocess.Popen(wait_cmd).communicate()
+    try:
+        rabbit_connection = pika.BlockingConnection(rabbit_params)
+    except pika.adapters.blocking_connection.exceptions.ConnectionClosed:
+        print "Be sure that you're connecting rabbitmq-server >= 2.8.4"
     return rabbit_connection
