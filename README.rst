@@ -1,7 +1,9 @@
 pytest-dbfixtures
 =================
 
-py.test fixtures: redis, mongo, rabbitmq 
+py.test clean fixtures: redis, mongo, rabbitmq 
+
+Starts specific database deamon and cleanup all data produced during tests.
 
 
 Install
@@ -10,6 +12,7 @@ Install
 .. sourcecode:: bash
 
     $ pip install pytest-dbfixtures
+
 
 How to use
 ----------
