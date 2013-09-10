@@ -19,6 +19,7 @@
 import os
 import shutil
 import importlib
+import subprocess
 
 import pytest
 from path import path
@@ -156,25 +157,28 @@ def mongodb(request, mongo_proc):
 @pytest.fixture
 def rabbitmq(request):
     pika, config = try_import('pika', request)
-    
+
     rabbit_conf = request.config.getvalue('rabbit_conf')
     for line in open(rabbit_conf):
         name, value = line[:-1].split('=')
         os.environ[name] = value
 
     rabbit_executor = TCPCoordinatedExecutor(
-        '{rabbit_exec}'.format(
-            rabbit_exec=config.rabbit.rabbit_server,
-        ),
-        host=config.rabbit.host,
-        port=config.rabbit.port,
+        config.rabbit.rabbit_server,
+        config.rabbit.host,
+        config.rabbit.port,
     )
-    rabbit_executor.start()
 
     def stop_and_reset():
         rabbit_executor.stop()
         shutil.rmtree(os.environ['RABBITMQ_MNESIA_BASE'])
     request.addfinalizer(stop_and_reset)
+
+    rabbit_executor.start()
+    pid_file = os.path.join(os.environ['RABBITMQ_MNESIA_BASE'],
+                            os.environ['RABBITMQ_NODENAME'] + '.pid')
+    wait_cmd = config.rabbit.rabbit_ctl, '-q', 'wait', pid_file
+    subprocess.Popen(wait_cmd)
 
     rabbit_params = pika.connection.ConnectionParameters(
         host=config.rabbit.host,
