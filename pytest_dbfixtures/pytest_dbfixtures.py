@@ -178,11 +178,13 @@ def rabbitmq(request):
     pid_file = os.path.join(os.environ['RABBITMQ_MNESIA_BASE'],
                             os.environ['RABBITMQ_NODENAME'] + '.pid')
     wait_cmd = config.rabbit.rabbit_ctl, '-q', 'wait', pid_file
-    subprocess.Popen(wait_cmd)
+    subprocess.Popen(wait_cmd).communicate()
 
     rabbit_params = pika.connection.ConnectionParameters(
         host=config.rabbit.host,
         port=config.rabbit.port,
+        connection_attempts=10,
+        retry_delay=2,
     )
     rabbit_connection = pika.BlockingConnection(rabbit_params)
     return rabbit_connection
