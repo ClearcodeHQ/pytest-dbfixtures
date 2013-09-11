@@ -19,6 +19,7 @@
 import os
 import importlib
 import subprocess
+import shutil
 from tempfile import mkdtemp
 
 import pytest
@@ -35,12 +36,16 @@ def get_config(request):
     return ConfigManager(files=[config_name])
 
 
-def try_import(module, request):
+def try_import(module, request, pypi_package=None):
     try:
         i = importlib.import_module(module)
     except ImportError:
-        raise ImportError('Please install {0} package.\n'
-                          'pip install -U {0}'.format(module))
+        raise ImportError(
+            'Please install {0} package.\n'
+            'pip install -U {0}'.format(
+                pypi_package or module
+            )
+        )
     else:
 
         return i, get_config(request)
@@ -213,3 +218,94 @@ def rabbitmq(request):
     except pika.adapters.blocking_connection.exceptions.ConnectionClosed:
         print "Be sure that you're connecting rabbitmq-server >= 2.8.4"
     return rabbit_connection
+
+
+def run_command(params, in_background=False):
+    ''' Run system command from shell '''
+
+    if in_background:
+        return subprocess.Popen(' '.join(params), shell=True)
+    return subprocess.check_output(' '.join(params), shell=True)
+
+
+def remove_mysql_directory(config):
+    if os.path.isdir(config.mysql.datadir):
+        print 'removing old datadir'
+        shutil.rmtree(config.mysql.datadir)
+
+
+def init_mysql_directory(config):
+    remove_mysql_directory(config)
+    init_directory = (
+        config.mysql.mysql_init,
+        '--user=%s' % os.getenv('USER'),
+        '--datadir=%s' % config.mysql.datadir,
+    )
+    run_command(init_directory)
+
+def create_mysql_test_database(config):
+    create_database = (
+        config.mysql.mysql_client,
+        '--user=%s' % config.mysql.user,
+        '--socket=%s' % config.mysql.socket,
+        '--execute="CREATE DATABASE {db_name}"'.format(
+            db_name=config.mysql.db
+        )
+    )
+    run_command(create_database)
+
+@pytest.fixture(scope='session')
+def mysql_proc(request):
+    config = get_config(request)
+    init_mysql_directory(config)
+
+    mysql_executor = TCPCoordinatedExecutor(
+        '''
+            {mysql_server} --datadir={datadir} --pid-file={pidfile}
+            --port={port} --socket={socket}
+        '''.format(
+            mysql_server=config.mysql.mysql_server,
+            datadir=config.mysql.datadir,
+            pidfile=config.mysql.pidfile,
+            port=config.mysql.port,
+            socket=config.mysql.socket,
+        ),
+        host=config.mysql.host,
+        port=config.mysql.port,
+    )
+    mysql_executor.start()
+
+    request.addfinalizer(mysql_executor.stop)
+    return mysql_executor
+
+
+@pytest.fixture
+def mysqldb(request, mysql_proc):
+    config = get_config(request)
+    create_mysql_test_database(config)
+
+    MySQLdb, config = try_import(
+        'MySQLdb', request, pypi_package='MySQL-python'
+    )
+
+    mysql_conn = MySQLdb.connect(
+        host=config.mysql.host,
+        unix_socket=config.mysql.socket,
+        user=config.mysql.user,
+        db=config.mysql.db,
+        passwd=config.mysql.password,
+    )
+    cursor = mysql_conn.cursor()
+
+    def shutdown():
+        shutdown_server = (
+            config.mysql.mysql_admin,
+            '--socket=%s' % config.mysql.socket,
+            '--user=%s' % config.mysql.user,
+            'shutdown',
+        )
+        run_command(shutdown_server)
+        remove_mysql_directory(config)
+
+    request.addfinalizer(shutdown)
+    return cursor
