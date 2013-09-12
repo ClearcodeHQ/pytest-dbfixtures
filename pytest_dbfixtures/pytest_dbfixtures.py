@@ -295,7 +295,6 @@ def mysqldb(request, mysql_proc):
         db=config.mysql.db,
         passwd=config.mysql.password,
     )
-    cursor = mysql_conn.cursor()
 
     def shutdown():
         shutdown_server = (
@@ -308,4 +307,4 @@ def mysqldb(request, mysql_proc):
         remove_mysql_directory(config)
 
     request.addfinalizer(shutdown)
-    return cursor
+    return mysql_conn

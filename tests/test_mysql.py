@@ -1,6 +1,7 @@
 def test_mysql(mysqldb):
 
-    mysqldb.execute("SELECT CURRENT_USER()")
-    results = mysqldb.fetchall()
+    cursor = mysqldb.cursor()
+    cursor.execute("SELECT CURRENT_USER()")
+    results = cursor.fetchall()
 
     assert len(results) == 1

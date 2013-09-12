@@ -1,7 +1,7 @@
 pytest-dbfixtures
 =================
 
-py.test clean fixtures: redis, mongo, rabbitmq
+py.test clean fixtures: mysql, redis, mongo, rabbitmq
 
 Starts specific database deamon and cleanup all data produced during tests.
 
@@ -20,8 +20,8 @@ How to use
 .. sourcecode:: python
 
     def test_using_mysql(mysqldb):
-        mysqldb.execute("SELECT CURRENT_USER()")
-        current_user = mysqldb.fetchone()[0]
+        cursor = mysqldb.cursor()
+        cursor.execute("SELECT CURRENT_USER()")
 
 
     def test_using_redis(redisdb):
