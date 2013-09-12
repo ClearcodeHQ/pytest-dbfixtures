@@ -220,17 +220,8 @@ def rabbitmq(request):
     return rabbit_connection
 
 
-def run_command(params, in_background=False):
-    ''' Run system command from shell '''
-
-    if in_background:
-        return subprocess.Popen(' '.join(params), shell=True)
-    return subprocess.check_output(' '.join(params), shell=True)
-
-
 def remove_mysql_directory(config):
     if os.path.isdir(config.mysql.datadir):
-        print 'removing old datadir'
         shutil.rmtree(config.mysql.datadir)
 
 
@@ -241,18 +232,8 @@ def init_mysql_directory(config):
         '--user=%s' % os.getenv('USER'),
         '--datadir=%s' % config.mysql.datadir,
     )
-    run_command(init_directory)
+    subprocess.check_output(' '.join(init_directory), shell=True)
 
-def create_mysql_test_database(config):
-    create_database = (
-        config.mysql.mysql_client,
-        '--user=%s' % config.mysql.user,
-        '--socket=%s' % config.mysql.socket,
-        '--execute="CREATE DATABASE {db_name}"'.format(
-            db_name=config.mysql.db
-        )
-    )
-    run_command(create_database)
 
 @pytest.fixture(scope='session')
 def mysql_proc(request):
@@ -275,14 +256,17 @@ def mysql_proc(request):
     )
     mysql_executor.start()
 
-    request.addfinalizer(mysql_executor.stop)
+    def stop_server_and_remove_directory():
+        mysql_executor.stop()
+        remove_mysql_directory(config)
+
+    request.addfinalizer(stop_server_and_remove_directory)
     return mysql_executor
 
 
-@pytest.fixture
-def mysqldb(request, mysql_proc):
+@pytest.fixture(scope='session')
+def mysqldb_session(request, mysql_proc):
     config = get_config(request)
-    create_mysql_test_database(config)
 
     MySQLdb, config = try_import(
         'MySQLdb', request, pypi_package='MySQL-python'
@@ -292,19 +276,28 @@ def mysqldb(request, mysql_proc):
         host=config.mysql.host,
         unix_socket=config.mysql.socket,
         user=config.mysql.user,
-        db=config.mysql.db,
         passwd=config.mysql.password,
     )
 
-    def shutdown():
-        shutdown_server = (
-            config.mysql.mysql_admin,
-            '--socket=%s' % config.mysql.socket,
-            '--user=%s' % config.mysql.user,
-            'shutdown',
-        )
-        run_command(shutdown_server)
-        remove_mysql_directory(config)
+    mysql_conn.query('CREATE DATABASE %s' % config.mysql.db)
+    mysql_conn.query('USE %s' % config.mysql.db)
 
-    request.addfinalizer(shutdown)
+    def drop_database():
+        mysql_conn.query('DROP DATABASE IF EXISTS %s' % config.mysql.db)
+        mysql_conn.close()
+
+    request.addfinalizer(drop_database)
     return mysql_conn
+
+
+@pytest.fixture
+def mysqldb(request, mysqldb_session):
+
+    def drop_database():
+        config = get_config(request)
+        mysqldb_session.query('DROP DATABASE IF EXISTS %s' % config.mysql.db)
+        mysqldb_session.close()
+
+    request.addfinalizer(drop_database)
+
+    return mysqldb_session

@@ -20,8 +20,13 @@ How to use
 .. sourcecode:: python
 
     def test_using_mysql(mysqldb):
-        cursor = mysqldb.cursor()
-        cursor.execute("SELECT CURRENT_USER()")
+        mysqldb.query("SELECT CURRENT_USER()")
+
+
+    @pytest.fixture(scope='session')
+    def some_session_fixture(mysqldb_session):
+        mysqldb_session.query("CREATE DATABASE xyz")
+        mysqldb_session.query("USE xyz")
 
 
     def test_using_redis(redisdb):
