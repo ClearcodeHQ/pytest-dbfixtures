@@ -250,7 +250,7 @@ def mysql_proc(request):
             pidfile=config.mysql.pidfile,
             port=config.mysql.port,
             socket=config.mysql.socket,
-            logfile=config.logfile,
+            logfile=config.mysql.logfile,
         ),
         host=config.mysql.host,
         port=config.mysql.port,
