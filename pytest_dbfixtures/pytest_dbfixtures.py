@@ -147,8 +147,6 @@ def mongodb(request, mongo_proc):
         config.mongo.port
     )
 
-    mongodb = mongo_conn[config.mongo.db]
-
     def drop():
         for db in mongo_conn.database_names():
             for collection_name in mongo_conn[db].collection_names():
@@ -157,7 +155,7 @@ def mongodb(request, mongo_proc):
 
     request.addfinalizer(drop)
     drop()
-    return mongodb
+    return mongo_conn
 
 
 def get_rabbit_env(name):

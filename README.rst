@@ -26,17 +26,18 @@ How to use
     @pytest.fixture(scope='session')
     def some_session_fixture(mysqldb_session):
         mysqldb_session.query("CREATE DATABASE xyz")
-        mysqldb_session.query("USE xyz")
+        rows = mysqldb_session.query("USE xyz")
 
 
     def test_using_redis(redisdb):
         redisdb.set('woof', 'woof')
-        redisdb.get('woof')
+        woof = redisdb.get('woof')
 
 
     def test_using_mongo(mongodb):
-        mongodb.test.insert({'woof': 'woof'})
-        mongodb.test.find_one()
+        db = mongodb['test_database']
+        db.test.insert({'woof': 'woof'})
+        documents = db.test.find_one()
 
 
     def test_using_rabbit(rabbitmq):

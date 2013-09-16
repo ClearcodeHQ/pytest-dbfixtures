@@ -3,5 +3,6 @@ def test_mongo(mongodb):
         "test1": "test1",
     }
 
-    mongodb.test.insert(test_data)
-    assert mongodb.test.find_one()['test1'] == 'test1'
+    db = mongodb['test_db']
+    db.test.insert(test_data)
+    assert db.test.find_one()['test1'] == 'test1'
