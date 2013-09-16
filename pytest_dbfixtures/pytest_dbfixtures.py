@@ -150,9 +150,10 @@ def mongodb(request, mongo_proc):
     mongodb = mongo_conn[config.mongo.db]
 
     def drop():
-        for collection_name in mongodb.collection_names():
-            if collection_name != 'system.indexes':
-                mongodb[collection_name].drop()
+        for db in mongo_conn.database_names():
+            for collection_name in mongo_conn[db].collection_names():
+                if collection_name != 'system.indexes':
+                    mongo_conn[db][collection_name].drop()
 
     request.addfinalizer(drop)
     drop()
