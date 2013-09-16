@@ -244,8 +244,8 @@ def mysql_proc(request):
     mysql_executor = TCPCoordinatedExecutor(
         '''
             {mysql_server} --datadir={datadir} --pid-file={pidfile}
-            --port={port} --socket={socket}
-        '''.format(
+            --port={port} --socket={socket}'''
+        .format(
             mysql_server=config.mysql.mysql_server,
             datadir=config.mysql.datadir,
             pidfile=config.mysql.pidfile,
