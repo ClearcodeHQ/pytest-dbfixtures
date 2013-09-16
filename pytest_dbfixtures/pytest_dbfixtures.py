@@ -257,7 +257,16 @@ def mysql_proc(request):
     )
     mysql_executor.start()
 
+    def shutdown_server():
+        return (
+            config.mysql.mysql_admin,
+            '--socket=%s' % config.mysql.socket,
+            '--user=%s' % config.mysql.user,
+            'shutdown'
+        )
+
     def stop_server_and_remove_directory():
+        subprocess.check_output(' '.join(shutdown_server()), shell=True)
         mysql_executor.stop()
         remove_mysql_directory(config)
 
@@ -297,7 +306,6 @@ def mysqldb(request, mysqldb_session):
     def drop_database():
         config = get_config(request)
         mysqldb_session.query('DROP DATABASE IF EXISTS %s' % config.mysql.db)
-        mysqldb_session.close()
 
     request.addfinalizer(drop_database)
 
