@@ -245,13 +245,13 @@ def mysql_proc(request):
             --port={port} --socket={socket} --log-error={logfile}
             --skip-syslog
         '''.format(
-            mysql_server=config.mysql.mysql_server,
-            datadir=config.mysql.datadir,
-            pidfile=config.mysql.pidfile,
-            port=config.mysql.port,
-            socket=config.mysql.socket,
-            logfile=config.mysql.logfile,
-        ),
+        mysql_server=config.mysql.mysql_server,
+        datadir=config.mysql.datadir,
+        pidfile=config.mysql.pidfile,
+        port=config.mysql.port,
+        socket=config.mysql.socket,
+        logfile=config.mysql.logfile,
+    ),
         host=config.mysql.host,
         port=config.mysql.port,
     )
@@ -274,39 +274,31 @@ def mysql_proc(request):
     return mysql_executor
 
 
-@pytest.fixture(scope='session')
-def mysqldb_session(request, mysql_proc):
-    config = get_config(request)
-
-    MySQLdb, config = try_import(
-        'MySQLdb', request, pypi_package='MySQL-python'
-    )
-
-    mysql_conn = MySQLdb.connect(
-        host=config.mysql.host,
-        unix_socket=config.mysql.socket,
-        user=config.mysql.user,
-        passwd=config.mysql.password,
-    )
-
-    mysql_conn.query('CREATE DATABASE %s' % config.mysql.db)
-    mysql_conn.query('USE %s' % config.mysql.db)
-
-    def drop_database():
-        mysql_conn.query('DROP DATABASE IF EXISTS %s' % config.mysql.db)
-        mysql_conn.close()
-
-    request.addfinalizer(drop_database)
-    return mysql_conn
-
-
-@pytest.fixture
-def mysqldb(request, mysqldb_session):
-
-    def drop_database():
+def mysqldb_fixture_factory(scope):
+    @pytest.fixture(scope)
+    def mysqldb_fixture(request, mysql_proc):
         config = get_config(request)
-        mysqldb_session.query('DROP DATABASE IF EXISTS %s' % config.mysql.db)
 
-    request.addfinalizer(drop_database)
+        MySQLdb, config = try_import(
+            'MySQLdb', request, pypi_package='MySQL-python'
+        )
 
-    return mysqldb_session
+        mysql_conn = MySQLdb.connect(
+            host=config.mysql.host,
+            unix_socket=config.mysql.socket,
+            user=config.mysql.user,
+            passwd=config.mysql.password,
+        )
+
+        mysql_conn.query('CREATE DATABASE %s' % config.mysql.db)
+        mysql_conn.query('USE %s' % config.mysql.db)
+
+        def drop_database():
+            mysql_conn.query('DROP DATABASE IF EXISTS %s' % config.mysql.db)
+            mysql_conn.close()
+
+        request.addfinalizer(drop_database)
+        return mysql_conn
+
+mysqldb_session = mysqldb_fixture_factory(scope='session')
+mysqldb = mysqldb_fixture_factory(scope='function')
