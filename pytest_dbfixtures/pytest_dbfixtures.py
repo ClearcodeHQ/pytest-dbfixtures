@@ -274,7 +274,16 @@ def mysql_proc(request):
     return mysql_executor
 
 
-def mysqldb_fixture_factory(scope):
+def mysqldb_fixture_factory(scope='session'):
+    """
+    Factory. Create connection to mysql. If you want you can give a scope,
+    default is 'session'.
+
+    :param str scope: scope (session, function, module, etc.)
+    :rtype: func
+    :returns: function ``mysqldb_fixture`` with suit scope
+    """
+
     @pytest.fixture(scope)
     def mysqldb_fixture(request, mysql_proc):
         config = get_config(request)
@@ -298,9 +307,11 @@ def mysqldb_fixture_factory(scope):
             mysql_conn.close()
 
         request.addfinalizer(drop_database)
+
         return mysql_conn
+
     return mysqldb_fixture
 
 
-mysqldb_session = mysqldb_fixture_factory(scope='session')
+mysqldb_session = mysqldb_fixture_factory()
 mysqldb = mysqldb_fixture_factory(scope='function')
