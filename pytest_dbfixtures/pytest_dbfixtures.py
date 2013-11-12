@@ -299,6 +299,8 @@ def mysqldb_fixture_factory(scope):
 
         request.addfinalizer(drop_database)
         return mysql_conn
+    return mysqldb_fixture
+
 
 mysqldb_session = mysqldb_fixture_factory(scope='session')
 mysqldb = mysqldb_fixture_factory(scope='function')
