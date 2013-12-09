@@ -24,16 +24,12 @@ from tempfile import mkdtemp
 
 import pytest
 from path import path
-from pymlconf import ConfigManager
 from summon_process.executors import TCPCoordinatedExecutor
+
+from pytest_dbfixtures.utils import get_config
 
 
 ROOT_DIR = path(__file__).parent.parent.abspath()
-
-
-def get_config(request):
-    config_name = request.config.getvalue('db_conf')
-    return ConfigManager(files=[config_name])
 
 
 def try_import(module, request, pypi_package=None):
