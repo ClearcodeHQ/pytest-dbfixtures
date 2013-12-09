@@ -36,7 +36,7 @@ setup(
     include_package_data=True,
     entry_points={
         'pytest11': [
-            'pytest_dbfixtures = pytest_dbfixtures.pytest_dbfixtures'
+            'pytest_dbfixtures = pytest_dbfixtures.plugin'
         ]},
     keywords='py.test pytest fixture redis mongo rabbitmq mysql',
     classifiers=[
