@@ -17,7 +17,6 @@
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import importlib
 import subprocess
 import shutil
 from tempfile import mkdtemp
@@ -26,26 +25,11 @@ import pytest
 from path import path
 from summon_process.executors import TCPCoordinatedExecutor
 
-from pytest_dbfixtures.utils import get_config
+from pytest_dbfixtures.utils import get_config, try_import
 from pytest_dbfixtures import factories
 
 
 ROOT_DIR = path(__file__).parent.parent.abspath()
-
-
-def try_import(module, request, pypi_package=None):
-    try:
-        i = importlib.import_module(module)
-    except ImportError:
-        raise ImportError(
-            'Please install {0} package.\n'
-            'pip install -U {0}'.format(
-                pypi_package or module
-            )
-        )
-    else:
-
-        return i, get_config(request)
 
 
 def pytest_addoption(parser):
@@ -83,19 +67,7 @@ def pytest_addoption(parser):
 
 
 redis_proc = factories.redis_proc()
-
-
-@pytest.fixture
-def redisdb(request, redis_proc):
-    redis, config = try_import('redis', request)
-
-    redis_client = redis.Redis(
-        config.redis.host,
-        config.redis.port,
-        config.redis.db,
-    )
-    request.addfinalizer(redis_client.flushall)
-    return redis_client
+redisdb = factories.redisdb('redis_proc')
 
 
 @pytest.fixture(scope='session')
