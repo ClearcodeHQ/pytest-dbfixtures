@@ -17,38 +17,19 @@
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import importlib
 import subprocess
 import shutil
 from tempfile import mkdtemp
 
 import pytest
 from path import path
-from pymlconf import ConfigManager
 from summon_process.executors import TCPCoordinatedExecutor
+
+from pytest_dbfixtures.utils import get_config, try_import
+from pytest_dbfixtures import factories
 
 
 ROOT_DIR = path(__file__).parent.parent.abspath()
-
-
-def get_config(request):
-    config_name = request.config.getvalue('db_conf')
-    return ConfigManager(files=[config_name])
-
-
-def try_import(module, request, pypi_package=None):
-    try:
-        i = importlib.import_module(module)
-    except ImportError:
-        raise ImportError(
-            'Please install {0} package.\n'
-            'pip install -U {0}'.format(
-                pypi_package or module
-            )
-        )
-    else:
-
-        return i, get_config(request)
 
 
 def pytest_addoption(parser):
@@ -85,36 +66,8 @@ def pytest_addoption(parser):
     )
 
 
-@pytest.fixture(scope='session')
-def redis_proc(request):
-    config = get_config(request)
-    redis_conf = request.config.getvalue('redis_conf')
-
-    redis_executor = TCPCoordinatedExecutor(
-        '{redis_exec} {params} {config}'.format(
-            redis_exec=config.redis.redis_exec,
-            params=config.redis.params,
-            config=redis_conf),
-        host=config.redis.host,
-        port=config.redis.port,
-    )
-    redis_executor.start()
-
-    request.addfinalizer(redis_executor.stop)
-    return redis_executor
-
-
-@pytest.fixture
-def redisdb(request, redis_proc):
-    redis, config = try_import('redis', request)
-
-    redis_client = redis.Redis(
-        config.redis.host,
-        config.redis.port,
-        config.redis.db,
-    )
-    request.addfinalizer(redis_client.flushall)
-    return redis_client
+redis_proc = factories.redis_proc()
+redisdb = factories.redisdb('redis_proc')
 
 
 @pytest.fixture(scope='session')
