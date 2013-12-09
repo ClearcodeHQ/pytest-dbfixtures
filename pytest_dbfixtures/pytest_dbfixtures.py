@@ -113,7 +113,7 @@ def redisdb(request, redis_proc):
         config.redis.port,
         config.redis.db,
     )
-    request.addfinalizer(redis_client.flushall)
+    request.addfinalizer(redis_client.flushdb)
     return redis_client
 
 
