@@ -27,6 +27,7 @@ from path import path
 from summon_process.executors import TCPCoordinatedExecutor
 
 from pytest_dbfixtures.utils import get_config
+from pytest_dbfixtures import factories
 
 
 ROOT_DIR = path(__file__).parent.parent.abspath()
@@ -81,23 +82,7 @@ def pytest_addoption(parser):
     )
 
 
-@pytest.fixture(scope='session')
-def redis_proc(request):
-    config = get_config(request)
-    redis_conf = request.config.getvalue('redis_conf')
-
-    redis_executor = TCPCoordinatedExecutor(
-        '{redis_exec} {params} {config}'.format(
-            redis_exec=config.redis.redis_exec,
-            params=config.redis.params,
-            config=redis_conf),
-        host=config.redis.host,
-        port=config.redis.port,
-    )
-    redis_executor.start()
-
-    request.addfinalizer(redis_executor.stop)
-    return redis_executor
+redis_proc = factories.redis_proc()
 
 
 @pytest.fixture
