@@ -7,6 +7,7 @@ pytest-dbfixtures along its history.
 * Paweł Wilczyński
 * Tomasz Święcicki
 * Tomasz Karbownicki
+* Grzegorz Śliwiński
 
 Great thanks to `Clearcode <http://clearcode.cc>`_ for allowing releasing
 pytest-dbfixtures as free software!
