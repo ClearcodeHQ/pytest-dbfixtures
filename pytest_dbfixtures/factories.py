@@ -31,13 +31,23 @@ def redis_proc(executable=None, params=None, config_file=None,
             redis_port = config.redis.port
 
         pidfile = 'redis-server.{port}.pid'.format(port=redis_port)
+        unixsocket = 'redis.{port}.sock'.format(port=redis_port)
+        dbfilename = 'dump.{port}.rdb'.format(port=redis_port)
+        logfile = 'redis-server.{port}.log'.format(port=redis_port)
 
         redis_executor = TCPCoordinatedExecutor(
-            '{redis_exec} {params} {config} --pidfile {pidfile}'.format(
-                redis_exec=redis_exec,
-                params=redis_params,
-                config=redis_conf,
-                pidfile=pidfile),
+            '''{redis_exec} {params} {config}
+            --pidfile {pidfile} --unixsocket {unixsocket}
+            --dbfilename {dbfilename} --logfile {logfile}
+            --port {port}'''.format(redis_exec=redis_exec,
+                                    params=redis_params,
+                                    config=redis_conf,
+                                    pidfile=pidfile,
+                                    unixsocket=unixsocket,
+                                    dbfilename=dbfilename,
+                                    logfile=logfile,
+                                    port=redis_port
+                                    ),
             host=redis_host,
             port=redis_port,
         )
@@ -52,8 +62,10 @@ def redis_proc(executable=None, params=None, config_file=None,
 def redisdb(process_fixture_name, host=None, port=None, db=None):
 
     @pytest.fixture
-    @pytest.mark.usefixtures(process_fixture_name)
-    def redisdb_factory(request, redis_proc):
+    def redisdb_factory(request):
+        # load required process fixture
+        request.getfuncargvalue(process_fixture_name)
+
         redis, config = try_import('redis', request)
 
         redis_host = host
