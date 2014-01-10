@@ -20,7 +20,7 @@ from setuptools import setup
 
 setup(
     name='pytest-dbfixtures',
-    version='0.4.0',
+    version='0.4.2',
     description='dbfixtures plugin for py.test.',
     author='Clearcode - The A Room',
     author_email='thearoom@clearcode.cc',
