@@ -156,6 +156,9 @@ def rabbitmq_proc(request):
     request.addfinalizer(stop_and_reset)
 
     rabbit_executor.start()
+    pid_file = base_path / get_rabbit_env('RABBITMQ_NODENAME') + '.pid'
+    wait_cmd = config.rabbit.rabbit_ctl, '-q', 'wait', pid_file
+    subprocess.Popen(wait_cmd).communicate()
 
     return rabbit_executor
 
@@ -163,7 +166,6 @@ def rabbitmq_proc(request):
 @pytest.fixture
 def rabbitmq(rabbitmq_proc, request):
     pika, config = try_import('pika', request)
-    base_path = get_rabbit_path('RABBITMQ_MNESIA_BASE')
 
     rabbit_params = pika.connection.ConnectionParameters(
         host=config.rabbit.host,
@@ -171,9 +173,6 @@ def rabbitmq(rabbitmq_proc, request):
         connection_attempts=3,
         retry_delay=2,
     )
-    pid_file = base_path / get_rabbit_env('RABBITMQ_NODENAME') + '.pid'
-    wait_cmd = config.rabbit.rabbit_ctl, '-q', 'wait', pid_file
-    subprocess.Popen(wait_cmd).communicate()
     try:
         rabbit_connection = pika.BlockingConnection(rabbit_params)
     except pika.adapters.blocking_connection.exceptions.ConnectionClosed:
