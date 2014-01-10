@@ -123,8 +123,7 @@ def get_rabbit_path(name):
 
 
 @pytest.fixture
-def rabbitmq(request):
-    pika, config = try_import('pika', request)
+def rabbitmq_proc(request):
 
     rabbit_conf = open(request.config.getvalue('rabbit_conf')).readlines()
     rabbit_conf = dict(line[:-1].split('=') for line in rabbit_conf)
@@ -141,6 +140,8 @@ def rabbitmq(request):
         prefix, name = name.split('RABBITMQ_')
         os.environ[name] = value
 
+    pika, config = try_import('pika', request)
+
     rabbit_executor = TCPCoordinatedExecutor(
         config.rabbit.rabbit_server,
         config.rabbit.host,
@@ -155,6 +156,14 @@ def rabbitmq(request):
     request.addfinalizer(stop_and_reset)
 
     rabbit_executor.start()
+
+    return rabbit_executor
+
+
+@pytest.fixture
+def rabbitmq(rabbitmq_proc, request):
+    pika, config = try_import('pika', request)
+    base_path = get_rabbit_path('RABBITMQ_MNESIA_BASE')
 
     rabbit_params = pika.connection.ConnectionParameters(
         host=config.rabbit.host,
