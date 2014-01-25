@@ -112,18 +112,50 @@ def mongodb(request, mongo_proc):
 
 
 def get_rabbit_env(name):
+    """
+    Get value from environment variable. If does not exists (older version) then
+    use older name.
+
+    :param str name: name of environment variable
+    :rtype: str
+    :returns: path to directory
+    """
     return os.environ.get(name) or os.environ.get(name.split('RABBITMQ_')[1])
 
 
 def get_rabbit_path(name):
+    """
+    Get a path to directory contains sub-directories for the RabbitMQ
+    server's Mnesia database files. `Relocate <http://www.rabbitmq.com/relocate.html>`_
+
+    If environment variable or path to directory do not exist, return ``None``, else
+    return path to directory.
+
+    :param str name: name of environment variable
+    :rtype: path.path or None
+    :returns: path to directory
+    """
     env = get_rabbit_env(name)
+
     if not env or not path(env).exists():
         return
+
     return path(env)
 
 
 @pytest.fixture
 def rabbitmq_proc(request):
+    """
+    #. Get config.
+    #. Make a temporary directory.
+    #. Setup environment variables.
+    #. Start a rabbit server `<http://www.rabbitmq.com/man/rabbitmq-server.1.man.html>`_
+    #. Stop rabbit server and remove temporary files after tests.
+
+    :param FixtureRequest request: fixture request object
+    :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor
+    :returns: tcp executor
+    """
 
     rabbit_conf = open(request.config.getvalue('rabbit_conf')).readlines()
     rabbit_conf = dict(line[:-1].split('=') for line in rabbit_conf)
@@ -132,11 +164,10 @@ def rabbitmq_proc(request):
     rabbit_conf['RABBITMQ_LOG_BASE'] = str(tmpdir)
     rabbit_conf['RABBITMQ_MNESIA_BASE'] = str(tmpdir)
 
-    # setup environment variables
     for name, value in rabbit_conf.items():
-        # for new versions of rabbitmq-server:
+        # for new versions of rabbitmq-server
         os.environ[name] = value
-        # for older versions of rabbitmq-server:
+        # for older versions of rabbitmq-server
         prefix, name = name.split('RABBITMQ_')
         os.environ[name] = value
 
@@ -153,6 +184,7 @@ def rabbitmq_proc(request):
         rabbit_executor.stop()
         base_path.rmtree()
         tmpdir.exists() and tmpdir.rmtree()
+
     request.addfinalizer(stop_and_reset)
 
     rabbit_executor.start()
@@ -165,6 +197,15 @@ def rabbitmq_proc(request):
 
 @pytest.fixture
 def rabbitmq(rabbitmq_proc, request):
+    """
+    #. Get module and config.
+    #. Connect to RabbitMQ using the parameters from config.
+
+    :param TCPCoordinatedExecutor rabbitmq_proc: tcp executor
+    :param FixtureRequest request: fixture request object
+    :rtype: pika.adapters.blocking_connection.BlockingConnection
+    :returns: instance of :class:`BlockingConnection`
+    """
     pika, config = try_import('pika', request)
 
     rabbit_params = pika.connection.ConnectionParameters(
@@ -173,16 +214,19 @@ def rabbitmq(rabbitmq_proc, request):
         connection_attempts=3,
         retry_delay=2,
     )
+
     try:
         rabbit_connection = pika.BlockingConnection(rabbit_params)
     except pika.adapters.blocking_connection.exceptions.ConnectionClosed:
         print "Be sure that you're connecting rabbitmq-server >= 2.8.4"
+
     return rabbit_connection
 
 
 def remove_mysql_directory(config):
     """
     Checks mysql directory. Recursively delete a directory tree if exist.
+
     :param pymlconf.ConfigManager config: config
     """
     if os.path.isdir(config.mysql.datadir):
