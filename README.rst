@@ -64,3 +64,4 @@ Examples::
 
     py.test --redis-config my-redis.conf
     py.test --rabbit-config my-rabbit.conf
+
