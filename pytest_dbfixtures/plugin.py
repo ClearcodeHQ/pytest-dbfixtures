@@ -72,6 +72,18 @@ redisdb = factories.redisdb('redis_proc')
 
 @pytest.fixture(scope='session')
 def mongo_proc(request):
+    """
+    #. Get config.
+    #. Run a ``mongod`` process.
+    #. Stop ``mongod`` process after tests.
+
+    .. note::
+        `mongod <http://docs.mongodb.org/v2.2/reference/mongod/>`_
+
+    :param FixtureRequest request: fixture request object
+    :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor
+    :returns: tcp executor
+    """
     config = get_config(request)
     mongo_conf = request.config.getvalue('mongo_conf')
 
@@ -87,12 +99,24 @@ def mongo_proc(request):
 
     def stop():
         mongo_executor.stop()
+
     request.addfinalizer(stop)
+
     return mongo_executor
 
 
 @pytest.fixture
 def mongodb(request, mongo_proc):
+    """
+    #. Get pymongo module and config.
+    #. Get connection to mongo.
+    #. Drop collections before and after tests.
+
+    :param FixtureRequest request: fixture request object
+    :param TCPCoordinatedExecutor mongo_proc: tcp executor
+    :rtype: pymongo.connection.Connection
+    :returns: connection to mongo database
+    """
     pymongo, config = try_import('pymongo', request)
 
     mongo_conn = pymongo.Connection(
@@ -107,7 +131,9 @@ def mongodb(request, mongo_proc):
                     mongo_conn[db][collection_name].drop()
 
     request.addfinalizer(drop)
+
     drop()
+
     return mongo_conn
 
 
