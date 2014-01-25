@@ -17,16 +17,16 @@
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import subprocess
-import shutil
-from tempfile import mkdtemp
-
 import pytest
+import shutil
+import subprocess
+
 from path import path
+from tempfile import mkdtemp
 from summon_process.executors import TCPCoordinatedExecutor
 
-from pytest_dbfixtures.utils import get_config, try_import
 from pytest_dbfixtures import factories
+from pytest_dbfixtures.utils import get_config, try_import
 
 
 ROOT_DIR = path(__file__).parent.parent.abspath()
@@ -181,11 +181,21 @@ def rabbitmq(rabbitmq_proc, request):
 
 
 def remove_mysql_directory(config):
+    """
+    Checks mysql directory. Recursively delete a directory tree if exist.
+    :param pymlconf.ConfigManager config: config
+    """
     if os.path.isdir(config.mysql.datadir):
         shutil.rmtree(config.mysql.datadir)
 
 
 def init_mysql_directory(config):
+    """
+    #. Remove mysql directory if exist.
+    #. `Initialize MySQL data directory <https://dev.mysql.com/doc/refman/5.0/en/mysql-install-db.html>`_
+
+    :param pymlconf.ConfigManager config: config
+    """
     remove_mysql_directory(config)
     init_directory = (
         config.mysql.mysql_init,
@@ -197,6 +207,16 @@ def init_mysql_directory(config):
 
 @pytest.fixture(scope='session')
 def mysql_proc(request):
+    """
+    #. Get config.
+    #. Initialize MySQL data directory
+    #. `Start a mysqld server https://dev.mysql.com/doc/refman/5.0/en/mysqld-safe.html`_
+    #. Stop server and remove directory after tests. `<https://dev.mysql.com/doc/refman/5.6/en/mysqladmin.html>`_
+
+    :param FixtureRequest request: fixture request object
+    :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor
+    :returns: tcp executor
+    """
     config = get_config(request)
     init_mysql_directory(config)
 
@@ -232,6 +252,7 @@ def mysql_proc(request):
         remove_mysql_directory(config)
 
     request.addfinalizer(stop_server_and_remove_directory)
+
     return mysql_executor
 
 
@@ -247,6 +268,20 @@ def mysqldb_fixture_factory(scope='session'):
 
     @pytest.fixture(scope)
     def mysqldb_fixture(request, mysql_proc):
+        """
+        #. Get config.
+        #. Try to import MySQLdb package.
+        #. Connect to mysql server.
+        #. Create database.
+        #. Use proper database.
+        #. Drop database after tests.
+
+        :param FixtureRequest request: fixture request object
+        :param TCPCoordinatedExecutor mysql_proc: tcp executor
+        :rtype: MySQLdb.connections.Connection
+        :returns: connection to database
+        """
+
         config = get_config(request)
 
         MySQLdb, config = try_import(

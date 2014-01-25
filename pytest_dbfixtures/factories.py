@@ -1,4 +1,5 @@
 import pytest
+
 from summon_process.executors import TCPCoordinatedExecutor
 
 from pytest_dbfixtures.utils import get_config, try_import
