@@ -40,3 +40,7 @@ nosetests.xml
 
 # redis logs
 *.log
+
+# pycharm files
+atlassian-ide-plugin.xml
+.idea/
