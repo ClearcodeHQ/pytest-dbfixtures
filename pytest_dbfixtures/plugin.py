@@ -17,16 +17,16 @@
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import subprocess
-import shutil
-from tempfile import mkdtemp
-
 import pytest
+import shutil
+import subprocess
+
 from path import path
+from tempfile import mkdtemp
 from summon_process.executors import TCPCoordinatedExecutor
 
-from pytest_dbfixtures.utils import get_config, try_import
 from pytest_dbfixtures import factories
+from pytest_dbfixtures.utils import get_config, try_import
 
 
 ROOT_DIR = path(__file__).parent.parent.abspath()
@@ -72,6 +72,18 @@ redisdb = factories.redisdb('redis_proc')
 
 @pytest.fixture(scope='session')
 def mongo_proc(request):
+    """
+    #. Get config.
+    #. Run a ``mongod`` process.
+    #. Stop ``mongod`` process after tests.
+
+    .. note::
+        `mongod <http://docs.mongodb.org/v2.2/reference/mongod/>`_
+
+    :param FixtureRequest request: fixture request object
+    :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor
+    :returns: tcp executor
+    """
     config = get_config(request)
     mongo_conf = request.config.getvalue('mongo_conf')
 
@@ -87,12 +99,24 @@ def mongo_proc(request):
 
     def stop():
         mongo_executor.stop()
+
     request.addfinalizer(stop)
+
     return mongo_executor
 
 
 @pytest.fixture
 def mongodb(request, mongo_proc):
+    """
+    #. Get pymongo module and config.
+    #. Get connection to mongo.
+    #. Drop collections before and after tests.
+
+    :param FixtureRequest request: fixture request object
+    :param TCPCoordinatedExecutor mongo_proc: tcp executor
+    :rtype: pymongo.connection.Connection
+    :returns: connection to mongo database
+    """
     pymongo, config = try_import('pymongo', request)
 
     mongo_conn = pymongo.Connection(
@@ -107,23 +131,57 @@ def mongodb(request, mongo_proc):
                     mongo_conn[db][collection_name].drop()
 
     request.addfinalizer(drop)
+
     drop()
+
     return mongo_conn
 
 
 def get_rabbit_env(name):
+    """
+    Get value from environment variable. If does not exists (older version) then
+    use older name.
+
+    :param str name: name of environment variable
+    :rtype: str
+    :returns: path to directory
+    """
     return os.environ.get(name) or os.environ.get(name.split('RABBITMQ_')[1])
 
 
 def get_rabbit_path(name):
+    """
+    Get a path to directory contains sub-directories for the RabbitMQ
+    server's Mnesia database files. `Relocate <http://www.rabbitmq.com/relocate.html>`_
+
+    If environment variable or path to directory do not exist, return ``None``, else
+    return path to directory.
+
+    :param str name: name of environment variable
+    :rtype: path.path or None
+    :returns: path to directory
+    """
     env = get_rabbit_env(name)
+
     if not env or not path(env).exists():
         return
+
     return path(env)
 
 
 @pytest.fixture
 def rabbitmq_proc(request):
+    """
+    #. Get config.
+    #. Make a temporary directory.
+    #. Setup environment variables.
+    #. Start a rabbit server `<http://www.rabbitmq.com/man/rabbitmq-server.1.man.html>`_
+    #. Stop rabbit server and remove temporary files after tests.
+
+    :param FixtureRequest request: fixture request object
+    :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor
+    :returns: tcp executor
+    """
 
     rabbit_conf = open(request.config.getvalue('rabbit_conf')).readlines()
     rabbit_conf = dict(line[:-1].split('=') for line in rabbit_conf)
@@ -132,11 +190,10 @@ def rabbitmq_proc(request):
     rabbit_conf['RABBITMQ_LOG_BASE'] = str(tmpdir)
     rabbit_conf['RABBITMQ_MNESIA_BASE'] = str(tmpdir)
 
-    # setup environment variables
     for name, value in rabbit_conf.items():
-        # for new versions of rabbitmq-server:
+        # for new versions of rabbitmq-server
         os.environ[name] = value
-        # for older versions of rabbitmq-server:
+        # for older versions of rabbitmq-server
         prefix, name = name.split('RABBITMQ_')
         os.environ[name] = value
 
@@ -153,6 +210,7 @@ def rabbitmq_proc(request):
         rabbit_executor.stop()
         base_path.rmtree()
         tmpdir.exists() and tmpdir.rmtree()
+
     request.addfinalizer(stop_and_reset)
 
     rabbit_executor.start()
@@ -165,6 +223,15 @@ def rabbitmq_proc(request):
 
 @pytest.fixture
 def rabbitmq(rabbitmq_proc, request):
+    """
+    #. Get module and config.
+    #. Connect to RabbitMQ using the parameters from config.
+
+    :param TCPCoordinatedExecutor rabbitmq_proc: tcp executor
+    :param FixtureRequest request: fixture request object
+    :rtype: pika.adapters.blocking_connection.BlockingConnection
+    :returns: instance of :class:`BlockingConnection`
+    """
     pika, config = try_import('pika', request)
 
     rabbit_params = pika.connection.ConnectionParameters(
@@ -173,19 +240,32 @@ def rabbitmq(rabbitmq_proc, request):
         connection_attempts=3,
         retry_delay=2,
     )
+
     try:
         rabbit_connection = pika.BlockingConnection(rabbit_params)
     except pika.adapters.blocking_connection.exceptions.ConnectionClosed:
         print "Be sure that you're connecting rabbitmq-server >= 2.8.4"
+
     return rabbit_connection
 
 
 def remove_mysql_directory(config):
+    """
+    Checks mysql directory. Recursively delete a directory tree if exist.
+
+    :param pymlconf.ConfigManager config: config
+    """
     if os.path.isdir(config.mysql.datadir):
         shutil.rmtree(config.mysql.datadir)
 
 
 def init_mysql_directory(config):
+    """
+    #. Remove mysql directory if exist.
+    #. `Initialize MySQL data directory <https://dev.mysql.com/doc/refman/5.0/en/mysql-install-db.html>`_
+
+    :param pymlconf.ConfigManager config: config
+    """
     remove_mysql_directory(config)
     init_directory = (
         config.mysql.mysql_init,
@@ -197,6 +277,16 @@ def init_mysql_directory(config):
 
 @pytest.fixture(scope='session')
 def mysql_proc(request):
+    """
+    #. Get config.
+    #. Initialize MySQL data directory
+    #. `Start a mysqld server https://dev.mysql.com/doc/refman/5.0/en/mysqld-safe.html`_
+    #. Stop server and remove directory after tests. `<https://dev.mysql.com/doc/refman/5.6/en/mysqladmin.html>`_
+
+    :param FixtureRequest request: fixture request object
+    :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor
+    :returns: tcp executor
+    """
     config = get_config(request)
     init_mysql_directory(config)
 
@@ -232,6 +322,7 @@ def mysql_proc(request):
         remove_mysql_directory(config)
 
     request.addfinalizer(stop_server_and_remove_directory)
+
     return mysql_executor
 
 
@@ -247,6 +338,20 @@ def mysqldb_fixture_factory(scope='session'):
 
     @pytest.fixture(scope)
     def mysqldb_fixture(request, mysql_proc):
+        """
+        #. Get config.
+        #. Try to import MySQLdb package.
+        #. Connect to mysql server.
+        #. Create database.
+        #. Use proper database.
+        #. Drop database after tests.
+
+        :param FixtureRequest request: fixture request object
+        :param TCPCoordinatedExecutor mysql_proc: tcp executor
+        :rtype: MySQLdb.connections.Connection
+        :returns: connection to database
+        """
+
         config = get_config(request)
 
         MySQLdb, config = try_import(

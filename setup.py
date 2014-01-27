@@ -34,6 +34,11 @@ setup(
         'path.py>=4.2',
     ],
     include_package_data=True,
+    extras_require={
+        'documentation':  [
+            "Sphinx",
+        ]
+    },
     entry_points={
         'pytest11': [
             'pytest_dbfixtures = pytest_dbfixtures.plugin'
