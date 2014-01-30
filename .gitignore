@@ -44,3 +44,6 @@ nosetests.xml
 # pycharm files
 atlassian-ide-plugin.xml
 .idea/
+
+# docs
+docs/_build/
