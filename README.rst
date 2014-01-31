@@ -1,6 +1,10 @@
 pytest-dbfixtures
 =================
 
+.. image:: https://travis-ci.org/clearcode/pytest-dbfixtures.png?branch=master
+    :target: https://travis-ci.org/clearcode/pytest-dbfixtures
+    :alt: Tests for pytest-dbfixtures
+
 .. image:: https://pypip.in/v/pytest-dbfixtures/badge.png
     :target: https://crate.io/packages/pytest-dbfixtures/
     :alt: Latest PyPI version
