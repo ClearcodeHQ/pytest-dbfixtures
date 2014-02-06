@@ -1,8 +1,16 @@
 language: python
 python:
-    - "2.7"
+- '2.7'
 install:
-    - python setup.py install
-    - pip install pymongo redis pika MySQL-python
+- python setup.py install
+- pip install pymongo redis pika MySQL-python
 script:
-    - py.test tests
+- py.test tests
+deploy:
+  provider: pypi
+  user:
+    secure: U82/Eiq193tV67k0QgXtJ8FGQvKTf9l4AuIis8jpAXrhWYGVH+GfASKFb9lGN8M/3tiXmCPZSP+WxEgSbBtcAIiDWiYkfVPnDf66AWf8glImyv/QOU+d8eSsP4dWrSpxo7mq+g94lhQ6cHSZtTCngU33VDCMu5RB+n27/AkS6co=
+  password:
+    secure: DRWW+buXoDjLjMDCiUKnnWiCVLUaei6iQsUTwU/3+UOPgd2htzAHo59X7GhF49N6cYG98qXZNayeM+a4QkHFnSCyzwFvlqrPpwnuINQtb0Bucoh9jnjKFq1OwAjaTdKz61YlRq6qaSXEGOKka08CN9Aj2UIUz/lNgMkZjkFmAIQ=
+  on:
+    tags: true
