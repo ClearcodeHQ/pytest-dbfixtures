@@ -36,7 +36,7 @@ def pytest_addoption(parser):
     parser.addoption(
         '--dbfixtures-config',
         action='store',
-        default=ROOT_DIR / 'pytest_dbfixtures' / 'dbfixtures.conf',
+        default=ROOT_DIR / 'pytest_dbfixtures' / 'conf' / 'dbfixtures.conf',
         metavar='path',
         dest='db_conf',
     )
@@ -44,7 +44,7 @@ def pytest_addoption(parser):
     parser.addoption(
         '--mongo-config',
         action='store',
-        default=ROOT_DIR / 'pytest_dbfixtures' / 'mongo.conf',
+        default=ROOT_DIR / 'pytest_dbfixtures' / 'conf' / 'mongo.conf',
         metavar='path',
         dest='mongo_conf',
     )
@@ -52,7 +52,7 @@ def pytest_addoption(parser):
     parser.addoption(
         '--redis-config',
         action='store',
-        default=ROOT_DIR / 'pytest_dbfixtures' / 'redis.conf',
+        default=ROOT_DIR / 'pytest_dbfixtures' / 'conf' / 'redis.conf',
         metavar='path',
         dest='redis_conf',
     )
@@ -60,7 +60,7 @@ def pytest_addoption(parser):
     parser.addoption(
         '--rabbit-config',
         action='store',
-        default=ROOT_DIR / 'pytest_dbfixtures' / 'rabbit.conf',
+        default=ROOT_DIR / 'pytest_dbfixtures' / 'conf' / 'rabbit.conf',
         metavar='path',
         dest='rabbit_conf',
     )
@@ -68,6 +68,9 @@ def pytest_addoption(parser):
 
 redis_proc = factories.redis_proc()
 redisdb = factories.redisdb('redis_proc')
+
+postgresql_proc = factories.postgresql_proc()
+postgresql = factories.postgresql('postgresql_proc')
 
 
 @pytest.fixture(scope='session')
