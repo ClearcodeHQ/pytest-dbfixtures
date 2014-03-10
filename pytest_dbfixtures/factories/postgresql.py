@@ -137,7 +137,7 @@ def postgresql_proc(executable=None, host=None, port=None):
         postgresql_executor = TCPCoordinatedExecutor(
             '''
                 {postgresql_ctl} start -D {datadir}
-                -o "-p {port} -c unix_socket_directory='{unixsocketdir}'"
+                -o "-F -p {port} -c unix_socket_directory='{unixsocketdir}'"
                 -l {logfile} {startparams}
             '''.format(
             postgresql_ctl=config.postgresql.postgresql_ctl,
