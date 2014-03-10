@@ -25,7 +25,7 @@ setup(
     author='Clearcode - The A Room',
     author_email='thearoom@clearcode.cc',
     url='https://github.com/clearcode/pytest-dbfixtures',
-    packages=['pytest_dbfixtures'],
+    packages=['pytest_dbfixtures', 'pytest_dbfixtures.factories'],
     install_requires=[
         'pytest>=2.3.4',
         'summon_process>=0.1.2',
