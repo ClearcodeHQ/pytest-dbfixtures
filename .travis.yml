@@ -3,7 +3,7 @@ python:
 - '2.7'
 install:
 - python setup.py install
-- pip install pymongo redis pika MySQL-python
+- pip install pymongo redis pika MySQL-python psycopg2
 script:
 - py.test tests
 deploy:

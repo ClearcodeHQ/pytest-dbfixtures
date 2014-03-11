@@ -25,7 +25,7 @@ setup(
     author='Clearcode - The A Room',
     author_email='thearoom@clearcode.cc',
     url='https://github.com/clearcode/pytest-dbfixtures',
-    packages=['pytest_dbfixtures'],
+    packages=['pytest_dbfixtures', 'pytest_dbfixtures.factories'],
     install_requires=[
         'pytest>=2.3.4',
         'summon_process>=0.1.2',
@@ -43,7 +43,7 @@ setup(
         'pytest11': [
             'pytest_dbfixtures = pytest_dbfixtures.plugin'
         ]},
-    keywords='py.test pytest fixture redis mongo rabbitmq mysql',
+    keywords='py.test pytest fixture redis mongo rabbitmq mysql postgresql',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
