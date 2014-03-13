@@ -1,4 +1,3 @@
-
 # Copyright (C) 2013 by Clearcode <http://clearcode.cc>
 # and associates (see AUTHORS).
 
@@ -17,5 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
-from redis import redis_proc, redisdb
-from postgresql import postgresql_proc, postgresql
+
+from pytest_dbfixtures.factories.redis import redis_proc, redisdb
+from pytest_dbfixtures.factories.postgresql import postgresql_proc, postgresql
