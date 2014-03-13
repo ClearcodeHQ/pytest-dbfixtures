@@ -84,7 +84,7 @@ def mongo_proc(request):
         `mongod <http://docs.mongodb.org/v2.2/reference/mongod/>`_
 
     :param FixtureRequest request: fixture request object
-    :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor
+    :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor # noqa
     :returns: tcp executor
     """
     config = get_config(request)
@@ -142,8 +142,8 @@ def mongodb(request, mongo_proc):
 
 def get_rabbit_env(name):
     """
-    Get value from environment variable. If does not exists (older version) then
-    use older name.
+    Get value from environment variable. If does not exists (older version)
+    then use older name.
 
     :param str name: name of environment variable
     :rtype: str
@@ -155,10 +155,11 @@ def get_rabbit_env(name):
 def get_rabbit_path(name):
     """
     Get a path to directory contains sub-directories for the RabbitMQ
-    server's Mnesia database files. `Relocate <http://www.rabbitmq.com/relocate.html>`_
+    server's Mnesia database files.
+    `Relocate <http://www.rabbitmq.com/relocate.html>`_
 
-    If environment variable or path to directory do not exist, return ``None``, else
-    return path to directory.
+    If environment variable or path to directory do not exist, return ``None``,
+    else return path to directory.
 
     :param str name: name of environment variable
     :rtype: path.path or None
@@ -178,11 +179,12 @@ def rabbitmq_proc(request):
     #. Get config.
     #. Make a temporary directory.
     #. Setup environment variables.
-    #. Start a rabbit server `<http://www.rabbitmq.com/man/rabbitmq-server.1.man.html>`_
+    #. Start a rabbit server
+        `<http://www.rabbitmq.com/man/rabbitmq-server.1.man.html>`_
     #. Stop rabbit server and remove temporary files after tests.
 
     :param FixtureRequest request: fixture request object
-    :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor
+    :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor # noqa
     :returns: tcp executor
     """
 
@@ -257,6 +259,7 @@ def remove_mysql_directory(config):
     Checks mysql directory. Recursively delete a directory tree if exist.
 
     :param pymlconf.ConfigManager config: config
+
     """
     if os.path.isdir(config.mysql.datadir):
         shutil.rmtree(config.mysql.datadir)
@@ -265,9 +268,11 @@ def remove_mysql_directory(config):
 def init_mysql_directory(config):
     """
     #. Remove mysql directory if exist.
-    #. `Initialize MySQL data directory <https://dev.mysql.com/doc/refman/5.0/en/mysql-install-db.html>`_
+    #. `Initialize MySQL data directory
+        <https://dev.mysql.com/doc/refman/5.0/en/mysql-install-db.html>`_
 
     :param pymlconf.ConfigManager config: config
+
     """
     remove_mysql_directory(config)
     init_directory = (
@@ -283,12 +288,15 @@ def mysql_proc(request):
     """
     #. Get config.
     #. Initialize MySQL data directory
-    #. `Start a mysqld server https://dev.mysql.com/doc/refman/5.0/en/mysqld-safe.html`_
-    #. Stop server and remove directory after tests. `<https://dev.mysql.com/doc/refman/5.6/en/mysqladmin.html>`_
+    #. `Start a mysqld server
+        <https://dev.mysql.com/doc/refman/5.0/en/mysqld-safe.html>`_
+    #. Stop server and remove directory after tests.
+        `See <https://dev.mysql.com/doc/refman/5.6/en/mysqladmin.html>`_
 
     :param FixtureRequest request: fixture request object
-    :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor
+    :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor # noqa
     :returns: tcp executor
+
     """
     config = get_config(request)
     init_mysql_directory(config)

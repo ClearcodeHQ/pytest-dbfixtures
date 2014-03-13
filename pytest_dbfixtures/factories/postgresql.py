@@ -65,9 +65,11 @@ def remove_postgresql_directory(config):
 def init_postgresql_directory(config):
     """
     #. Remove postgresql directory if exist.
-    #. `Initialize postgresql data directory <www.postgresql.org/docs/9.1/static/app-initdb.html>`_
+    #. `Initialize postgresql data directory
+        <www.postgresql.org/docs/9.1/static/app-initdb.html>`_
 
     :param pymlconf.ConfigManager config: config
+
     """
     remove_postgresql_directory(config)
     init_directory = (
@@ -86,16 +88,15 @@ def init_postgresql_database(postgresql, config):
 
     :param FixtureRequest postgresql: psycopg2 object
     :param pymlconf.ConfigManager config: config
-    """
 
-    psycopg2, config = try_import('psycopg2', request)
+    """
 
     conn = postgresql.connect(
         user=config.postgresql.user,
         host=config.postgresql.host,
         port=config.postgresql.port
     )
-    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+    conn.set_isolation_level(postgresql.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
     cur.execute('CREATE DATABASE ' + config.postgresql.db)
     cur.close()
@@ -116,7 +117,7 @@ def drop_postgresql_database(postgresql, config):
         host=config.postgresql.host,
         port=config.postgresql.port
     )
-    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+    conn.set_isolation_level(postgresql.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
     cur.execute('DROP DATABASE IF EXISTS %s' % config.postgresql.db)
     cur.close()
@@ -139,11 +140,13 @@ def postgresql_proc(executable=None, host=None, port=None):
         """
         #. Get config.
         #. Initialize postgresql data directory
-        #. `Start a postgresqld server http://www.postgresql.org/docs/9.1/static/app-pg-ctl.html`_
-        #. Stop server and remove directory after tests. `<http://www.postgresql.org/docs/9.1/static/app-pg-ctl.html>`_
+        #. `Start a postgresqld server
+            <http://www.postgresql.org/docs/9.1/static/app-pg-ctl.html>`_
+        #. Stop server and remove directory after tests.
+            `See <http://www.postgresql.org/docs/9.1/static/app-pg-ctl.html>`_
 
         :param FixtureRequest request: fixture request object
-        :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor
+        :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor # noqa
         :returns: tcp executor
         """
         config = get_config(request)

@@ -45,7 +45,7 @@ def redis_proc(executable=None, params=None, config_file=None,
         #. Stop redis process after tests.
 
         :param FixtureRequest request: fixture request object
-        :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor
+        :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor # noqa
         :returns: tcp executor
         """
         config = get_config(request)

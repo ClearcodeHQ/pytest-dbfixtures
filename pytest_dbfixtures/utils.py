@@ -17,14 +17,17 @@ def get_config(request):
 
 def try_import(module, request, pypi_package=None):
     """
-    Trying to import module, if occurred error, then raise :class:`ImportError`.
-    If not, imported module and :class:`pymlconf.ConfigManager` will be returned.
+    Try to import module.
 
     :param str module: name of the module
     :param FixtureRequest request: fixture request object
-    :param str pypi_package: name of the package on `<https://pypi.python.org/pypi>`_
-    :rtype: tuple
+    :param str pypi_package: name of the package on
+        `pypi <https://pypi.python.org/pypi>`_
     :returns: tuple with ``module`` and :class:`pymlconf.ConfigManager`
+    :rtype: tuple
+
+    :raises: ImportError
+
     """
     try:
         i = importlib.import_module(module)

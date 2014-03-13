@@ -19,3 +19,6 @@
 
 from pytest_dbfixtures.factories.redis import redis_proc, redisdb
 from pytest_dbfixtures.factories.postgresql import postgresql_proc, postgresql
+
+
+__all__ = [redis_proc, redisdb, postgresql, postgresql_proc]
