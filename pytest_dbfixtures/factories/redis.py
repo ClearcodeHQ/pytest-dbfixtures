@@ -106,3 +106,6 @@ def redisdb(process_fixture_name, host=None, port=None, db=None):
         return redis_client
 
     return redisdb_factory
+
+
+__all__ = [redisdb, redis_proc]

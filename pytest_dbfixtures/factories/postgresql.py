@@ -71,7 +71,7 @@ def init_postgresql_database(postgresql, config):
     :param FixtureRequest postgresql: psycopg2 object
     :param pymlconf.ConfigManager config: config
     """
-    conn=postgresql.connect(
+    conn = postgresql.connect(
         user=config.postgresql.user,
         host=config.postgresql.host,
         port=config.postgresql.port
@@ -92,7 +92,7 @@ def drop_postgresql_database(postgresql, config):
     :param FixtureRequest postgresql: psycopg2 object
     :param pymlconf.ConfigManager config: config
     """
-    conn=postgresql.connect(
+    conn = postgresql.connect(
         user=config.postgresql.user,
         host=config.postgresql.host,
         port=config.postgresql.port
@@ -102,6 +102,7 @@ def drop_postgresql_database(postgresql, config):
     cur.execute('DROP DATABASE IF EXISTS %s' % config.postgresql.db)
     cur.close()
     conn.close()
+
 
 def postgresql_proc(executable=None, host=None, port=None):
     """
@@ -206,7 +207,7 @@ def postgresql(process_fixture_name, host=None, port=None, db=None):
         config.postgresql.db = db or config.postgresql.db
 
         init_postgresql_database(postgresql, config)
-        conn=postgresql.connect(
+        conn = postgresql.connect(
             dbname=config.postgresql.db,
             user=config.postgresql.user,
             host=config.postgresql.host,
@@ -222,3 +223,6 @@ def postgresql(process_fixture_name, host=None, port=None, db=None):
         return conn
 
     return postgresql_factory
+
+
+__all__ = [postgresql, postgresql_proc]
