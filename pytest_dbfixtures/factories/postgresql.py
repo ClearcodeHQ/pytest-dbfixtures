@@ -23,7 +23,6 @@ import time
 
 import pytest
 from summon_process.executors import TCPCoordinatedExecutor
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 from pytest_dbfixtures.utils import get_config, try_import
 
@@ -88,12 +87,15 @@ def init_postgresql_database(postgresql, config):
     :param FixtureRequest postgresql: psycopg2 object
     :param pymlconf.ConfigManager config: config
     """
+
+    psycopg2, config = try_import('psycopg2', request)
+
     conn = postgresql.connect(
         user=config.postgresql.user,
         host=config.postgresql.host,
         port=config.postgresql.port
     )
-    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
     cur.execute('CREATE DATABASE ' + config.postgresql.db)
     cur.close()
