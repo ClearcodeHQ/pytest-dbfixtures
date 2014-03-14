@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='pytest-dbfixtures',
@@ -25,7 +25,7 @@ setup(
     author='Clearcode - The A Room',
     author_email='thearoom@clearcode.cc',
     url='https://github.com/clearcode/pytest-dbfixtures',
-    packages=['pytest_dbfixtures', 'pytest_dbfixtures.factories'],
+    packages=find_packages(),
     install_requires=[
         'pytest>=2.3.4',
         'summon_process>=0.1.2',
@@ -35,7 +35,7 @@ setup(
     ],
     include_package_data=True,
     extras_require={
-        'documentation':  [
+        'documentation': [
             "Sphinx",
         ]
     },

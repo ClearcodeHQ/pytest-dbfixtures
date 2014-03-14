@@ -2,6 +2,7 @@ from pytest_dbfixtures import factories
 
 query = "CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);"
 
+
 def test_postgres(postgresql):
     cur = postgresql.cursor()
     cur.execute(query)

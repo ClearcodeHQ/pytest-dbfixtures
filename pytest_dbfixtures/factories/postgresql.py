@@ -1,12 +1,28 @@
+# Copyright (C) 2013 by Clearcode <http://clearcode.cc>
+# and associates (see AUTHORS).
+
+# This file is part of pytest-dbfixtures.
+
+# pytest-dbfixtures is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# pytest-dbfixtures is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+
+# You should have received a copy of the GNU Lesser General Public License
+# along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
+
 import os
-import pytest
 import shutil
 import subprocess
 import time
 
+import pytest
 from summon_process.executors import TCPCoordinatedExecutor
-
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 from pytest_dbfixtures.utils import get_config, try_import
 
@@ -49,9 +65,11 @@ def remove_postgresql_directory(config):
 def init_postgresql_directory(config):
     """
     #. Remove postgresql directory if exist.
-    #. `Initialize postgresql data directory <www.postgresql.org/docs/9.1/static/app-initdb.html>`_
+    #. `Initialize postgresql data directory
+        <www.postgresql.org/docs/9.1/static/app-initdb.html>`_
 
     :param pymlconf.ConfigManager config: config
+
     """
     remove_postgresql_directory(config)
     init_directory = (
@@ -70,13 +88,15 @@ def init_postgresql_database(postgresql, config):
 
     :param FixtureRequest postgresql: psycopg2 object
     :param pymlconf.ConfigManager config: config
+
     """
-    conn=postgresql.connect(
+
+    conn = postgresql.connect(
         user=config.postgresql.user,
         host=config.postgresql.host,
         port=config.postgresql.port
     )
-    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+    conn.set_isolation_level(postgresql.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
     cur.execute('CREATE DATABASE ' + config.postgresql.db)
     cur.close()
@@ -92,16 +112,17 @@ def drop_postgresql_database(postgresql, config):
     :param FixtureRequest postgresql: psycopg2 object
     :param pymlconf.ConfigManager config: config
     """
-    conn=postgresql.connect(
+    conn = postgresql.connect(
         user=config.postgresql.user,
         host=config.postgresql.host,
         port=config.postgresql.port
     )
-    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+    conn.set_isolation_level(postgresql.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
     cur.execute('DROP DATABASE IF EXISTS %s' % config.postgresql.db)
     cur.close()
     conn.close()
+
 
 def postgresql_proc(executable=None, host=None, port=None):
     """
@@ -119,11 +140,13 @@ def postgresql_proc(executable=None, host=None, port=None):
         """
         #. Get config.
         #. Initialize postgresql data directory
-        #. `Start a postgresqld server http://www.postgresql.org/docs/9.1/static/app-pg-ctl.html`_
-        #. Stop server and remove directory after tests. `<http://www.postgresql.org/docs/9.1/static/app-pg-ctl.html>`_
+        #. `Start a postgresqld server
+            <http://www.postgresql.org/docs/9.1/static/app-pg-ctl.html>`_
+        #. Stop server and remove directory after tests.
+            `See <http://www.postgresql.org/docs/9.1/static/app-pg-ctl.html>`_
 
         :param FixtureRequest request: fixture request object
-        :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor
+        :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor # noqa
         :returns: tcp executor
         """
         config = get_config(request)
@@ -206,7 +229,7 @@ def postgresql(process_fixture_name, host=None, port=None, db=None):
         config.postgresql.db = db or config.postgresql.db
 
         init_postgresql_database(postgresql, config)
-        conn=postgresql.connect(
+        conn = postgresql.connect(
             dbname=config.postgresql.db,
             user=config.postgresql.user,
             host=config.postgresql.host,
@@ -222,3 +245,6 @@ def postgresql(process_fixture_name, host=None, port=None, db=None):
         return conn
 
     return postgresql_factory
+
+
+__all__ = [postgresql, postgresql_proc]

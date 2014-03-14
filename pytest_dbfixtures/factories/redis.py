@@ -1,5 +1,23 @@
-import pytest
+# Copyright (C) 2013 by Clearcode <http://clearcode.cc>
+# and associates (see AUTHORS).
 
+# This file is part of pytest-dbfixtures.
+
+# pytest-dbfixtures is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# pytest-dbfixtures is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+
+# You should have received a copy of the GNU Lesser General Public License
+# along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
+
+
+import pytest
 from summon_process.executors import TCPCoordinatedExecutor
 
 from pytest_dbfixtures.utils import get_config, try_import
@@ -27,7 +45,7 @@ def redis_proc(executable=None, params=None, config_file=None,
         #. Stop redis process after tests.
 
         :param FixtureRequest request: fixture request object
-        :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor
+        :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor # noqa
         :returns: tcp executor
         """
         config = get_config(request)
@@ -106,3 +124,6 @@ def redisdb(process_fixture_name, host=None, port=None, db=None):
         return redis_client
 
     return redisdb_factory
+
+
+__all__ = [redisdb, redis_proc]
