@@ -16,7 +16,7 @@ pytest-dbfixtures
 Overview
 --------
 
-py.test clean fixtures: ``mysql``, ``redis``, ``mongo``, ``rabbitmq``.
+py.test clean fixtures: ``mysql``, ``redis``, ``mongo``, ``rabbitmq``. ``postgresql``
 
 Starts specific database deamon and cleanup all data produced during tests.
 
