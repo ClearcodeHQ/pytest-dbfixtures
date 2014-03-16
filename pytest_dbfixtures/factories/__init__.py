@@ -19,6 +19,12 @@
 
 from pytest_dbfixtures.factories.redis import redis_proc, redisdb
 from pytest_dbfixtures.factories.postgresql import postgresql_proc, postgresql
+from pytest_dbfixtures.factories.mysql import mysql_proc
+from pytest_dbfixtures.factories.mysqldb import mysqldb
 
 
-__all__ = [redis_proc, redisdb, postgresql, postgresql_proc]
+__all__ = [
+    redis_proc, redisdb,
+    postgresql, postgresql_proc,
+    mysql_proc, mysqldb
+]
