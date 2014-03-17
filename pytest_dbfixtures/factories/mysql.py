@@ -30,7 +30,7 @@ def remove_mysql_directory(datadir):
     """
     Check mysql directory. Recursively delete a directory tree if exist.
 
-    :param pymlconf.ConfigManager config: config
+    :param str datadir: path to datadir
 
     """
     if os.path.isdir(datadir):
@@ -43,7 +43,8 @@ def init_mysql_directory(mysql_init, datadir):
     #. `Initialize MySQL data directory
         <https://dev.mysql.com/doc/refman/5.0/en/mysql-install-db.html>`_
 
-    :param pymlconf.ConfigManager config: config
+    :param str mysql_init: mysql_init executable
+    :param str datadir: path to datadir
 
     """
     remove_mysql_directory(datadir)
@@ -61,8 +62,8 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
     Mysql server process factory.
 
     :param str executable: path to mysql executable
-    :param str executable: path to mysql_admin executable
-    :param str executable: path to mysql_init executable
+    :param str admin_executable: path to mysql_admin executable
+    :param str init_executable: path to mysql_init executable
     :param str host: hostname
     :param str port: port
 
