@@ -16,12 +16,14 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
+
 from setuptools import setup, find_packages
+
 
 setup(
     name='pytest-dbfixtures',
-    version='0.4.4',
-    description='dbfixtures plugin for py.test.',
+    version='0.4.6',
+    description='Databases fixtures plugin for py.test.',
     author='Clearcode - The A Room',
     author_email='thearoom@clearcode.cc',
     url='https://github.com/clearcode/pytest-dbfixtures',

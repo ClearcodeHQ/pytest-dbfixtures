@@ -26,7 +26,7 @@ Install
 
 .. sourcecode:: bash
 
-    $ pip install pytest-dbfixtures
+    $ pip install --upgrade pytest-dbfixtures
 
 
 How to use
