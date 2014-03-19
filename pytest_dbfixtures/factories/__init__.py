@@ -1,3 +1,4 @@
+"""Groups factories to be importable from one place."""
 # Copyright (C) 2013 by Clearcode <http://clearcode.cc>
 # and associates (see AUTHORS).
 

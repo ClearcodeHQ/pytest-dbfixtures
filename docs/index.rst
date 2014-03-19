@@ -14,8 +14,7 @@ Contents:
    install
    howtouse
    configure
-   plugin
-   factories
+   api
 
 
 Indices and tables
