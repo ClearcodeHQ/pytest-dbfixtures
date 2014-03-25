@@ -16,13 +16,20 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import re
+import os
 from setuptools import setup, find_packages
+
+
+here = os.path.dirname(__file__)
+with open(os.path.join(here, 'pytest_dbfixtures', '__init__.py')) as v_file:
+    package_version = re.compile(
+        r".*__version__ = '(.*?)'", re.S).match(v_file.read()).group(1)
 
 
 setup(
     name='pytest-dbfixtures',
-    version='0.4.6',
+    version=package_version,
     description='Databases fixtures plugin for py.test.',
     author='Clearcode - The A Room',
     author_email='thearoom@clearcode.cc',
