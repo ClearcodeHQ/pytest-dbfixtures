@@ -23,10 +23,15 @@ from pytest_dbfixtures.utils import get_config, try_import
 
 def mysqldb(process_fixture_name, scope='session',
             user=None, passwd=None, db=None,
-            host=None, port=None):
+            host=None, port=None,
+            charset='utf8', collation='utf8_general_ci'):
     """
     Factory. Create connection to mysql. If you want you can give a scope,
     default is 'session'.
+
+    For charset and collation meaning,
+    see `Database Character Set and Collation
+    <https://dev.mysql.com/doc/refman/5.5/en/charset-database.html>`_
 
     :param str process_fixture_name: process fixture name
     :param str scope: scope (session, function, module, etc.)
@@ -35,8 +40,13 @@ def mysqldb(process_fixture_name, scope='session',
     :param str passwd: mysql server's password
     :param str db: database's name
     :param str port: port
-    :rtype: func
+    :param str charset: MySQL characterset to use by default
+        for *tests* database
+    :param str collation: MySQL collation to use by default
+        for *tests* database
+
     :returns: function ``mysqldb_fixture`` with suit scope
+    :rtype: func
     """
 
     @pytest.fixture(scope)
@@ -76,7 +86,12 @@ def mysqldb(process_fixture_name, scope='session',
             passwd=mysql_passwd,
         )
 
-        mysql_conn.query('CREATE DATABASE %s' % mysql_db)
+        mysql_conn.query(
+            '''CREATE DATABASE {name}
+                 DEFAULT CHARACTER SET {charset}
+                 DEFAULT COLLATE {collation}'''.format(
+            name=mysql_db, charset=charset, collation=collation
+        ))
         mysql_conn.query('USE %s' % mysql_db)
 
         def drop_database():
