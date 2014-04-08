@@ -16,9 +16,9 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import urlparse
 import pytest
-from summon_process.executors import TCPCoordinatedExecutor
+from summon_process.executors import HTTPCoordinatedExecutor
 
 from pytest_dbfixtures.utils import get_config
 
@@ -61,13 +61,21 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluser_name=None):
             cluster=cluster
         )
 
-        elasticsearch_executor = TCPCoordinatedExecutor(
-            command_exec, host, port
+        elasticsearch_executor = HTTPCoordinatedExecutor(
+            command_exec, 'http://{host}:{port}'.format(
+                host=host,
+                port=port
+            ),
+            timeout=10
         )
 
         elasticsearch_executor.start()
 
-        request.addfinalizer(elasticsearch_executor.stop)
+        def stop_elastic():
+            if elasticsearch_executor.running():
+                elasticsearch_executor.stop()
+
+        request.addfinalizer(stop_elastic)
         return elasticsearch_executor
 
     return elasticsearch_proc_fixture

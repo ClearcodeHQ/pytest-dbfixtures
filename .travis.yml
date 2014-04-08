@@ -5,7 +5,7 @@ install:
 - python setup.py install
 - pip install pymongo redis pika MySQL-python psycopg2 pylama
 script:
-- py.test tests
+- py.test -sv tests
 - pylama
 deploy:
   provider: pypi
