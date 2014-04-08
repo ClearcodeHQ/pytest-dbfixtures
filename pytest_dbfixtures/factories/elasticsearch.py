@@ -16,20 +16,19 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
-import urlparse
 import pytest
 from summon_process.executors import HTTPCoordinatedExecutor
 
 from pytest_dbfixtures.utils import get_config
 
 
-def elasticsearch_proc(host='127.0.0.1', port=9201, cluser_name=None):
+def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None):
     """
     Creates elasticsearch process fixture.
 
     :param str host: host that the instance listens on
     :param int port: port that the instance listens on
-    :param str cluser_name: name of a cluser this node should work on.
+    :param str cluster_name: name of a cluser this node should work on.
         Used for autodiscovery. By default each node is in it's own cluser.
     """
     @pytest.fixture(scope='session')
@@ -43,7 +42,7 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluser_name=None):
         home_path = '/tmp/elasticsearch_{0}'.format(port)
         logs_path = '/tmp/elasticsearch_{0}_logs'.format(port)
         work_path = '/tmp/elasticsearch_{0}_tmp'.format(port)
-        cluster = cluser_name or 'dbfixtures.{0}'.format(port)
+        cluster = cluster_name or 'dbfixtures.{0}'.format(port)
 
         command_exec = '''
             {deamon} -p {pidfile} -Des.http.port={port}
@@ -71,11 +70,7 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluser_name=None):
 
         elasticsearch_executor.start()
 
-        def stop_elastic():
-            if elasticsearch_executor.running():
-                elasticsearch_executor.stop()
-
-        request.addfinalizer(stop_elastic)
+        request.addfinalizer(elasticsearch_executor.stop)
         return elasticsearch_executor
 
     return elasticsearch_proc_fixture
