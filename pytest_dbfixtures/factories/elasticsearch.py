@@ -19,12 +19,16 @@
 import pytest
 from summon_process.executors import HTTPCoordinatedExecutor
 
-from pytest_dbfixtures.utils import get_config
+from pytest_dbfixtures.utils import get_config, try_import
 
 
 def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None):
     """
     Creates elasticsearch process fixture.
+
+    .. warning::
+
+        This fixture requires at least version 1.0 of elasticsearch to work.
 
     :param str host: host that the instance listens on
     :param int port: port that the instance listens on
@@ -74,3 +78,25 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None):
         return elasticsearch_executor
 
     return elasticsearch_proc_fixture
+
+
+def elasticsearch(proc_fixture, hosts='127.0.01:9201'):
+    """
+    Creates Elasticsearch client fixture.
+
+    :param hosts: elasticsearch hosts list. See
+        http://elasticsearch-py.readthedocs.org/en/master/api.html#elasticsearch.Elasticsearch for details. # noqa
+    """
+
+    @pytest.fixture
+    def elasticsearch_fixture(request):
+        """Elasticsearch client fixture."""
+        request.getfuncargvalue(proc_fixture)
+
+        elasticsearch, _ = try_import('elasticsearch', request)
+
+        client = elasticsearch.Elasticsearch(hosts=hosts)
+
+        return client
+
+    return elasticsearch_fixture
