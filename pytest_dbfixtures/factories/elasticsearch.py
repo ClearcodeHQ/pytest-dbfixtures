@@ -69,7 +69,7 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None):
                 host=host,
                 port=port
             ),
-            timeout=10
+            timeout=60
         )
 
         elasticsearch_executor.start()
