@@ -1,7 +1,14 @@
 CHANGES
 =======
 
-Current
+
+0.4.8
+-------
+
+* introduced Elasticsearch fixture
+
+
+0.4.6
 -------
 
 * mysql fixture now uses factories
@@ -17,4 +24,5 @@ Current
 
 0.4.3
 -------
-- splits rabbitmq fixture into process/client fixtures
+
+* splits rabbitmq fixture into process/client fixtures
