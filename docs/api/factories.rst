@@ -47,4 +47,4 @@ Elasticsearch factories
 -----------------------
 
     .. automodule:: pytest_dbfixtures.factories.elasticsearch
-        :members: elasticsearch_proc
+        :members: elasticsearch_proc, elasticsearch
