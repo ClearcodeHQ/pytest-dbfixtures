@@ -37,7 +37,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'pytest>=2.3.4',
-        'summon_process>=0.1.2',
+        'summon_process>=0.1.3',
         'pyaml>=3.10',
         'pymlconf>=0.2.10a',
         'path.py>=4.2',

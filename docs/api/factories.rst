@@ -42,3 +42,9 @@ Mysql factories
         :private-members:
         :special-members:
         :show-inheritance:
+
+Elasticsearch factories
+-----------------------
+
+    .. automodule:: pytest_dbfixtures.factories.elasticsearch
+        :members: elasticsearch_proc

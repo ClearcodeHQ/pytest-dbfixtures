@@ -1,9 +1,14 @@
 language: python
 python:
 - '2.7'
+before_script:
+- wget -O - http://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add -
+- echo "deb http://packages.elasticsearch.org/elasticsearch/1.1/debian stable main" | sudo tee -a /etc/apt/sources.list
+- sudo apt-get update -qq
+- sudo apt-get install elasticsearch
 install:
 - python setup.py install
-- pip install pymongo redis pika MySQL-python psycopg2 pylama
+- pip install pymongo redis pika MySQL-python psycopg2 elasticsearch pylama
 script:
 - py.test tests
 - pylama

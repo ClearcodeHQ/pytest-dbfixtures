@@ -75,6 +75,9 @@ mysql_proc = factories.mysql_proc()
 mysqldb = factories.mysqldb('mysql_proc', scope='function')
 mysqldb_session = factories.mysqldb('mysql_proc')
 
+elasticsearch_proc = factories.elasticsearch_proc()
+elasticsearch = factories.elasticsearch('elasticsearch_proc')
+
 
 @pytest.fixture(scope='session')
 def mongo_proc(request):
