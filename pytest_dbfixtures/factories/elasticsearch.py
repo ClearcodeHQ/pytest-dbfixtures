@@ -97,6 +97,11 @@ def elasticsearch(proc_fixture, hosts='127.0.01:9201'):
 
         client = elasticsearch.Elasticsearch(hosts=hosts)
 
+        def drop_indexes():
+            client.indices.delete(index='*')
+
+        request.addfinalizer(drop_indexes)
+
         return client
 
     return elasticsearch_fixture
