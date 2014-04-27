@@ -168,7 +168,7 @@ def postgresql_proc(executable=None, host=None, port=None):
         postgresql_executor = TCPCoordinatedExecutor(
             '''
                 {postgresql_ctl} start -D {datadir}
-                -o "-F -p {port} -c unix_socket_directory='{unixsocketdir}'"
+                -o "-F -p {port} -c unix_socket_directories='{unixsocketdir}'"
                 -l {logfile} {startparams}
             '''.format(
             postgresql_ctl=config.postgresql.postgresql_ctl,
@@ -180,7 +180,7 @@ def postgresql_proc(executable=None, host=None, port=None):
         ),
             host=config.postgresql.host,
             port=config.postgresql.port,
-            timeout=10,
+            timeout=60,
         )
         postgresql_executor.start()
         if '-w' in config.postgresql.startparams:
