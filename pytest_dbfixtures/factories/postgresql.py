@@ -150,6 +150,14 @@ def postgresql_proc(executable=None, host=None, port=None):
         :returns: tcp executor
         """
         config = get_config(request)
+        config.postgresql.postgresql_ctl = executable or config.postgresql.postgresql_ctl  # noqa
+        # check if that executable exists, as it's no on
+        if not os.path.exists(config.postgresql.postgresql_ctl):
+            pg_bindir = subprocess.check_output(
+                ['pg_config', '--bindir'], universal_newlines=True).strip()
+            config.postgresql.postgresql_ctl = os.path.join(
+                pg_bindir, 'pg_ctl')
+
         config.postgresql.host = host or config.postgresql.host
         config.postgresql.port = port or config.postgresql.port
         config.postgresql.datadir += str(config.postgresql.port)
@@ -172,6 +180,7 @@ def postgresql_proc(executable=None, host=None, port=None):
         ),
             host=config.postgresql.host,
             port=config.postgresql.port,
+            timeout=10,
         )
         postgresql_executor.start()
         if '-w' in config.postgresql.startparams:
