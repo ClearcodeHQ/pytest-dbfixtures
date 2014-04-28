@@ -178,7 +178,10 @@ def postgresql_proc(executable=None, host=None, port=None):
         config = get_config(request)
         config.postgresql.postgresql_ctl = executable or config.postgresql.postgresql_ctl  # noqa
         # check if that executable exists, as it's no on system PATH
-        if not os.path.exists(config.postgresql.postgresql_ctl):
+        if not os.path.exists(config.postgresql.postgresql_ctl) and (
+            # only replace if executable isn't passed manually
+            executable is None
+        ):
             pg_bindir = subprocess.check_output(
                 ['pg_config', '--bindir'], universal_newlines=True).strip()
             config.postgresql.postgresql_ctl = os.path.join(
@@ -187,7 +190,9 @@ def postgresql_proc(executable=None, host=None, port=None):
         config.postgresql.host = host or config.postgresql.host
         config.postgresql.port = port or config.postgresql.port
         config.postgresql.datadir += str(config.postgresql.port)
-        config.postgresql.logfile += str(config.postgresql.port)
+        config.postgresql.logfile = '/tmp/postgresql.{0}.log'.format(
+            config.postgresql.port
+        )
 
         init_postgresql_directory(config)
         pg_version = postgresql_version(config.postgresql.postgresql_ctl)
