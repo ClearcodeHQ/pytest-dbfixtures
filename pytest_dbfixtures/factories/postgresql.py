@@ -138,16 +138,15 @@ def drop_postgresql_database(postgresql, config):
     conn.close()
 
 
-def postgresql_version():
+def postgresql_version(pg_ctl):
     """
     Detect postgresql version.
 
     :return: minor version string
     :rtype: str
     """
-    version_string = subprocess.check_output(['pg_config', '--version'])
-    print(version_string)
-    matches = re.search('PostgreSQL (?P<version>\d\.\d)\.\d', version_string)
+    version_string = subprocess.check_output([pg_ctl, '--version'])
+    matches = re.search('.* (?P<version>\d\.\d)\.\d', version_string)
     return matches.groupdict()['version']
 
 
@@ -191,9 +190,9 @@ def postgresql_proc(executable=None, host=None, port=None):
         config.postgresql.logfile += str(config.postgresql.port)
 
         init_postgresql_directory(config)
-
+        pg_version = postgresql_version(config.postgresql.postgresql_ctl)
         postgresql_executor = TCPCoordinatedExecutor(
-            PROC_START_COMMAND[postgresql_version()].format(
+            PROC_START_COMMAND[pg_version].format(
                 postgresql_ctl=config.postgresql.postgresql_ctl,
                 datadir=config.postgresql.datadir,
                 port=config.postgresql.port,
