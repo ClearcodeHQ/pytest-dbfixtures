@@ -17,6 +17,7 @@
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import re
 import shutil
 import subprocess
 import time
@@ -28,6 +29,19 @@ from pytest_dbfixtures.utils import get_config, try_import
 
 
 START_INFO = 'database system is ready to accept connections'
+
+BASE_PROC_START_COMMAND = """
+{postgresql_ctl} start -D {datadir}
+-o "-F -p {port} -c %s='{unixsocketdir}'"
+-l {logfile} {startparams}"""
+
+PROC_START_COMMAND = {
+    '8.4': BASE_PROC_START_COMMAND % 'unix_socket_directory',
+    '9.0': BASE_PROC_START_COMMAND % 'unix_socket_directory',
+    '9.1': BASE_PROC_START_COMMAND % 'unix_socket_directory',
+    '9.2': BASE_PROC_START_COMMAND % 'unix_socket_directory',
+    '9.3': BASE_PROC_START_COMMAND % 'unix_socket_directories',
+}
 
 
 def wait_for_postgres(config, awaited_msg):
@@ -124,6 +138,18 @@ def drop_postgresql_database(postgresql, config):
     conn.close()
 
 
+def postgresql_version():
+    """
+    Detect postgresql version.
+
+    :return: minor version string
+    :rtype: str
+    """
+    version_string = subprocess.check_output(['pg_config', '--version'])
+    matches = re.search('PostgreSQL (?P<version>\d\.\d)\.\d', version_string)
+    return matches.groupdict()['version']
+
+
 def postgresql_proc(executable=None, host=None, port=None):
     """
     postgresql process factory.
@@ -151,7 +177,7 @@ def postgresql_proc(executable=None, host=None, port=None):
         """
         config = get_config(request)
         config.postgresql.postgresql_ctl = executable or config.postgresql.postgresql_ctl  # noqa
-        # check if that executable exists, as it's no on
+        # check if that executable exists, as it's no on system PATH
         if not os.path.exists(config.postgresql.postgresql_ctl):
             pg_bindir = subprocess.check_output(
                 ['pg_config', '--bindir'], universal_newlines=True).strip()
@@ -166,18 +192,14 @@ def postgresql_proc(executable=None, host=None, port=None):
         init_postgresql_directory(config)
 
         postgresql_executor = TCPCoordinatedExecutor(
-            '''
-                {postgresql_ctl} start -D {datadir}
-                -o "-F -p {port} -c unix_socket_directories='{unixsocketdir}'"
-                -l {logfile} {startparams}
-            '''.format(
-            postgresql_ctl=config.postgresql.postgresql_ctl,
-            datadir=config.postgresql.datadir,
-            port=config.postgresql.port,
-            unixsocketdir=config.postgresql.unixsocketdir,
-            logfile=config.postgresql.logfile,
-            startparams=config.postgresql.startparams,
-        ),
+            PROC_START_COMMAND[postgresql_version()].format(
+                postgresql_ctl=config.postgresql.postgresql_ctl,
+                datadir=config.postgresql.datadir,
+                port=config.postgresql.port,
+                unixsocketdir=config.postgresql.unixsocketdir,
+                logfile=config.postgresql.logfile,
+                startparams=config.postgresql.startparams,
+            ),
             host=config.postgresql.host,
             port=config.postgresql.port,
             timeout=60,
