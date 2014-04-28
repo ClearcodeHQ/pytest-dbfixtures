@@ -146,6 +146,7 @@ def postgresql_version():
     :rtype: str
     """
     version_string = subprocess.check_output(['pg_config', '--version'])
+    print(version_string)
     matches = re.search('PostgreSQL (?P<version>\d\.\d)\.\d', version_string)
     return matches.groupdict()['version']
 
