@@ -18,8 +18,8 @@
 
 
 import pytest
-from summon_process.executors import TCPCoordinatedExecutor
 
+from pytest_dbfixtures.executors import TCPExecutor
 from pytest_dbfixtures.utils import get_config, try_import
 
 
@@ -45,7 +45,7 @@ def redis_proc(executable=None, params=None, config_file=None,
         #. Stop redis process after tests.
 
         :param FixtureRequest request: fixture request object
-        :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor # noqa
+        :rtype: pytest_dbfixtures.executors.TCPExecutor
         :returns: tcp executor
         """
         config = get_config(request)
@@ -61,7 +61,7 @@ def redis_proc(executable=None, params=None, config_file=None,
         dbfilename = 'dump.{port}.rdb'.format(port=redis_port)
         logfile = 'redis-server.{port}.log'.format(port=redis_port)
 
-        redis_executor = TCPCoordinatedExecutor(
+        redis_executor = TCPExecutor(
             '''{redis_exec} {params} {config}
             --pidfile {pidfile} --unixsocket {unixsocket}
             --dbfilename {dbfilename} --logfile {logfile}
