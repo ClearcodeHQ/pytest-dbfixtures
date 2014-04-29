@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+0.4.10
+-------
+
+* Postgresql multiple versions proper support
+* Default timeouts and waits for process executors
+
 
 0.4.8
 -------
