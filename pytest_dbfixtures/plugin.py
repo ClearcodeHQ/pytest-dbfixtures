@@ -22,9 +22,9 @@ import subprocess
 
 from path import path
 from tempfile import mkdtemp
-from summon_process.executors import TCPCoordinatedExecutor
 
 from pytest_dbfixtures import factories
+from pytest_dbfixtures.executors import TCPExecutor
 from pytest_dbfixtures.utils import get_config, try_import
 
 
@@ -90,13 +90,13 @@ def mongo_proc(request):
         `mongod <http://docs.mongodb.org/v2.2/reference/mongod/>`_
 
     :param FixtureRequest request: fixture request object
-    :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor # noqa
+    :rtype: pytest_dbfixtures.executors.TCPExecutor
     :returns: tcp executor
     """
     config = get_config(request)
     mongo_conf = request.config.getvalue('mongo_conf')
 
-    mongo_executor = TCPCoordinatedExecutor(
+    mongo_executor = TCPExecutor(
         '{mongo_exec} {params} {config}'.format(
             mongo_exec=config.mongo.mongo_exec,
             params=config.mongo.params,
@@ -122,7 +122,7 @@ def mongodb(request, mongo_proc):
     #. Drop collections before and after tests.
 
     :param FixtureRequest request: fixture request object
-    :param TCPCoordinatedExecutor mongo_proc: tcp executor
+    :param TCPExecutor mongo_proc: tcp executor
     :rtype: pymongo.connection.Connection
     :returns: connection to mongo database
     """
@@ -190,7 +190,7 @@ def rabbitmq_proc(request):
     #. Stop rabbit server and remove temporary files after tests.
 
     :param FixtureRequest request: fixture request object
-    :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor # noqa
+    :rtype: pytest_dbfixtures.executors.TCPExecutor
     :returns: tcp executor
     """
 
@@ -210,7 +210,7 @@ def rabbitmq_proc(request):
 
     pika, config = try_import('pika', request)
 
-    rabbit_executor = TCPCoordinatedExecutor(
+    rabbit_executor = TCPExecutor(
         config.rabbit.rabbit_server,
         config.rabbit.host,
         config.rabbit.port,
@@ -238,7 +238,7 @@ def rabbitmq(rabbitmq_proc, request):
     #. Get module and config.
     #. Connect to RabbitMQ using the parameters from config.
 
-    :param TCPCoordinatedExecutor rabbitmq_proc: tcp executor
+    :param TCPExecutor rabbitmq_proc: tcp executor
     :param FixtureRequest request: fixture request object
     :rtype: pika.adapters.blocking_connection.BlockingConnection
     :returns: instance of :class:`BlockingConnection`

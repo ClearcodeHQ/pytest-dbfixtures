@@ -17,8 +17,8 @@
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-from summon_process.executors import HTTPCoordinatedExecutor
 
+from pytest_dbfixtures.executors import HTTPExecutor
 from pytest_dbfixtures.utils import get_config, try_import
 
 
@@ -64,12 +64,11 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None):
             cluster=cluster
         )
 
-        elasticsearch_executor = HTTPCoordinatedExecutor(
+        elasticsearch_executor = HTTPExecutor(
             command_exec, 'http://{host}:{port}'.format(
                 host=host,
                 port=port
             ),
-            timeout=60
         )
 
         elasticsearch_executor.start()

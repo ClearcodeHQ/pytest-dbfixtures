@@ -21,8 +21,8 @@ import shutil
 import subprocess
 
 import pytest
-from summon_process.executors import TCPCoordinatedExecutor
 
+from pytest_dbfixtures.executors import TCPExecutor
 from pytest_dbfixtures.utils import get_config
 
 
@@ -83,7 +83,7 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
             `See <https://dev.mysql.com/doc/refman/5.6/en/mysqladmin.html>`_
 
         :param FixtureRequest request: fixture request object
-        :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor # noqa
+        :rtype: pytest_dbfixtures.executors.TCPExecutor
         :returns: tcp executor
 
         """
@@ -101,7 +101,7 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
 
         init_mysql_directory(mysql_init, datadir)
 
-        mysql_executor = TCPCoordinatedExecutor(
+        mysql_executor = TCPExecutor(
             '''
             {mysql_server} --datadir={datadir} --pid-file={pidfile}
             --port={port} --socket={socket} --log-error={logfile}

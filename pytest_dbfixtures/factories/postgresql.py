@@ -23,8 +23,8 @@ import subprocess
 import time
 
 import pytest
-from summon_process.executors import TCPCoordinatedExecutor
 
+from pytest_dbfixtures.executors import TCPExecutor
 from pytest_dbfixtures.utils import get_config, try_import
 
 
@@ -172,7 +172,7 @@ def postgresql_proc(executable=None, host=None, port=None):
             `See <http://www.postgresql.org/docs/9.1/static/app-pg-ctl.html>`_
 
         :param FixtureRequest request: fixture request object
-        :rtype: summon_process.executors.tcp_coordinated_executor.TCPCoordinatedExecutor # noqa
+        :rtype: pytest_dbfixtures.executors.TCPExecutor
         :returns: tcp executor
         """
         config = get_config(request)
@@ -196,7 +196,7 @@ def postgresql_proc(executable=None, host=None, port=None):
 
         init_postgresql_directory(config)
         pg_version = postgresql_version(config.postgresql.postgresql_ctl)
-        postgresql_executor = TCPCoordinatedExecutor(
+        postgresql_executor = TCPExecutor(
             PROC_START_COMMAND[pg_version].format(
                 postgresql_ctl=config.postgresql.postgresql_ctl,
                 datadir=config.postgresql.datadir,
@@ -207,7 +207,6 @@ def postgresql_proc(executable=None, host=None, port=None):
             ),
             host=config.postgresql.host,
             port=config.postgresql.port,
-            timeout=60,
         )
         postgresql_executor.start()
         if '-w' in config.postgresql.startparams:
