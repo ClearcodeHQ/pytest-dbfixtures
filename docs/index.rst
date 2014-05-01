@@ -20,6 +20,7 @@ Contents:
    howtouse
    configure
    api
+   changelog
 
 
 Indices and tables
@@ -28,4 +29,4 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
+* :ref:`authors`
