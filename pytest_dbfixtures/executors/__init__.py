@@ -16,43 +16,17 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
-Overrides summon_process executors to defaultly use wait=True parameter
-which turns on waiting on process beeing actually closed and set default
-timeout for process to start.
-'''
-
 from summon_process.executors import (
-    SimpleExecutor,
     TCPCoordinatedExecutor,
     HTTPCoordinatedExecutor,
 )
 
-
-DEFAULT_TIMEOUT = 100
-
-
-class BaseExecutor(SimpleExecutor):
-
-    '''
-        Set timeout=DEFAULT_TIMEOUT on __init__ and wait=True on stop()
-        on executors inheriting from this class.
-    '''
-
-    def __init__(self, *args, **kwargs):
-        if kwargs.get('timeout') is None:
-            kwargs['timeout'] = DEFAULT_TIMEOUT
-        super(BaseExecutor, self).__init__(*args, **kwargs)
-
-    def stop(self, *args, **kwargs):
-        if 'wait' not in kwargs:
-            kwargs['wait'] = True
-        super(BaseExecutor, self).stop(*args, **kwargs)
+from pytest_dbfixtures.executors.extensions import ExtendedExecutor
 
 
-class TCPExecutor(BaseExecutor, TCPCoordinatedExecutor):
+class TCPExecutor(ExtendedExecutor, TCPCoordinatedExecutor):
     pass
 
 
-class HTTPExecutor(BaseExecutor, HTTPCoordinatedExecutor):
+class HTTPExecutor(ExtendedExecutor, HTTPCoordinatedExecutor):
     pass
