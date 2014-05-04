@@ -15,13 +15,13 @@
 
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
-
+import warnings
 import pytest
 
 from pytest_dbfixtures.utils import get_config, try_import
 
 
-def mysqldb(process_fixture_name, scope='session',
+def mysqldb(process_fixture_name, scope=None,
             user=None, passwd=None, db=None,
             host=None, port=None,
             charset='utf8', collation='utf8_general_ci'):
@@ -32,6 +32,10 @@ def mysqldb(process_fixture_name, scope='session',
     For charset and collation meaning,
     see `Database Character Set and Collation
     <https://dev.mysql.com/doc/refman/5.5/en/charset-database.html>`_
+
+    .. warning::
+
+        scope argument is deprecated!
 
     :param str process_fixture_name: process fixture name
     :param str scope: scope (session, function, module, etc.)
@@ -48,6 +52,17 @@ def mysqldb(process_fixture_name, scope='session',
     :returns: function ``mysqldb_fixture`` with suit scope
     :rtype: func
     """
+    if scope:
+        # deprecate scope
+        warnings.warn(
+            '`scope` argument is deprecated. '
+            'This fixture also automatically clears database after test '
+            'So it\'s much better idea to have it simply function-scoped',
+            DeprecationWarning,
+            2
+        )
+    else:
+        scope = 'function'
 
     @pytest.fixture(scope)
     def mysqldb_fixture(request):
