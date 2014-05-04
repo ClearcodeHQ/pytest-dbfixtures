@@ -10,7 +10,7 @@ install:
 - python setup.py install
 - pip install pymongo redis pika MySQL-python psycopg2 elasticsearch pylama
 script:
-- py.test -v tests
+- py.test --showlocals --verbose tests
 - pylama
 deploy:
   provider: pypi

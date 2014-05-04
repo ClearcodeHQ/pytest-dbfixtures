@@ -16,12 +16,9 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import pytest
-import subprocess
 
 from path import path
-from tempfile import mkdtemp
 
 from pytest_dbfixtures import factories
 from pytest_dbfixtures.executors import TCPExecutor
@@ -77,6 +74,9 @@ mysqldb_session = factories.mysqldb('mysql_proc')
 
 elasticsearch_proc = factories.elasticsearch_proc()
 elasticsearch = factories.elasticsearch('elasticsearch_proc')
+
+rabbitmq_proc = factories.rabbitmq_proc()
+rabbitmq = factories.rabbitmq('rabbitmq_proc')
 
 
 @pytest.fixture(scope='session')
@@ -144,117 +144,3 @@ def mongodb(request, mongo_proc):
     drop()
 
     return mongo_conn
-
-
-def get_rabbit_env(name):
-    """
-    Get value from environment variable. If does not exists (older version)
-    then use older name.
-
-    :param str name: name of environment variable
-    :rtype: str
-    :returns: path to directory
-    """
-    return os.environ.get(name) or os.environ.get(name.split('RABBITMQ_')[1])
-
-
-def get_rabbit_path(name):
-    """
-    Get a path to directory contains sub-directories for the RabbitMQ
-    server's Mnesia database files.
-    `Relocate <http://www.rabbitmq.com/relocate.html>`_
-
-    If environment variable or path to directory do not exist, return ``None``,
-    else return path to directory.
-
-    :param str name: name of environment variable
-    :rtype: path.path or None
-    :returns: path to directory
-    """
-    env = get_rabbit_env(name)
-
-    if not env or not path(env).exists():
-        return
-
-    return path(env)
-
-
-@pytest.fixture
-def rabbitmq_proc(request):
-    """
-    #. Get config.
-    #. Make a temporary directory.
-    #. Setup environment variables.
-    #. Start a rabbit server
-        `<http://www.rabbitmq.com/man/rabbitmq-server.1.man.html>`_
-    #. Stop rabbit server and remove temporary files after tests.
-
-    :param FixtureRequest request: fixture request object
-    :rtype: pytest_dbfixtures.executors.TCPExecutor
-    :returns: tcp executor
-    """
-
-    rabbit_conf = open(request.config.getvalue('rabbit_conf')).readlines()
-    rabbit_conf = dict(line[:-1].split('=') for line in rabbit_conf)
-
-    tmpdir = path(mkdtemp(prefix='rabbitmq_fixture'))
-    rabbit_conf['RABBITMQ_LOG_BASE'] = str(tmpdir)
-    rabbit_conf['RABBITMQ_MNESIA_BASE'] = str(tmpdir)
-
-    for name, value in rabbit_conf.items():
-        # for new versions of rabbitmq-server
-        os.environ[name] = value
-        # for older versions of rabbitmq-server
-        prefix, name = name.split('RABBITMQ_')
-        os.environ[name] = value
-
-    pika, config = try_import('pika', request)
-
-    rabbit_executor = TCPExecutor(
-        config.rabbit.rabbit_server,
-        config.rabbit.host,
-        config.rabbit.port,
-    )
-    base_path = get_rabbit_path('RABBITMQ_MNESIA_BASE')
-
-    def stop_and_reset():
-        rabbit_executor.stop()
-        base_path.rmtree()
-        tmpdir.exists() and tmpdir.rmtree()
-
-    request.addfinalizer(stop_and_reset)
-
-    rabbit_executor.start()
-    pid_file = base_path / get_rabbit_env('RABBITMQ_NODENAME') + '.pid'
-    wait_cmd = config.rabbit.rabbit_ctl, '-q', 'wait', pid_file
-    subprocess.Popen(wait_cmd).communicate()
-
-    return rabbit_executor
-
-
-@pytest.fixture
-def rabbitmq(rabbitmq_proc, request):
-    """
-    #. Get module and config.
-    #. Connect to RabbitMQ using the parameters from config.
-
-    :param TCPExecutor rabbitmq_proc: tcp executor
-    :param FixtureRequest request: fixture request object
-    :rtype: pika.adapters.blocking_connection.BlockingConnection
-    :returns: instance of :class:`BlockingConnection`
-    """
-    pika, config = try_import('pika', request)
-
-    rabbit_params = pika.connection.ConnectionParameters(
-        host=config.rabbit.host,
-        port=config.rabbit.port,
-        connection_attempts=3,
-        retry_delay=2,
-    )
-
-    try:
-        rabbit_connection = pika.BlockingConnection(rabbit_params)
-    except pika.adapters.blocking_connection.exceptions.ConnectionClosed:
-        print "Be sure that you're connecting rabbitmq-server >= 2.8.4"
-
-    return rabbit_connection
