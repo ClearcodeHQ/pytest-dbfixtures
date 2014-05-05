@@ -17,13 +17,14 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
-
 from pytest_dbfixtures.factories.redis import redis_proc, redisdb
 from pytest_dbfixtures.factories.postgresql import postgresql_proc, postgresql
 from pytest_dbfixtures.factories.mysql import mysql_proc
 from pytest_dbfixtures.factories.mysqldb import mysqldb
+from pytest_dbfixtures.factories.rabbitmq import rabbitmq, rabbitmq_proc
 from pytest_dbfixtures.factories.elasticsearch import (
-    elasticsearch_proc, elasticsearch
+    elasticsearch,
+    elasticsearch_proc,
 )
 
 
@@ -31,5 +32,6 @@ __all__ = [
     redis_proc, redisdb,
     postgresql, postgresql_proc,
     mysql_proc, mysqldb,
+    rabbitmq, rabbitmq_proc,
     elasticsearch_proc, elasticsearch
 ]
