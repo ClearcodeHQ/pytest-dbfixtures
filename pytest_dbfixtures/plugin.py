@@ -72,8 +72,8 @@ postgresql_proc = factories.postgresql_proc()
 postgresql = factories.postgresql('postgresql_proc')
 
 mysql_proc = factories.mysql_proc()
-mysqldb = factories.mysqldb('mysql_proc', scope='function')
-mysqldb_session = factories.mysqldb('mysql_proc')
+mysqldb = factories.mysqldb('mysql_proc')
+mysqldb_session = factories.mysqldb('mysql_proc', scope='session')
 
 elasticsearch_proc = factories.elasticsearch_proc()
 elasticsearch = factories.elasticsearch('elasticsearch_proc')
