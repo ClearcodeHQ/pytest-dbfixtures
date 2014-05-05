@@ -1,6 +1,15 @@
 CHANGES
 =======
 
+0.4.12
+-------
+
+* Overrides SimpleExecutor's behavior with a try of more gentle terminating
+  subprocess before killing it.
+* Deprecate scope for mysqldb fixture and change it to function by default.
+* RabbitMQ factories support (multiple rabbit fixtures).
+
+
 0.4.10
 -------
 
