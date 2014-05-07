@@ -18,7 +18,7 @@
 import warnings
 import pytest
 
-from pytest_dbfixtures.utils import get_config, try_import
+from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
 
 
 def mysqldb(process_fixture_name, scope=None,
@@ -79,7 +79,7 @@ def mysqldb(process_fixture_name, scope=None,
         :rtype: MySQLdb.connections.Connection
         :returns: connection to database
         """
-        request.getfuncargvalue(process_fixture_name)
+        get_process_fixture(request, process_fixture_name)
 
         config = get_config(request)
         mysql_port = port or config.mysql.port
@@ -103,8 +103,8 @@ def mysqldb(process_fixture_name, scope=None,
 
         mysql_conn.query(
             '''CREATE DATABASE {name}
-             DEFAULT CHARACTER SET {charset}
-             DEFAULT COLLATE {collation}'''
+            DEFAULT CHARACTER SET {charset}
+            DEFAULT COLLATE {collation}'''
             .format(
                 name=mysql_db, charset=charset, collation=collation
             )

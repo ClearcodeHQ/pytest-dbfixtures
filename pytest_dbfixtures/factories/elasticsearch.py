@@ -19,7 +19,7 @@
 import pytest
 
 from pytest_dbfixtures.executors import HTTPExecutor
-from pytest_dbfixtures.utils import get_config, try_import
+from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
 
 
 def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None):
@@ -79,10 +79,11 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None):
     return elasticsearch_proc_fixture
 
 
-def elasticsearch(proc_fixture, hosts='127.0.01:9201'):
+def elasticsearch(process_fixture_name, hosts='127.0.01:9201'):
     """
     Creates Elasticsearch client fixture.
 
+    :param str process_fixture_name: elasticsearch process fixture name
     :param hosts: elasticsearch hosts list. See
         http://elasticsearch-py.readthedocs.org/en/master/api.html#elasticsearch.Elasticsearch for details. # noqa
     """
@@ -90,7 +91,8 @@ def elasticsearch(proc_fixture, hosts='127.0.01:9201'):
     @pytest.fixture
     def elasticsearch_fixture(request):
         """Elasticsearch client fixture."""
-        request.getfuncargvalue(proc_fixture)
+
+        get_process_fixture(request, process_fixture_name)
 
         elasticsearch, _ = try_import('elasticsearch', request)
 

@@ -20,7 +20,7 @@
 import pytest
 
 from pytest_dbfixtures.executors import TCPExecutor
-from pytest_dbfixtures.utils import get_config, try_import
+from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
 
 
 def redis_proc(executable=None, params=None, config_file=None,
@@ -110,7 +110,7 @@ def redisdb(process_fixture_name, host=None, port=None, db=None):
         :rtype: redis.client.Redis
         :returns: Redis client
         """
-        request.getfuncargvalue(process_fixture_name)
+        get_process_fixture(request, process_fixture_name)
 
         redis, config = try_import('redis', request)
 

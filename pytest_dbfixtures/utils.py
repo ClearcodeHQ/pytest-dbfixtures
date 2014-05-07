@@ -59,3 +59,17 @@ def try_import(module, request, pypi_package=None):
     else:
 
         return i, get_config(request)
+
+
+def get_process_fixture(request, process_name):
+    """
+    This function loads process fixture, check's if it's running,
+    and starts it if not.
+
+    :param pytest.FixtureRequest request: fixture request object
+    :param str process_name: fixture process name
+    """
+    process = request.getfuncargvalue(process_name)
+    if not process.running():
+        process.start()
+    return process
