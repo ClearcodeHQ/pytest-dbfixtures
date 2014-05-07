@@ -106,14 +106,15 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
             {mysql_server} --datadir={datadir} --pid-file={pidfile}
             --port={port} --socket={socket} --log-error={logfile}
             --skip-syslog
-        '''.format(
-            mysql_server=mysql_exec,
-            port=mysql_port,
-            datadir=datadir,
-            pidfile=pidfile,
-            socket=unixsocket,
-            logfile=logfile,
-        ),
+            '''
+            .format(
+                mysql_server=mysql_exec,
+                port=mysql_port,
+                datadir=datadir,
+                pidfile=pidfile,
+                socket=unixsocket,
+                logfile=logfile,
+            ),
             host=mysql_host,
             port=mysql_port,
         )
