@@ -103,10 +103,12 @@ def mysqldb(process_fixture_name, scope=None,
 
         mysql_conn.query(
             '''CREATE DATABASE {name}
-                 DEFAULT CHARACTER SET {charset}
-                 DEFAULT COLLATE {collation}'''.format(
-            name=mysql_db, charset=charset, collation=collation
-        ))
+             DEFAULT CHARACTER SET {charset}
+             DEFAULT COLLATE {collation}'''
+            .format(
+                name=mysql_db, charset=charset, collation=collation
+            )
+        )
         mysql_conn.query('USE %s' % mysql_db)
 
         def drop_database():
