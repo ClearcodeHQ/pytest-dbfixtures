@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+0.4.13
+-------
+
+* Bugfix of rabbitmq_proc fixture - now it works with scope=function
+
+
 0.4.12
 -------
 
