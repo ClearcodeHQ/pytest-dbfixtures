@@ -68,7 +68,7 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
         :returns pytest fixture with RabbitMQ process executor
     '''
 
-    @pytest.fixture(scope='session')
+    @pytest.fixture
     def rabbitmq_proc_fixture(request):
         """
         #. Get config.
@@ -125,6 +125,7 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
             rabbit_host,
             rabbit_port,
         )
+
         request.addfinalizer(rabbit_executor.stop)
 
         base_path = rabbit_path('RABBITMQ_MNESIA_BASE')
