@@ -44,108 +44,110 @@ PROC_START_COMMAND = {
 }
 
 
-def wait_for_postgres(config, awaited_msg):
+def wait_for_postgres(logfile, awaited_msg):
     """
     Blocks until logfile is created by psql server.
     Awaits for given message in logfile. Block until log contains message.
 
-    :param pymlconf.ConfigManager config: config
+    :param str logfile: logfile path
     :param str awaited_msg: awaited message
     """
-    while not os.path.isfile(config.postgresql.logfile):
+    while not os.path.isfile(logfile):
         time.sleep(1)
 
     while 1:
-        with open(config.postgresql.logfile, 'r') as content_file:
+        with open(logfile, 'r') as content_file:
             content = content_file.read()
             if awaited_msg in content:
                 break
         time.sleep(1)
 
 
-def remove_postgresql_directory(config):
+def remove_postgresql_directory(logfile, datadir):
     """
     Checks postgresql directory and logfile. Delete a logfile if exist.
     Recursively delete a directory tree if exist.
 
-    :param pymlconf.ConfigManager config: config
+    :param str logfile: logfile path
+    :param str datadir: datadir path
     """
-    if os.path.isfile(config.postgresql.logfile):
-        os.remove(config.postgresql.logfile)
-    if os.path.isdir(config.postgresql.datadir):
-        shutil.rmtree(config.postgresql.datadir)
+    if os.path.isfile(logfile):
+        os.remove(logfile)
+    if os.path.isdir(datadir):
+        shutil.rmtree(datadir)
 
 
-def init_postgresql_directory(config):
+def init_postgresql_directory(postgresql_ctl, user, datadir, logfile):
     """
     #. Remove postgresql directory if exist.
     #. `Initialize postgresql data directory
-        <www.postgresql.org/docs/9.1/static/app-initdb.html>`_
+        <www.postgresql.org/docs/9.3/static/app-initdb.html>`_
 
-    :param pymlconf.ConfigManager config: config
+    :param str postgresql_ctl: ctl path
+    :param str user: postgresql username
+    :param str datadir: datadir path
+    :param str logfile: logfile path
 
     """
-    remove_postgresql_directory(config)
+    remove_postgresql_directory(logfile, datadir)
     init_directory = (
-        config.postgresql.postgresql_ctl, 'initdb',
-        '-o "--auth=trust --username=%s"' % config.postgresql.user,
-        '-D %s' % config.postgresql.datadir,
+        postgresql_ctl, 'initdb',
+        '-o "--auth=trust --username=%s"' % user,
+        '-D %s' % datadir,
     )
     subprocess.check_output(' '.join(init_directory), shell=True)
 
 
-def init_postgresql_database(postgresql, config):
+def init_postgresql_database(psycopg2, user, host, port, db):
     """
     #. Connect to psql with proper isolation level
     #. Create test database
     #. Close connection
 
-    :param FixtureRequest postgresql: psycopg2 object
-    :param pymlconf.ConfigManager config: config
+    :param module psycopg2: psycopg2 object
+    :param str user: postgresql username
+    :param str host: postgresql host
+    :param str port: postgresql port
+    :param str db: database name
 
     """
 
-    conn = postgresql.connect(
-        user=config.postgresql.user,
-        host=config.postgresql.host,
-        port=config.postgresql.port
-    )
-    conn.set_isolation_level(postgresql.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+    conn = psycopg2.connect(user=user, host=host, port=port)
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
-    cur.execute('CREATE DATABASE ' + config.postgresql.db)
+    cur.execute('CREATE DATABASE ' + db)
     cur.close()
     conn.close()
 
 
-def drop_postgresql_database(postgresql, config):
+def drop_postgresql_database(psycopg2, user, host, port, db):
     """
     #. Connect to psql with proper isolation level
     #. Drop test database
     #. Close connection
 
-    :param FixtureRequest postgresql: psycopg2 object
-    :param pymlconf.ConfigManager config: config
+    :param module psycopg2: psycopg2 object
+    :param str user: postgresql username
+    :param str host: postgresql host
+    :param str port: postgresql port
+    :param str db: database name
     """
-    conn = postgresql.connect(
-        user=config.postgresql.user,
-        host=config.postgresql.host,
-        port=config.postgresql.port
-    )
-    conn.set_isolation_level(postgresql.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+    conn = psycopg2.connect(user=user, host=host, port=port)
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
-    cur.execute('DROP DATABASE IF EXISTS %s' % config.postgresql.db)
+    cur.execute('DROP DATABASE IF EXISTS %s' % db)
     cur.close()
     conn.close()
 
 
-def postgresql_version(pg_ctl):
+def postgresql_version(postgresql_ctl):
     """
     Detect postgresql version.
 
     :return: minor version string
     :rtype: str
     """
-    version_string = subprocess.check_output([pg_ctl, '--version'])
+    version_string = subprocess.check_output([postgresql_ctl, '--version'])
     matches = re.search('.* (?P<version>\d\.\d)\.\d', version_string)
     return matches.groupdict()['version']
 
@@ -176,56 +178,57 @@ def postgresql_proc(executable=None, host=None, port=None):
         :returns: tcp executor
         """
         config = get_config(request)
-        config.postgresql.postgresql_ctl = executable or config.postgresql.postgresql_ctl  # noqa
+        postgresql_ctl = executable or config.postgresql.postgresql_ctl
         # check if that executable exists, as it's no on system PATH
-        if not os.path.exists(config.postgresql.postgresql_ctl) and (
-            # only replace if executable isn't passed manually
-            executable is None
-        ):
+        # only replace if executable isn't passed manually
+        if not os.path.exists(postgresql_ctl) and executable is None:
             pg_bindir = subprocess.check_output(
-                ['pg_config', '--bindir'], universal_newlines=True).strip()
-            config.postgresql.postgresql_ctl = os.path.join(
-                pg_bindir, 'pg_ctl')
+                ['pg_config', '--bindir'], universal_newlines=True
+            ).strip()
+            postgresql_ctl = os.path.join(pg_bindir, 'pg_ctl')
 
-        config.postgresql.host = host or config.postgresql.host
-        config.postgresql.port = port or config.postgresql.port
-        config.postgresql.datadir += str(config.postgresql.port)
-        config.postgresql.logfile = '/tmp/postgresql.{0}.log'.format(
-            config.postgresql.port
+        pg_host = host or config.postgresql.host
+        pg_port = port or config.postgresql.port
+        datadir = '/tmp/postgresqldata.{0}'.format(pg_port)
+        logfile = '/tmp/postgresql.{0}.log'.format(pg_port)
+
+        init_postgresql_directory(
+            postgresql_ctl, config.postgresql.user, datadir, logfile
         )
-
-        init_postgresql_directory(config)
-        pg_version = postgresql_version(config.postgresql.postgresql_ctl)
+        pg_version = postgresql_version(postgresql_ctl)
         postgresql_executor = TCPExecutor(
             PROC_START_COMMAND[pg_version].format(
-                postgresql_ctl=config.postgresql.postgresql_ctl,
-                datadir=config.postgresql.datadir,
-                port=config.postgresql.port,
+                postgresql_ctl=postgresql_ctl,
+                datadir=datadir,
+                port=pg_port,
                 unixsocketdir=config.postgresql.unixsocketdir,
-                logfile=config.postgresql.logfile,
+                logfile=logfile,
                 startparams=config.postgresql.startparams,
             ),
-            host=config.postgresql.host,
-            port=config.postgresql.port,
+            host=pg_host,
+            port=pg_port,
         )
-        postgresql_executor.start()
-        if '-w' in config.postgresql.startparams:
-            wait_for_postgres(config, START_INFO)
-
-        def shutdown_server():
-            return (
-                config.postgresql.postgresql_ctl, 'stop',
-                '-D %s' % config.postgresql.datadir,
-                '-o "-p %s -c unix_socket_directory=\'%s\'"' % (
-                    config.postgresql.port, config.postgresql.unixsocketdir)
-            )
 
         def stop_server_and_remove_directory():
-            subprocess.check_output(' '.join(shutdown_server()), shell=True)
+            subprocess.check_output(
+                '{postgresql_ctl} stop -D {datadir} '
+                '-o "-p {port} -c unix_socket_directory=\'{unixsocketdir}\'"'
+                .format(
+                    postgresql_ctl=postgresql_ctl,
+                    datadir=datadir,
+                    port=pg_port,
+                    unixsocketdir=config.postgresql.unixsocketdir
+                ),
+                shell=True)
             postgresql_executor.stop()
-            remove_postgresql_directory(config)
+            remove_postgresql_directory(logfile, datadir)
 
         request.addfinalizer(stop_server_and_remove_directory)
+
+        # start server
+        postgresql_executor.start()
+        if '-w' in config.postgresql.startparams:
+            wait_for_postgres(logfile, START_INFO)
 
         return postgresql_executor
 
@@ -258,22 +261,26 @@ def postgresql(process_fixture_name, host=None, port=None, db=None):
         """
         request.getfuncargvalue(process_fixture_name)
 
-        postgresql, config = try_import('psycopg2', request)
-        config.postgresql.host = host or config.postgresql.unixsocketdir
-        config.postgresql.port = port or config.postgresql.port
-        config.postgresql.db = db or config.postgresql.db
+        psycopg2, config = try_import('psycopg2', request)
+        pg_host = host or config.postgresql.unixsocketdir
+        pg_port = port or config.postgresql.port
+        pg_db = db or config.postgresql.db
 
-        init_postgresql_database(postgresql, config)
-        conn = postgresql.connect(
-            dbname=config.postgresql.db,
+        init_postgresql_database(
+            psycopg2, config.postgresql.user, pg_host, pg_port, pg_db
+        )
+        conn = psycopg2.connect(
+            dbname=pg_db,
             user=config.postgresql.user,
-            host=config.postgresql.host,
-            port=config.postgresql.port
+            host=pg_host,
+            port=pg_port
         )
 
         def drop_database():
             conn.close()
-            drop_postgresql_database(postgresql, config)
+            drop_postgresql_database(
+                psycopg2, config.postgresql.user, pg_host, pg_port, pg_db
+            )
 
         request.addfinalizer(drop_database)
 
