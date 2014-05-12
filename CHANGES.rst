@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+
+Current
+-------
+
+* Bugfix: Now we don't overwrite postgresql config in postgres_proc
+
+
 0.4.13
 -------
 
