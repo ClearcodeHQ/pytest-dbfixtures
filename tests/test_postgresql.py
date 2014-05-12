@@ -18,7 +18,7 @@ def test_postgresql_proc(request, postgres):
     assert postgresql_proc.running() is True
 
 
-def test_postgres(postgresql):
+def test_main_postgres(postgresql):
     cur = postgresql.cursor()
     cur.execute(query)
     postgresql.commit()
