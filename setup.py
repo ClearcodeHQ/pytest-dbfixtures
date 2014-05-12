@@ -33,7 +33,7 @@ setup(
     description='Databases fixtures plugin for py.test.',
     author='Clearcode - The A Room',
     author_email='thearoom@clearcode.cc',
-    url='https://github.com/clearcode/pytest-dbfixtures',
+    url='https://github.com/ClearcodeHQ/pytest-dbfixtures',
     packages=find_packages(),
     install_requires=[
         'pytest>=2.3.4',
