@@ -15,6 +15,18 @@ Redis factories
         :special-members:
         :show-inheritance:
 
+
+Mongo factories
+---------------
+
+    .. automodule:: pytest_dbfixtures.factories.mongo
+        :members: mongo_proc, mongodb
+        :undoc-members:
+        :private-members:
+        :special-members:
+        :show-inheritance:
+
+
 Postgresql factories
 --------------------
 
