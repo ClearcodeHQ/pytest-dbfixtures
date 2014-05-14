@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
 import pytest
 
 from path import path
@@ -66,7 +65,7 @@ def mongo_proc(executable=None, params=None, host=None, port=None):
         mongo_port = port or config.mongo.port
 
         mongo_executor = TCPExecutor(
-            '{mongo_exec} --bind_ip {host} --port {port} --dbpath {dbpath} {params}'.format(
+            '{mongo_exec} --bind_ip {host} --port {port} --dbpath {dbpath} {params}'.format(  # noqa
                 mongo_exec=mongo_exec,
                 params=mongo_params,
                 host=mongo_host,
