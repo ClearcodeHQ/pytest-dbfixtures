@@ -5,6 +5,13 @@ CHANGES
 Current
 -------
 
+* Client fixtures now check if process (process fixture) is running before
+  every test and starts process if it was terminated after previous test.
+
+
+0.4.14
+-------
+
 * Bugfix: Now we don't overwrite postgresql config in postgres_proc
 
 
