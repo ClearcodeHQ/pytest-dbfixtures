@@ -22,7 +22,7 @@ from path import path
 
 from pytest_dbfixtures import factories
 from pytest_dbfixtures.executors import TCPExecutor
-from pytest_dbfixtures.utils import get_config, try_import
+from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
 
 
 ROOT_DIR = path(__file__).parent.parent.abspath()
@@ -115,7 +115,7 @@ def mongo_proc(request):
 
 
 @pytest.fixture
-def mongodb(request, mongo_proc):
+def mongodb(request):
     """
     #. Get pymongo module and config.
     #. Get connection to mongo.
@@ -126,6 +126,7 @@ def mongodb(request, mongo_proc):
     :rtype: pymongo.connection.Connection
     :returns: connection to mongo database
     """
+    get_process_fixture(request, 'mongo_proc')
     pymongo, config = try_import('pymongo', request)
 
     mongo_conn = pymongo.Connection(
