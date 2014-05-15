@@ -16,10 +16,10 @@ Mongo
 
 
     from pytest_dbfixtures import factories
-    mongo_proc2 = factories.mongo_proc(port=27070)
+    mongo_proc2 = factories.mongo_proc(port=27070, params='--nojournal --noauth --nohttpinterface --noprealloc')
     mongodb2 = factories.mongodb('mongo_proc2', port=27070)
 
-    def test_second_mongo(mongodb, mongodb2, mongodb3):
+    def test_second_mongo(mongodb, mongodb2):
         test_data_one = {
             "test1": "test1",
         }

@@ -64,13 +64,16 @@ def mongo_proc(executable=None, params=None, host=None, port=None):
         mongo_host = host or config.mongo.host
         mongo_port = port or config.mongo.port
 
+        mongo_logpath = '/tmp/mongo.{port}.log'.format(port=mongo_port)
+
         mongo_executor = TCPExecutor(
-            '{mongo_exec} --bind_ip {host} --port {port} --dbpath {dbpath} {params}'.format(  # noqa
+            '{mongo_exec} --bind_ip {host} --port {port} --dbpath {dbpath} --logpath {logpath} {params}'.format(  # noqa
                 mongo_exec=mongo_exec,
                 params=mongo_params,
                 host=mongo_host,
                 port=mongo_port,
                 dbpath=tmpdir,
+                logpath=mongo_logpath,
             ),
             host=mongo_host,
             port=mongo_port,
