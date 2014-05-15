@@ -15,7 +15,8 @@ def test_mysql(mysqldb):
     mysqldb.commit()
     cursor.close()
 
-mysql_proc2 = factories.mysql_proc(port=3308)
+
+mysql_proc2 = factories.mysql_proc(port=3308, params='--skip-sync-frm')
 mysqldb2 = factories.mysqldb('mysql_proc2', port=3308)
 
 
