@@ -5,6 +5,12 @@ CHANGES
 Current
 -------
 
+* Add params to mysql fixture
+
+
+0.4.15
+-------
+
 * Client fixtures now check if process (process fixture) is running before
   every test and starts process if it was terminated after previous test.
 
