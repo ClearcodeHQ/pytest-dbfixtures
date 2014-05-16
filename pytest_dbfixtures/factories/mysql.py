@@ -57,7 +57,7 @@ def init_mysql_directory(mysql_init, datadir):
 
 
 def mysql_proc(executable=None, admin_executable=None, init_executable=None,
-               host=None, port=None):
+               host=None, port=None, params=None):
     """
     Mysql server process factory.
 
@@ -93,6 +93,7 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
         mysql_init = init_executable or config.mysql.mysql_init
         mysql_port = port or config.mysql.port
         mysql_host = host or config.mysql.host
+        mysql_params = params or config.mysql.params
 
         datadir = '/tmp/mysqldata_{port}'.format(port=mysql_port)
         pidfile = '/tmp/mysql-server.{port}.pid'.format(port=mysql_port)
@@ -105,7 +106,7 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
             '''
             {mysql_server} --datadir={datadir} --pid-file={pidfile}
             --port={port} --socket={socket} --log-error={logfile}
-            --skip-syslog
+            --skip-syslog {params}
             '''
             .format(
                 mysql_server=mysql_exec,
@@ -114,6 +115,7 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
                 pidfile=pidfile,
                 socket=unixsocket,
                 logfile=logfile,
+                params=mysql_params,
             ),
             host=mysql_host,
             port=mysql_port,
