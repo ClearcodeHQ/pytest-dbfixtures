@@ -62,18 +62,19 @@ def redis_proc(executable=None, params=None, config_file=None,
         logfile = 'redis-server.{port}.log'.format(port=redis_port)
 
         redis_executor = TCPExecutor(
-            '''{redis_exec} {params} {config}
+            '''{redis_exec} {config}
             --pidfile {pidfile} --unixsocket {unixsocket}
             --dbfilename {dbfilename} --logfile {logfile}
-            --port {port}'''.format(redis_exec=redis_exec,
-                                    params=redis_params,
-                                    config=redis_conf,
-                                    pidfile=pidfile,
-                                    unixsocket=unixsocket,
-                                    dbfilename=dbfilename,
-                                    logfile=logfile,
-                                    port=redis_port
-                                    ),
+            --port {port} {params}'''.format(
+                redis_exec=redis_exec,
+                params=redis_params,
+                config=redis_conf,
+                pidfile=pidfile,
+                unixsocket=unixsocket,
+                dbfilename=dbfilename,
+                logfile=logfile,
+                port=redis_port
+            ),
             host=redis_host,
             port=redis_port,
         )
