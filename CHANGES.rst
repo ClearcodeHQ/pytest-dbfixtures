@@ -1,8 +1,13 @@
 CHANGES
 =======
 
-
 Current
+-------
+
+* Bugfix: params in redis fixture
+
+
+0.4.16
 -------
 
 * Add params to mysql fixture
