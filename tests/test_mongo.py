@@ -4,8 +4,6 @@ from pytest_dbfixtures import factories
 
 
 def test_mongo(mongodb):
-    assert path('/tmp/mongo.27069.log').isfile()
-
     test_data = {
         "test1": "test1",
     }
@@ -23,9 +21,6 @@ mongodb3 = factories.mongodb('mongo_proc3', port=27071)
 
 
 def test_third_mongo(mongodb, mongodb2, mongodb3):
-    for port in ('27069', '27070', '27071'):
-        assert path('/tmp/mongo.{port}.log'.format(port=port)).isfile()
-
     test_data_one = {
         "test1": "test1",
     }
@@ -46,3 +41,8 @@ def test_third_mongo(mongodb, mongodb2, mongodb3):
     db = mongodb3['test_db']
     db.test.insert(test_data_three)
     assert db.test.find_one()['test3'] == 'test3'
+
+
+def test_mongo_proc(mongo_proc, mongo_proc2, mongo_proc3):
+    for m in (mongo_proc, mongo_proc2, mongo_proc3):
+        assert path('/tmp/mongo.{port}.log'.format(port=m._port)).isfile()
