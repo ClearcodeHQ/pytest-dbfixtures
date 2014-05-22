@@ -4,6 +4,8 @@ python:
 install:
 - python setup.py install
 - pip install pymongo redis pika MySQL-python psycopg2 elasticsearch pylama
+# manually install wheel for deployment
+- "pip install wheel --use-mirrors"
 script:
 - py.test --showlocals --verbose tests
 - pylama
@@ -15,3 +17,4 @@ deploy:
     secure: DRWW+buXoDjLjMDCiUKnnWiCVLUaei6iQsUTwU/3+UOPgd2htzAHo59X7GhF49N6cYG98qXZNayeM+a4QkHFnSCyzwFvlqrPpwnuINQtb0Bucoh9jnjKFq1OwAjaTdKz61YlRq6qaSXEGOKka08CN9Aj2UIUz/lNgMkZjkFmAIQ=
   on:
     tags: true
+  distributions: "sdist bdist_wheel"
