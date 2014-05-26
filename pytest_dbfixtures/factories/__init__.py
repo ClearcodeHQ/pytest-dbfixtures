@@ -22,6 +22,7 @@ from pytest_dbfixtures.factories.postgresql import postgresql_proc, postgresql
 from pytest_dbfixtures.factories.mysql import mysql_proc
 from pytest_dbfixtures.factories.mysqldb import mysqldb
 from pytest_dbfixtures.factories.rabbitmq import rabbitmq, rabbitmq_proc
+from pytest_dbfixtures.factories.mongo import mongodb, mongo_proc
 from pytest_dbfixtures.factories.elasticsearch import (
     elasticsearch,
     elasticsearch_proc,
@@ -33,5 +34,6 @@ __all__ = [
     postgresql, postgresql_proc,
     mysql_proc, mysqldb,
     rabbitmq, rabbitmq_proc,
+    mongodb, mongo_proc,
     elasticsearch_proc, elasticsearch
 ]

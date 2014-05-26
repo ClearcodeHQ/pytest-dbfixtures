@@ -16,13 +16,10 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
-import pytest
 
 from path import path
 
 from pytest_dbfixtures import factories
-from pytest_dbfixtures.executors import TCPExecutor
-from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
 
 
 ROOT_DIR = path(__file__).parent.parent.abspath()
@@ -78,70 +75,5 @@ elasticsearch = factories.elasticsearch('elasticsearch_proc')
 rabbitmq_proc = factories.rabbitmq_proc()
 rabbitmq = factories.rabbitmq('rabbitmq_proc')
 
-
-@pytest.fixture(scope='session')
-def mongo_proc(request):
-    """
-    #. Get config.
-    #. Run a ``mongod`` process.
-    #. Stop ``mongod`` process after tests.
-
-    .. note::
-        `mongod <http://docs.mongodb.org/v2.2/reference/mongod/>`_
-
-    :param FixtureRequest request: fixture request object
-    :rtype: pytest_dbfixtures.executors.TCPExecutor
-    :returns: tcp executor
-    """
-    config = get_config(request)
-    mongo_conf = request.config.getvalue('mongo_conf')
-
-    mongo_executor = TCPExecutor(
-        '{mongo_exec} {params} {config}'.format(
-            mongo_exec=config.mongo.mongo_exec,
-            params=config.mongo.params,
-            config=mongo_conf),
-        host=config.mongo.host,
-        port=config.mongo.port,
-    )
-    mongo_executor.start()
-
-    def stop():
-        mongo_executor.stop()
-
-    request.addfinalizer(stop)
-
-    return mongo_executor
-
-
-@pytest.fixture
-def mongodb(request):
-    """
-    #. Get pymongo module and config.
-    #. Get connection to mongo.
-    #. Drop collections before and after tests.
-
-    :param FixtureRequest request: fixture request object
-    :param TCPExecutor mongo_proc: tcp executor
-    :rtype: pymongo.connection.Connection
-    :returns: connection to mongo database
-    """
-    get_process_fixture(request, 'mongo_proc')
-    pymongo, config = try_import('pymongo', request)
-
-    mongo_conn = pymongo.Connection(
-        config.mongo.host,
-        config.mongo.port
-    )
-
-    def drop():
-        for db in mongo_conn.database_names():
-            for collection_name in mongo_conn[db].collection_names():
-                if collection_name != 'system.indexes':
-                    mongo_conn[db][collection_name].drop()
-
-    request.addfinalizer(drop)
-
-    drop()
-
-    return mongo_conn
+mongo_proc = factories.mongo_proc()
+mongodb = factories.mongodb('mongo_proc')
