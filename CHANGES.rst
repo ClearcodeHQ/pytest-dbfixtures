@@ -1,7 +1,14 @@
 CHANGES
 =======
 
+
 Current
+-------
+
+* MongoDB fixtures can be now initialized by factories
+
+
+0.4.17
 -------
 
 * Bugfix: params in redis fixture
