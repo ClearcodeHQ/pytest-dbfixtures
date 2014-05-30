@@ -27,10 +27,27 @@ with open(os.path.join(here, 'pytest_dbfixtures', '__init__.py')) as v_file:
         r".*__version__ = '(.*?)'", re.S).match(v_file.read()).group(1)
 
 
+def read(fname):
+    """
+    Read file's content.
+
+    :param str fname: name of file to read
+
+    :returns: file content
+    :rtype: str
+    """
+    return open(os.path.join(here, fname)).read()
+
+
 setup(
     name='pytest-dbfixtures',
     version=package_version,
     description='Databases fixtures plugin for py.test.',
+    long_description=(
+        read('README.rst')
+        + '\n\n' +
+        read('CHANGES.rst')
+    ),
     author='Clearcode - The A Room',
     author_email='thearoom@clearcode.cc',
     url='https://github.com/ClearcodeHQ/pytest-dbfixtures',

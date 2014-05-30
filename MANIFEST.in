@@ -1,2 +1,2 @@
 include *.rst
-recursive-include pytest_dbfixtures *.conf
+recursive-include pytest_dbfixtures *.py *.conf
