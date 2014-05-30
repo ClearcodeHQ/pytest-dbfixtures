@@ -2,14 +2,20 @@ CHANGES
 =======
 
 
-Current
--------
+
+0.4.19
+------
+
+* StopRunningExecutor to simply return if process had been already killed.
+
+0.4.18
+------
 
 * MongoDB fixtures can be now initialized by factories
 
 
 0.4.17
--------
+------
 
 * Bugfix: params in redis fixture
 
