@@ -37,6 +37,19 @@ class StartTimeoutExecutor(SimpleExecutor):
         super(StartTimeoutExecutor, self).__init__(*args, **kwargs)
 
 
+class StopRunningExecutor(SimpleExecutor):
+
+    def stop(self, *args, **kwargs):
+        '''
+        Overrides original stop()'s method with a check if process
+        is still running because stopping already terminated process
+        ends with exception.
+        '''
+        if not self.running():
+            return
+        super(StopRunningExecutor, self).stop(*args, **kwargs)
+
+
 class StopWaitingExecutor(SimpleExecutor):
 
     def stop(self, *args, **kwargs):
@@ -86,5 +99,5 @@ class GentleKillingExecutor(SimpleExecutor):
 
 
 class ExtendedExecutor(StartTimeoutExecutor, StopWaitingExecutor,
-                       GentleKillingExecutor):
+                       GentleKillingExecutor, StopRunningExecutor):
     pass
