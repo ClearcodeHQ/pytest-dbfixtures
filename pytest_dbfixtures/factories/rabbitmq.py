@@ -59,21 +59,23 @@ class RabbitMqExecutor(TCPExecutor):
     def list_exchanges(self):
         """Get exchanges defined on given rabbitmq."""
         exchanges = []
-        output = self.rabbitctl_output('list_exchanges')
+        output = self.rabbitctl_output('list_exchanges', 'name')
         for exchange in output.split('\n'):
-            parts = exchange.split('\t')
-            if len(parts) > 1 and parts[0]:
-                exchanges.append(parts[0])
+            if exchange in ['Listing exchanges ...', '...done.']:
+                continue
+            if exchange:
+                exchanges.append(exchange)
         return exchanges
 
     def list_queues(self):
         """Get queues defined on given rabbitmq."""
         queues = []
-        output = self.rabbitctl_output('list_queues')
+        output = self.rabbitctl_output('list_queues', 'name')
         for queue in output.split('\n'):
-            parts = queue.split('\t')
-            if len(parts) > 1 and parts[0]:
-                queues.append(parts[0])
+            if queue in ['Listing queues ...', '...done.']:
+                continue
+            if queue:
+                queues.append(queue)
         return queues
 
 
@@ -244,7 +246,8 @@ def clear_rabbitmq(process, pika_connection):
         channel.queue_delete(queue)
 
 
-def rabbitmq(process_fixture_name, host=None, port=None, rabbit_ctl_file=None):
+def rabbitmq(
+        process_fixture_name, host=None, port=None, teardown=clear_rabbitmq):
     """
     Connects with RabbitMQ server
 
@@ -252,6 +255,14 @@ def rabbitmq(process_fixture_name, host=None, port=None, rabbit_ctl_file=None):
                                      returned by rabbitmq_proc
     :param str host: RabbitMQ server host
     :param int port: RabbitMQ server port
+    :param callable teardown: custom callable that clears rabbitmq
+
+    .. note::
+
+        calls to rabbitmqctl might be as slow or even slower
+        as restarting process. To speed up, provide Your own teardown function,
+        to remove queues and exchanges of your choosing, without querying
+        rabbitmqctl underneath.
 
     :returns RabbitMQ connection
     """
@@ -286,7 +297,7 @@ def rabbitmq(process_fixture_name, host=None, port=None, rabbit_ctl_file=None):
             print "Be sure that you're connecting rabbitmq-server >= 2.8.4"
 
         def finalizer():
-            clear_rabbitmq(process, rabbit_connection)
+            teardown(process, rabbit_connection)
 
         request.addfinalizer(finalizer)
 
