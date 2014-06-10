@@ -16,6 +16,67 @@ from pytest_dbfixtures.utils import try_import, get_config
 from pytest_dbfixtures.executors import TCPExecutor
 
 
+class RabbitMqExecutor(TCPExecutor):
+
+    """
+    RabbitMQ executor to start specific rabbitmq instances.
+    """
+
+    def __init__(self, command, host, port, rabbit_ctl, environ, **kwargs):
+        """
+        Initialize RabbitMQ executor.
+
+        :param str command: rabbitmq-server location
+        :param str host: host where rabbitmq will be accessible
+        :param int port: port under which rabbitmq runs
+        :param str rabbit_ctl: rabbitctl location
+        :param dict environ: rabbitmq configuration environment variables
+        :param kwargs: see TCPExecutor for description
+        """
+        super(RabbitMqExecutor, self).__init__(command, host, port, **kwargs)
+        self.rabbit_ctl = rabbit_ctl
+        self.env = environ
+
+    def set_environ(self):
+        for env, value in self.env.iteritems():
+            os.environ[env] = value
+
+    def start(self):
+        self.set_environ()
+        TCPExecutor.start(self)
+
+    def rabbitctl_output(self, *args):
+        """
+        Queries rabbitctl with args
+
+        :param list args: list of additional args to query
+        """
+        self.set_environ()
+        ctl_command = [self.rabbit_ctl]
+        ctl_command.extend(args)
+        return subprocess.check_output(ctl_command)
+
+    def list_exchanges(self):
+        """Get exchanges defined on given rabbitmq."""
+        exchanges = []
+        output = self.rabbitctl_output('list_exchanges')
+        for exchange in output.split('\n'):
+            parts = exchange.split('\t')
+            if len(parts) > 1 and parts[0]:
+                exchanges.append(parts[0])
+        return exchanges
+
+    def list_queues(self):
+        """Get queues defined on given rabbitmq."""
+        queues = []
+        output = self.rabbitctl_output('list_queues')
+        for queue in output.split('\n'):
+            parts = queue.split('\t')
+            if len(parts) > 1 and parts[0]:
+                queues.append(parts[0])
+        return queues
+
+
 def rabbit_env(name):
     """
     :param str name: name of environment variable
@@ -68,7 +129,7 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
         :returns pytest fixture with RabbitMQ process executor
     '''
 
-    @pytest.fixture
+    @pytest.fixture(scope='session')
     def rabbitmq_proc_fixture(request):
         """
         #. Get config.
@@ -104,61 +165,74 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
         rabbit_conf['RABBITMQ_MNESIA_BASE'] = str(mnesia)
         rabbit_conf['RABBITMQ_ENABLED_PLUGINS_FILE'] = str(tmpdir / 'plugins')
 
+        environ = {}
+
         for name, value in rabbit_conf.items():
             # for new versions of rabbitmq-server
-            os.environ[name] = value
+            environ[name] = value
             # for older versions of rabbitmq-server
             prefix, name = name.split('RABBITMQ_')
-            os.environ[name] = value
+            environ[name] = value
 
         config = get_config(request)
 
+        rabbit_ctl = rabbit_ctl_file or config.rabbit.rabbit_ctl
         rabbit_server = server or config.rabbit.rabbit_server
         rabbit_host = host or config.rabbit.host
         rabbit_port = port or config.rabbit.port
 
-        os.environ['RABBITMQ_NODE_PORT'] = str(rabbit_port)
-        os.environ['NODE_PORT'] = str(rabbit_port)
+        environ['RABBITMQ_NODE_PORT'] = str(rabbit_port)
+        environ['NODE_PORT'] = str(rabbit_port)
 
-        rabbit_executor = TCPExecutor(
+        rabbit_executor = RabbitMqExecutor(
             rabbit_server,
             rabbit_host,
             rabbit_port,
+            rabbit_ctl,
+            environ
         )
 
         request.addfinalizer(rabbit_executor.stop)
 
-        base_path = rabbit_path('RABBITMQ_MNESIA_BASE')
-
         if node_name:
             os.environ['RABBITMQ_NODENAME'] = node_name
 
-        rabbit_ctl = rabbit_ctl_file or config.rabbit.rabbit_ctl
-
         rabbit_executor.start()
-
-        # In the end we want to use `rabbitctl wait` command to be certain
-        # that our rabbitmq-server is really up and ready.
-        pid_file = base_path / rabbit_env('RABBITMQ_NODENAME') + '.pid'
-        wait_cmd = rabbit_ctl, '-q', 'wait', pid_file
-        subprocess.Popen(wait_cmd).communicate()
 
         return rabbit_executor
 
     return rabbitmq_proc_fixture
 
 
-def rabbitmq(process_fixture_name, host=None, port=None):
-    '''
-        Connects with RabbitMQ server
+def clear_rabbitmq(process, pika_connection):
+    """
+    Clear queues and exchanges from given rabbitmq process.
 
-        :param str process_fixture_name: name of RabbitMQ preocess variable
-                                         returned by rabbitmq_proc
-        :param str host: RabbitMQ server host
-        :param int port: RabbitMQ server port
+    :param RabbitMqExecutor process: rabbitmq process
+    :param pika.BlockingConnection pika_connection: connection to rabbitmq
 
-        :returns RabbitMQ connection
-    '''
+    """
+    channel = pika_connection.channel()
+    process.set_environ()
+
+    for exchange in process.list_exchanges():
+        channel.exchange_delete(exchange)
+
+    for queue in process.list_queues():
+        channel.queue_delete(queue)
+
+
+def rabbitmq(process_fixture_name, host=None, port=None, rabbit_ctl_file=None):
+    """
+    Connects with RabbitMQ server
+
+    :param str process_fixture_name: name of RabbitMQ preocess variable
+                                     returned by rabbitmq_proc
+    :param str host: RabbitMQ server host
+    :param int port: RabbitMQ server port
+
+    :returns RabbitMQ connection
+    """
 
     @pytest.fixture
     def rabbitmq_factory(request):
@@ -173,7 +247,7 @@ def rabbitmq(process_fixture_name, host=None, port=None):
         """
 
         # load required process fixture
-        request.getfuncargvalue(process_fixture_name)
+        process = request.getfuncargvalue(process_fixture_name)
 
         pika, config = try_import('pika', request)
 
@@ -188,6 +262,11 @@ def rabbitmq(process_fixture_name, host=None, port=None):
             rabbit_connection = pika.BlockingConnection(rabbit_params)
         except pika.adapters.blocking_connection.exceptions.ConnectionClosed:
             print "Be sure that you're connecting rabbitmq-server >= 2.8.4"
+
+        def finalizer():
+            clear_rabbitmq(process, rabbit_connection)
+
+        request.addfinalizer(finalizer)
 
         return rabbit_connection
 
