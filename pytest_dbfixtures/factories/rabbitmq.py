@@ -184,6 +184,9 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
         environ['RABBITMQ_NODE_PORT'] = str(rabbit_port)
         environ['NODE_PORT'] = str(rabbit_port)
 
+        if node_name:
+            environ['RABBITMQ_NODENAME'] = node_name
+
         rabbit_executor = RabbitMqExecutor(
             rabbit_server,
             rabbit_host,
@@ -193,9 +196,6 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
         )
 
         request.addfinalizer(rabbit_executor.stop)
-
-        if node_name:
-            os.environ['RABBITMQ_NODENAME'] = node_name
 
         rabbit_executor.start()
 
