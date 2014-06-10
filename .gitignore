@@ -41,6 +41,9 @@ nosetests.xml
 # redis logs
 *.log
 
+# erl dump:
+*.dump
+
 # pycharm files
 atlassian-ide-plugin.xml
 .idea/
