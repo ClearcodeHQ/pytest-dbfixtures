@@ -29,14 +29,12 @@ def test_rabbitmq_clear_exchanges(rabbitmq, rabbitmq_proc):
     channel = rabbitmq.channel()
     assert channel.is_open
 
-    # we need config envorionment for the correct process
+    # list exchanges
     no_exchanges = rabbitmq_proc.list_exchanges()
-    assert not no_exchanges
 
     # declare exchange and list exchanges afterwards
     channel.exchange_declare(exchange='cache-in')
     exchanges = rabbitmq_proc.list_exchanges()
-    assert len(exchanges) > 0
 
     # make sure it differs
     assert exchanges != no_exchanges
@@ -54,7 +52,7 @@ def test_rabbitmq_clear_queues(rabbitmq, rabbitmq_proc):
     channel = rabbitmq.channel()
     assert channel.is_open
 
-    # we need config envorionment for the correct process
+    # list queues
     no_queues = rabbitmq_proc.list_queues()
     assert not no_queues
 

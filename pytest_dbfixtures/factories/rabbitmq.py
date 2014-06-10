@@ -216,9 +216,31 @@ def clear_rabbitmq(process, pika_connection):
     process.set_environ()
 
     for exchange in process.list_exchanges():
+        if exchange.startswith('amq.'):
+            # ----------------------------------------------------------------
+            # From rabbit docs:
+            # https://www.rabbitmq.com/amqp-0-9-1-reference.html
+            # ----------------------------------------------------------------
+            # Exchange names starting with "amq." are reserved for pre-declared
+            # and standardised exchanges. The client MAY declare an exchange
+            # starting with "amq." if the passive option is set, or the
+            # exchange already exists. Error code: access-refused
+            # ----------------------------------------------------------------
+            continue
         channel.exchange_delete(exchange)
 
     for queue in process.list_queues():
+        if queue.startswith('amq.'):
+            # ----------------------------------------------------------------
+            # From rabbit docs:
+            # https://www.rabbitmq.com/amqp-0-9-1-reference.html
+            # ----------------------------------------------------------------
+            # Queue names starting with "amq." are reserved for pre-declared
+            # and standardised queues. The client MAY declare a queue starting
+            # with "amq." if the passive option is set, or the queue already
+            # exists. Error code: access-refused
+            # ----------------------------------------------------------------
+            continue
         channel.queue_delete(queue)
 
 
