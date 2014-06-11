@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+0.4.20
+------
+
+* RabbitMQ process fixture is session scoped
+* rabbitmq fixture factory accepts custom teardown
 
 
 0.4.19
