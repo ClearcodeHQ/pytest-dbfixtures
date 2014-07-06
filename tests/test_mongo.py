@@ -45,4 +45,4 @@ def test_third_mongo(mongodb, mongodb2, mongodb3):
 
 def test_mongo_proc(mongo_proc, mongo_proc2, mongo_proc3):
     for m in (mongo_proc, mongo_proc2, mongo_proc3):
-        assert path('/tmp/mongo.{port}.log'.format(port=m._port)).isfile()
+        assert path('/tmp/mongo.{port}.log'.format(port=m.port)).isfile()
