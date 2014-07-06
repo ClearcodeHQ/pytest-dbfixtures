@@ -16,17 +16,14 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
-from summon_process.executors import (
-    TCPCoordinatedExecutor,
-    HTTPCoordinatedExecutor,
-)
+from mirakuru import TCPExecutor, HTTPExecutor
 
 from pytest_dbfixtures.executors.extensions import ExtendedExecutor
 
 
-class TCPExecutor(ExtendedExecutor, TCPCoordinatedExecutor):
+class TCPExecutor(ExtendedExecutor, TCPExecutor):
     pass
 
 
-class HTTPExecutor(ExtendedExecutor, HTTPCoordinatedExecutor):
+class HTTPExecutor(ExtendedExecutor, HTTPExecutor):
     pass

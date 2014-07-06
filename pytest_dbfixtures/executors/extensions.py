@@ -18,13 +18,13 @@
 
 import time
 
-from summon_process.executors import SimpleExecutor
+from mirakuru import Executor
 
 
 DEFAULT_TIMEOUT = 60  # in seconds
 
 
-class StartTimeoutExecutor(SimpleExecutor):
+class StartTimeoutExecutor(Executor):
 
     def __init__(self, *args, **kwargs):
         '''
@@ -37,41 +37,15 @@ class StartTimeoutExecutor(SimpleExecutor):
         super(StartTimeoutExecutor, self).__init__(*args, **kwargs)
 
 
-class StopRunningExecutor(SimpleExecutor):
+class GentleKillingExecutor(Executor):
 
-    def stop(self, *args, **kwargs):
-        '''
-        Overrides original stop()'s method with a check if process
-        is still running because stopping already terminated process
-        ends with exception.
-        '''
-        if not self.running():
-            return
-        super(StopRunningExecutor, self).stop(*args, **kwargs)
-
-
-class StopWaitingExecutor(SimpleExecutor):
-
-    def stop(self, *args, **kwargs):
-        '''
-        Overrides original stop()'s method `wait` parameter.
-        :param int timeout: if True current process waits for subprocess
-                            actually exit  (default: True)
-        '''
-        if 'wait' not in kwargs:
-            kwargs['wait'] = True
-        super(StopWaitingExecutor, self).stop(*args, **kwargs)
-
-
-class GentleKillingExecutor(SimpleExecutor):
-
-    def kill(self, wait_for_exit=True, wait_for_kill=10):
+    def kill(self, wait=True, wait_for_kill=10):
         """
-        Overrides SimpleExecutor's `kill()` behaviour with a try of more
+        Overrides Executor's `kill()` behaviour with a try of more
         gentle terminating subprocess before killing it. Also now we wait
         for subprocess to exit by default.
 
-        :param bool wait_for_exit: set to `True` to wait (OS call)
+        :param bool wait: set to `True` to wait (OS call)
                               for the process to end. (default: True)
         :param int wait_for_kill: seconds to wait after terminate call
                                   failed and before we actually kill()
@@ -91,13 +65,12 @@ class GentleKillingExecutor(SimpleExecutor):
             break
 
         if not exited:
-            super(GentleKillingExecutor, self).kill(wait_for_exit)
+            super(GentleKillingExecutor, self).kill(wait)
             return
 
         self._process = None
         self._endtime = None
 
 
-class ExtendedExecutor(StartTimeoutExecutor, StopWaitingExecutor,
-                       GentleKillingExecutor, StopRunningExecutor):
+class ExtendedExecutor(StartTimeoutExecutor, GentleKillingExecutor):
     pass
