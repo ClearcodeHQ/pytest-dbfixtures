@@ -54,7 +54,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'pytest>=2.3.4',
-        'mirakuru>=0.1.0',
+        'mirakuru>=0.1.2',
         'pyaml>=3.10',
         'pymlconf>=0.2.10a',
         'path.py>=4.2',
