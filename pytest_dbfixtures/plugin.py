@@ -35,14 +35,6 @@ def pytest_addoption(parser):
     )
 
     parser.addoption(
-        '--mongo-config',
-        action='store',
-        default=ROOT_DIR / 'pytest_dbfixtures' / 'conf' / 'mongo.conf',
-        metavar='path',
-        dest='mongo_conf',
-    )
-
-    parser.addoption(
         '--redis-config',
         action='store',
         default=ROOT_DIR / 'pytest_dbfixtures' / 'conf' / 'redis.conf',
@@ -65,11 +57,6 @@ def pytest_load_initial_conftests(early_config, parser, args):
     if db_conf and not path(db_conf).isfile():
         raise ValueError(
             'argument passed to --dbfixtures-config is not a valid file path'
-        )
-    mongo_conf = early_config.getvalue('mongo_conf')
-    if mongo_conf and not path(mongo_conf).isfile():
-        raise ValueError(
-            'argument passed to --mongo-config is not a valid file path'
         )
     redis_conf = early_config.getvalue('redis_conf')
     if redis_conf and not path(redis_conf).isfile():
