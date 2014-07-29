@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+unreleased
+------
+
+* localized elasticsearch instance by default
+
 0.4.20
 ------
 
