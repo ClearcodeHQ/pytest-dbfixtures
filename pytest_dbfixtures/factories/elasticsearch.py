@@ -22,7 +22,9 @@ from pytest_dbfixtures.executors import HTTPExecutor
 from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
 
 
-def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None):
+def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
+                       network_publish_host='127.0.0.1',
+                       discovery_zen_ping_multicast_enabled=False):
     """
     Creates elasticsearch process fixture.
 
@@ -34,6 +36,11 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None):
     :param int port: port that the instance listens on
     :param str cluster_name: name of a cluser this node should work on.
         Used for autodiscovery. By default each node is in it's own cluser.
+    :param str network_publish_host: host to publish itself within cluser
+        http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-network.html
+    :param bool discovery_zen_ping_multicast_enabled: whether to enable or
+        disable host discovery
+        http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-discovery-zen.html
     """
     @pytest.fixture(scope='session')
     def elasticsearch_proc_fixture(request):
@@ -47,13 +54,17 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None):
         logs_path = '/tmp/elasticsearch_{0}_logs'.format(port)
         work_path = '/tmp/elasticsearch_{0}_tmp'.format(port)
         cluster = cluster_name or 'dbfixtures.{0}'.format(port)
+        multicast_enabled =\
+            'true' if discovery_zen_ping_multicast_enabled else 'false'
 
         command_exec = '''
             {deamon} -p {pidfile} -Des.http.port={port}
-            -Des.path.home={home_path}  -Des.default.path.logs={logs_path}
-            -Des.default.path.work={work_path}
-            -Des.default.path.conf=/etc/elasticsearch
-            -Des.cluster.name={cluster}
+            --path.home={home_path}  -Des.default.path.logs={logs_path}
+            --default.path.work={work_path}
+            --default.path.conf=/etc/elasticsearch
+            --cluster.name={cluster}
+            --network.publish_host='{network_publish_host}'
+            --discovery.zen.ping.multicast.enabled={multicast_enabled}
             '''.format(
             deamon=config.elasticsearch.deamon,
             pidfile=pidfile,
@@ -61,7 +72,10 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None):
             home_path=home_path,
             logs_path=logs_path,
             work_path=work_path,
-            cluster=cluster
+            cluster=cluster,
+            network_publish_host=network_publish_host,
+            multicast_enabled=multicast_enabled,
+
         )
 
         elasticsearch_executor = HTTPExecutor(
@@ -79,7 +93,7 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None):
     return elasticsearch_proc_fixture
 
 
-def elasticsearch(process_fixture_name, hosts='127.0.01:9201'):
+def elasticsearch(process_fixture_name, hosts='127.0.0.1:9201'):
     """
     Creates Elasticsearch client fixture.
 
