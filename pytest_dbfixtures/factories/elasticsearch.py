@@ -59,12 +59,12 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
 
         command_exec = '''
             {deamon} -p {pidfile} -Des.http.port={port}
-            -Des.path.home={home_path}  -Des.default.path.logs={logs_path}
-            -Des.default.path.work={work_path}
-            -Des.default.path.conf=/etc/elasticsearch
-            -Des.cluster.name={cluster}
-            -Des.network.publish_host='{network_publish_host}'
-            -Des.discovery.zen.ping.multicast.enabled={multicast_enabled}
+            --path.home={home_path}  -Des.default.path.logs={logs_path}
+            --default.path.work={work_path}
+            --default.path.conf=/etc/elasticsearch
+            --cluster.name={cluster}
+            --network.publish_host='{network_publish_host}'
+            --discovery.zen.ping.multicast.enabled={multicast_enabled}
             '''.format(
             deamon=config.elasticsearch.deamon,
             pidfile=pidfile,
