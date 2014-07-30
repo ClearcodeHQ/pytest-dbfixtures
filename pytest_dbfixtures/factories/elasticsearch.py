@@ -25,7 +25,8 @@ from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
 
 def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
                        network_publish_host='127.0.0.1',
-                       discovery_zen_ping_multicast_enabled=False):
+                       discovery_zen_ping_multicast_enabled=False,
+                       index_store_type='memory'):
     """
     Creates elasticsearch process fixture.
 
@@ -42,6 +43,8 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
     :param bool discovery_zen_ping_multicast_enabled: whether to enable or
         disable host discovery
         http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-discovery-zen.html
+    :param str index_store_type: index.store.type setting. *memory* by default
+        to speed up tests
     """
     @pytest.fixture(scope='session')
     def elasticsearch_proc_fixture(request):
@@ -66,6 +69,7 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
             --cluster.name={cluster}
             --network.publish_host='{network_publish_host}'
             --discovery.zen.ping.multicast.enabled={multicast_enabled}
+            --index.store.type={index_store_type}
             '''.format(
             deamon=config.elasticsearch.deamon,
             pidfile=pidfile,
@@ -76,6 +80,7 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
             cluster=cluster,
             network_publish_host=network_publish_host,
             multicast_enabled=multicast_enabled,
+            index_store_type=index_store_type
 
         )
 
