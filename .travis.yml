@@ -17,5 +17,6 @@ deploy:
     secure: DRWW+buXoDjLjMDCiUKnnWiCVLUaei6iQsUTwU/3+UOPgd2htzAHo59X7GhF49N6cYG98qXZNayeM+a4QkHFnSCyzwFvlqrPpwnuINQtb0Bucoh9jnjKFq1OwAjaTdKz61YlRq6qaSXEGOKka08CN9Aj2UIUz/lNgMkZjkFmAIQ=
   on:
     tags: true
+    all_branches: true
     repo: ClearcodeHQ/pytest-dbfixtures
   distributions: "sdist bdist_wheel"
