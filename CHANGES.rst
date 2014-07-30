@@ -4,6 +4,8 @@ CHANGES
 unreleased
 ------
 
+* remove elasticsearch home folder at process teardown
+* set elasticsearch index.store.type to memory by default
 * localized elasticsearch instance by default
 
 0.4.20
