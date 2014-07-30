@@ -69,7 +69,9 @@ setup(
         'pytest11': [
             'pytest_dbfixtures = pytest_dbfixtures.plugin'
         ]},
-    keywords='py.test pytest fixture redis mongo rabbitmq mysql postgresql',
+    keywords='tests py.test pytest fixture redis mongo mongodb'
+             ' rabbit rabbitmq mysql postgres postgresql'
+             ' elasticsearch',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
