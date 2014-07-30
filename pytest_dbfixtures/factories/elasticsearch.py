@@ -15,6 +15,7 @@
 
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
+import shutil
 
 import pytest
 
@@ -24,7 +25,8 @@ from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
 
 def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
                        network_publish_host='127.0.0.1',
-                       discovery_zen_ping_multicast_enabled=False):
+                       discovery_zen_ping_multicast_enabled=False,
+                       index_store_type='memory'):
     """
     Creates elasticsearch process fixture.
 
@@ -41,6 +43,8 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
     :param bool discovery_zen_ping_multicast_enabled: whether to enable or
         disable host discovery
         http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-discovery-zen.html
+    :param str index_store_type: index.store.type setting. *memory* by default
+        to speed up tests
     """
     @pytest.fixture(scope='session')
     def elasticsearch_proc_fixture(request):
@@ -58,13 +62,14 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
             'true' if discovery_zen_ping_multicast_enabled else 'false'
 
         command_exec = '''
-            {deamon} -p {pidfile} -Des.http.port={port}
-            --path.home={home_path}  -Des.default.path.logs={logs_path}
+            {deamon} -p {pidfile} --http.port={port}
+            --path.home={home_path}  --default.path.logs={logs_path}
             --default.path.work={work_path}
             --default.path.conf=/etc/elasticsearch
             --cluster.name={cluster}
             --network.publish_host='{network_publish_host}'
             --discovery.zen.ping.multicast.enabled={multicast_enabled}
+            --index.store.type={index_store_type}
             '''.format(
             deamon=config.elasticsearch.deamon,
             pidfile=pidfile,
@@ -75,6 +80,7 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
             cluster=cluster,
             network_publish_host=network_publish_host,
             multicast_enabled=multicast_enabled,
+            index_store_type=index_store_type
 
         )
 
@@ -87,7 +93,11 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
 
         elasticsearch_executor.start()
 
-        request.addfinalizer(elasticsearch_executor.stop)
+        def finalize_elasticsearch():
+            elasticsearch_executor.stop()
+            shutil.rmtree(home_path)
+
+        request.addfinalizer(finalize_elasticsearch)
         return elasticsearch_executor
 
     return elasticsearch_proc_fixture
