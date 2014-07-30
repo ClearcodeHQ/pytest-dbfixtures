@@ -15,6 +15,7 @@
 
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
+import shutil
 
 import pytest
 
@@ -58,8 +59,8 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
             'true' if discovery_zen_ping_multicast_enabled else 'false'
 
         command_exec = '''
-            {deamon} -p {pidfile} -Des.http.port={port}
-            --path.home={home_path}  -Des.default.path.logs={logs_path}
+            {deamon} -p {pidfile} --http.port={port}
+            --path.home={home_path}  --default.path.logs={logs_path}
             --default.path.work={work_path}
             --default.path.conf=/etc/elasticsearch
             --cluster.name={cluster}
@@ -87,7 +88,11 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
 
         elasticsearch_executor.start()
 
-        request.addfinalizer(elasticsearch_executor.stop)
+        def finalize_elasticsearch():
+            elasticsearch_executor.stop()
+            shutil.rmtree(home_path)
+
+        request.addfinalizer(finalize_elasticsearch)
         return elasticsearch_executor
 
     return elasticsearch_proc_fixture
