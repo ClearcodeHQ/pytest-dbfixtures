@@ -5,18 +5,18 @@ pytest-dbfixtures
     :target: https://travis-ci.org/ClearcodeHQ/pytest-dbfixtures
     :alt: Tests for pytest-dbfixtures
 
-.. image:: https://pypip.in/v/pytest-dbfixtures/badge.png?cache_buster=0.4.17
+.. image:: https://pypip.in/v/pytest-dbfixtures/badge.png?cache_buster=0.4.22
     :target: https://crate.io/packages/pytest-dbfixtures/
     :alt: Latest PyPI version
 
-.. image:: https://pypip.in/d/pytest-dbfixtures/badge.png?cache_buster=0.4.17
+.. image:: https://pypip.in/d/pytest-dbfixtures/badge.png?cache_buster=0.4.22
     :target: https://crate.io/packages/pytest-dbfixtures/
     :alt: Number of PyPI downloads
 
 Overview
 --------
 
-py.test clean fixtures for: ``mysql``, ``redis``, ``mongo``, ``rabbitmq``, ``postgresql`` and ``elasticsearch``.
+py.test clean fixtures for: ``postgresql``, ``mysql``, ``redis``, ``mongo``, ``elasticsearch`` and ``rabbitmq``.
 
 Starts specific database deamon and cleanup all data produced during tests.
 
