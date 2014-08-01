@@ -35,14 +35,6 @@ def pytest_addoption(parser):
     )
 
     parser.addoption(
-        '--mongo-config',
-        action='store',
-        default=ROOT_DIR / 'pytest_dbfixtures' / 'conf' / 'mongo.conf',
-        metavar='path',
-        dest='mongo_conf',
-    )
-
-    parser.addoption(
         '--redis-config',
         action='store',
         default=ROOT_DIR / 'pytest_dbfixtures' / 'conf' / 'redis.conf',
@@ -57,6 +49,25 @@ def pytest_addoption(parser):
         metavar='path',
         dest='rabbit_conf',
     )
+
+
+def pytest_load_initial_conftests(early_config, parser, args):
+    """Validate paths passed to py.test."""
+    db_conf = early_config.getvalue('db_conf')
+    if db_conf and not path(db_conf).isfile():
+        raise ValueError(
+            'argument passed to --dbfixtures-config is not a valid file path'
+        )
+    redis_conf = early_config.getvalue('redis_conf')
+    if redis_conf and not path(redis_conf).isfile():
+        raise ValueError(
+            'argument passed to --redis-config is not a valid file path'
+        )
+    rabbit_conf = early_config.getvalue('rabbit_conf')
+    if rabbit_conf and not path(rabbit_conf).isfile():
+        raise ValueError(
+            'argument passed to --rabbit-config is not a valid file path'
+        )
 
 
 redis_proc = factories.redis_proc()
