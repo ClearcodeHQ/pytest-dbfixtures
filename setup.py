@@ -61,9 +61,8 @@ setup(
     ],
     include_package_data=True,
     extras_require={
-        'documentation': [
-            "Sphinx",
-        ]
+        'documentation': ["Sphinx", ],
+        'tests': ['pytest-cov']
     },
     entry_points={
         'pytest11': [
