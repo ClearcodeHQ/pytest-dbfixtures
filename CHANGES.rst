@@ -1,8 +1,13 @@
 CHANGES
 =======
 
+0.4.22
+------
+
+* remove creating old RABBITMQ env variables
+
 0.4.21
--------
+------
 
 * remove elasticsearch home folder at process teardown
 * set elasticsearch index.store.type to memory by default
