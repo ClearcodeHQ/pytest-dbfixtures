@@ -1,10 +1,3 @@
-'''
-http://www.rabbitmq.com/configure.html
-RabbitMQ is configured by environment variables and unfortunately they
-have changed over time from 'bare' into the 'RABBITMQ_' prefixed ones.
-Following code should consider both versions.
-'''
-
 import os
 import subprocess
 from tempfile import mkdtemp
@@ -60,22 +53,24 @@ class RabbitMqExecutor(TCPExecutor):
         """Get exchanges defined on given rabbitmq."""
         exchanges = []
         output = self.rabbitctl_output('list_exchanges', 'name')
+        unwanted_exchanges = ['Listing exchanges ...', '...done.']
+
         for exchange in output.split('\n'):
-            if exchange in ['Listing exchanges ...', '...done.']:
-                continue
-            if exchange:
+            if exchange and exchange not in unwanted_exchanges:
                 exchanges.append(exchange)
+
         return exchanges
 
     def list_queues(self):
         """Get queues defined on given rabbitmq."""
         queues = []
         output = self.rabbitctl_output('list_queues', 'name')
+        unwanted_queues = ['Listing queues ...', '...done.']
+
         for queue in output.split('\n'):
-            if queue in ['Listing queues ...', '...done.']:
-                continue
-            if queue:
+            if queue and queue not in unwanted_queues:
                 queues.append(queue)
+
         return queues
 
 
@@ -85,8 +80,7 @@ def rabbit_env(name):
     :returns: value of rabbitmq's environment variable
     :rtype: str
     """
-    return os.environ.get(name) or \
-        os.environ.get(name.split('RABBITMQ_')[1])  # older versions of rabbit
+    return os.environ.get(name)
 
 
 def rabbit_path(name):
@@ -163,6 +157,7 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
 
         log = (tmpdir / 'log').makedirs_p()
         mnesia = (tmpdir / 'mnesia').makedirs_p()
+
         rabbit_conf['RABBITMQ_LOG_BASE'] = str(log)
         rabbit_conf['RABBITMQ_MNESIA_BASE'] = str(mnesia)
         rabbit_conf['RABBITMQ_ENABLED_PLUGINS_FILE'] = str(tmpdir / 'plugins')
@@ -171,9 +166,6 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
 
         for name, value in rabbit_conf.items():
             # for new versions of rabbitmq-server
-            environ[name] = value
-            # for older versions of rabbitmq-server
-            prefix, name = name.split('RABBITMQ_')
             environ[name] = value
 
         config = get_config(request)
@@ -184,7 +176,6 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
         rabbit_port = port or config.rabbit.port
 
         environ['RABBITMQ_NODE_PORT'] = str(rabbit_port)
-        environ['NODE_PORT'] = str(rabbit_port)
 
         if node_name:
             environ['RABBITMQ_NODENAME'] = node_name
@@ -251,8 +242,8 @@ def rabbitmq(
     """
     Connects with RabbitMQ server
 
-    :param str process_fixture_name: name of RabbitMQ preocess variable
-                                     returned by rabbitmq_proc
+    :param str process_fixture_name: name of RabbitMQ process variable
+        returned by rabbitmq_proc
     :param str host: RabbitMQ server host
     :param int port: RabbitMQ server port
     :param callable teardown: custom callable that clears rabbitmq
