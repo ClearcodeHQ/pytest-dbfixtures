@@ -2,13 +2,17 @@ language: python
 python:
 - '2.7'
 install:
-- python setup.py install
+- python setup.py develop
 - pip install pymongo redis pika MySQL-python psycopg2 elasticsearch pylama
+- "pip install pytest_dbfixtures[tests] coveralls"
 # manually install wheel for deployment
-- "pip install wheel --use-mirrors"
+- "pip install wheel"
 script:
-- py.test --showlocals --verbose tests
+- py.test --cov pytest_dbfixtures -lv tests
 - pylama
+after_success:
+    - coveralls
+
 deploy:
   provider: pypi
   user:
