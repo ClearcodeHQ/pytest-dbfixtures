@@ -15,8 +15,9 @@
 
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
-
+import os
 import time
+import signal
 
 from mirakuru import Executor
 
@@ -54,7 +55,7 @@ class GentleKillingExecutor(Executor):
         if not self.running():
             return
 
-        self.process.terminate()
+        os.killpg(self.process.pid, signal.SIGTERM)
 
         exited = False
         for x in xrange(wait_for_kill):
