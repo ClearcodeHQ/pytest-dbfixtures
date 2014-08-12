@@ -16,14 +16,14 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
-from mirakuru import TCPExecutor, HTTPExecutor
+import mirakuru
 
 from pytest_dbfixtures.executors.extensions import ExtendedExecutor
 
 
-class TCPExecutor(ExtendedExecutor, TCPExecutor):
+class TCPExecutor(ExtendedExecutor, mirakuru.TCPExecutor):
     pass
 
 
-class HTTPExecutor(ExtendedExecutor, HTTPExecutor):
+class HTTPExecutor(ExtendedExecutor, mirakuru.HTTPExecutor):
     pass
