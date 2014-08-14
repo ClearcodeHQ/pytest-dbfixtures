@@ -6,7 +6,8 @@ unreleased
 
 * Fix kill method (GentleKillingExecutor)
 
-0.4.22
+0.4.23
+-------
 ------
 
 * remove creating old RABBITMQ env variables
