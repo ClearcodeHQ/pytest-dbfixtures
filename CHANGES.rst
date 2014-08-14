@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+unreleased
+------
+
+* Fix kill method (GentleKillingExecutor)
+
 0.4.22
 ------
 
