@@ -15,8 +15,9 @@
 
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
-
+import os
 import time
+import signal
 
 from mirakuru import Executor
 
@@ -27,11 +28,11 @@ DEFAULT_TIMEOUT = 60  # in seconds
 class StartTimeoutExecutor(Executor):
 
     def __init__(self, *args, **kwargs):
-        '''
+        """
         Overrides original initializator's `timeout` parameter:
         :param int timeout: number of seconds to wait for process to start
                             (default: 60)
-        '''
+        """
         if kwargs.get('timeout') is None:
             kwargs['timeout'] = DEFAULT_TIMEOUT
         super(StartTimeoutExecutor, self).__init__(*args, **kwargs)
@@ -54,11 +55,11 @@ class GentleKillingExecutor(Executor):
         if not self.running():
             return
 
-        self._process.terminate()
+        os.killpg(self.process.pid, signal.SIGTERM)
 
         exited = False
         for x in xrange(wait_for_kill):
-            if self._process.poll() is None:
+            if self.process.poll() is None:
                 time.sleep(1)
                 continue
             exited = True
@@ -68,7 +69,7 @@ class GentleKillingExecutor(Executor):
             super(GentleKillingExecutor, self).kill(wait)
             return
 
-        self._process = None
+        self.process = None
         self._endtime = None
 
 
