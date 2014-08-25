@@ -1,6 +1,5 @@
 import os
 import subprocess
-from tempfile import mkdtemp
 
 import pytest
 from path import path
@@ -145,36 +144,27 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
         :returns: tcp executor of running rabbitmq-server
         """
 
-        rabbit_confpath = config_file or request.config.getvalue('rabbit_conf')
-        conf = open(rabbit_confpath).readlines()
-        rabbit_conf = dict(line[:-1].split('=') for line in conf)
-
-        tmpdir = path(mkdtemp(prefix='rabbitmq_pytest_fixture'))
-
-        def rm():
-            tmpdir.exists() and tmpdir.rmtree()
-        request.addfinalizer(rm)
-
-        log = (tmpdir / 'log').makedirs_p()
-        mnesia = (tmpdir / 'mnesia').makedirs_p()
-
-        rabbit_conf['RABBITMQ_LOG_BASE'] = str(log)
-        rabbit_conf['RABBITMQ_MNESIA_BASE'] = str(mnesia)
-        rabbit_conf['RABBITMQ_ENABLED_PLUGINS_FILE'] = str(tmpdir / 'plugins')
-
-        environ = {}
-
-        for name, value in rabbit_conf.items():
-            # for new versions of rabbitmq-server
-            environ[name] = value
-
         config = get_config(request)
+        rabbit_confpath = config_file or request.config.getvalue('rabbit_conf')
+
+        with open(rabbit_confpath) as configuration:
+            environ = dict(
+                line[:-1].split('=') for line in configuration.readlines()
+            )
 
         rabbit_ctl = rabbit_ctl_file or config.rabbit.rabbit_ctl
         rabbit_server = server or config.rabbit.rabbit_server
         rabbit_host = host or config.rabbit.host
         rabbit_port = port or config.rabbit.port
 
+        rabbit_path = path('/tmp/rabbitmq.{0}/'.format(rabbit_port))
+        rabbit_log = rabbit_path + 'log'
+        rabbit_mnesia = rabbit_path + 'mnesia'
+        rabbit_plugins = rabbit_path + 'plugins'
+
+        environ['RABBITMQ_LOG_BASE'] = rabbit_log
+        environ['RABBITMQ_MNESIA_BASE'] = rabbit_mnesia
+        environ['RABBITMQ_ENABLED_PLUGINS_FILE'] = rabbit_plugins
         environ['RABBITMQ_NODE_PORT'] = str(rabbit_port)
 
         if node_name:
