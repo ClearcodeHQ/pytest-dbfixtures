@@ -1,6 +1,18 @@
 CHANGES
 =======
 
+0.5.1
+-------
+
+* make rabbitmq logs persistent
+
+0.5.0
+------
+
+* update mirakuru to min 0.2
+* os.killpg to terminate process
+* add tests coverage on coveralls
+
 0.4.22
 ------
 
