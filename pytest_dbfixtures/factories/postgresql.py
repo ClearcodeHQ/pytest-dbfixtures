@@ -17,31 +17,17 @@
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import re
 import shutil
 import subprocess
 import time
 
 import pytest
 
-from pytest_dbfixtures.executors import TCPExecutor
+from pytest_dbfixtures.executors.postgresql import PostgreSQLExecutor
 from pytest_dbfixtures.utils import get_config, try_import
 
 
 START_INFO = 'database system is ready to accept connections'
-
-BASE_PROC_START_COMMAND = """
-{postgresql_ctl} start -D {datadir}
--o "-F -p {port} -c %s='{unixsocketdir}'"
--l {logfile} {startparams}"""
-
-PROC_START_COMMAND = {
-    '8.4': BASE_PROC_START_COMMAND % 'unix_socket_directory',
-    '9.0': BASE_PROC_START_COMMAND % 'unix_socket_directory',
-    '9.1': BASE_PROC_START_COMMAND % 'unix_socket_directory',
-    '9.2': BASE_PROC_START_COMMAND % 'unix_socket_directory',
-    '9.3': BASE_PROC_START_COMMAND % 'unix_socket_directories',
-}
 
 
 def wait_for_postgres(logfile, awaited_msg):
@@ -140,18 +126,6 @@ def drop_postgresql_database(psycopg2, user, host, port, db):
     conn.close()
 
 
-def postgresql_version(postgresql_ctl):
-    """
-    Detect postgresql version.
-
-    :return: minor version string
-    :rtype: str
-    """
-    version_string = subprocess.check_output([postgresql_ctl, '--version'])
-    matches = re.search('.* (?P<version>\d\.\d)\.\d', version_string)
-    return matches.groupdict()['version']
-
-
 def postgresql_proc(executable=None, host=None, port=None):
     """
     postgresql process factory.
@@ -195,18 +169,14 @@ def postgresql_proc(executable=None, host=None, port=None):
         init_postgresql_directory(
             postgresql_ctl, config.postgresql.user, datadir, logfile
         )
-        pg_version = postgresql_version(postgresql_ctl)
-        postgresql_executor = TCPExecutor(
-            PROC_START_COMMAND[pg_version].format(
-                postgresql_ctl=postgresql_ctl,
-                datadir=datadir,
-                port=pg_port,
-                unixsocketdir=config.postgresql.unixsocketdir,
-                logfile=logfile,
-                startparams=config.postgresql.startparams,
-            ),
+        postgresql_executor = PostgreSQLExecutor(
+            pg_ctl=postgresql_ctl,
             host=pg_host,
             port=pg_port,
+            datadir=datadir,
+            unixsocketdir=config.postgresql.unixsocketdir,
+            logfile=logfile,
+            startparams=config.postgresql.startparams,
         )
 
         def stop_server_and_remove_directory():
