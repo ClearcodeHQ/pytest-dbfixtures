@@ -49,21 +49,18 @@ def wait_for_postgres(logfile, awaited_msg):
         time.sleep(1)
 
 
-def remove_postgresql_directory(logfile, datadir):
+def remove_postgresql_directory(datadir):
     """
     Checks postgresql directory and logfile. Delete a logfile if exist.
     Recursively delete a directory tree if exist.
 
-    :param str logfile: logfile path
     :param str datadir: datadir path
     """
-    if os.path.isfile(logfile):
-        os.remove(logfile)
     if os.path.isdir(datadir):
         shutil.rmtree(datadir)
 
 
-def init_postgresql_directory(postgresql_ctl, user, datadir, logfile):
+def init_postgresql_directory(postgresql_ctl, user, datadir):
     """
     #. Remove postgresql directory if exist.
     #. `Initialize postgresql data directory
@@ -72,10 +69,9 @@ def init_postgresql_directory(postgresql_ctl, user, datadir, logfile):
     :param str postgresql_ctl: ctl path
     :param str user: postgresql username
     :param str datadir: datadir path
-    :param str logfile: logfile path
 
     """
-    remove_postgresql_directory(logfile, datadir)
+    remove_postgresql_directory(datadir)
     init_directory = (
         postgresql_ctl, 'initdb',
         '-o "--auth=trust --username=%s"' % user,
@@ -167,7 +163,7 @@ def postgresql_proc(executable=None, host=None, port=None):
         logfile = '/tmp/postgresql.{0}.log'.format(pg_port)
 
         init_postgresql_directory(
-            postgresql_ctl, config.postgresql.user, datadir, logfile
+            postgresql_ctl, config.postgresql.user, datadir
         )
         postgresql_executor = PostgreSQLExecutor(
             pg_ctl=postgresql_ctl,
@@ -180,18 +176,8 @@ def postgresql_proc(executable=None, host=None, port=None):
         )
 
         def stop_server_and_remove_directory():
-            subprocess.check_output(
-                '{postgresql_ctl} stop -D {datadir} '
-                '-o "-p {port} -c unix_socket_directory=\'{unixsocketdir}\'"'
-                .format(
-                    postgresql_ctl=postgresql_ctl,
-                    datadir=datadir,
-                    port=pg_port,
-                    unixsocketdir=config.postgresql.unixsocketdir
-                ),
-                shell=True)
             postgresql_executor.stop()
-            remove_postgresql_directory(logfile, datadir)
+            remove_postgresql_directory(datadir)
 
         request.addfinalizer(stop_server_and_remove_directory)
 
