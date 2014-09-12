@@ -275,7 +275,7 @@ def rabbitmq(
         try:
             rabbit_connection = pika.BlockingConnection(rabbit_params)
         except pika.adapters.blocking_connection.exceptions.ConnectionClosed:
-            print "Be sure that you're connecting rabbitmq-server >= 2.8.4"
+            print("Be sure that you're connecting rabbitmq-server >= 2.8.4")
 
         def finalizer():
             teardown(process, rabbit_connection)
