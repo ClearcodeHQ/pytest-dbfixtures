@@ -25,9 +25,14 @@ from pytest_dbfixtures.executors import TCPExecutor
 
 class PostgreSQLExecutor(TCPExecutor):
 
-    """PostgreSQL executor running on pg_ctl."""
+    """
+    PostgreSQL executor running on pg_ctl.
 
-    BASE_PROC_START_COMMAND = """{postgresql_ctl} start -D {datadir}
+    Based over an `pg_ctl program
+    <http://www.postgresql.org/docs/9.1/static/app-pg-ctl.html>`_
+    """
+
+    BASE_PROC_START_COMMAND = """{pg_ctl} start -D {datadir}
     -o "-F -p {port} -c %s='{unixsocketdir}'" -l {logfile} {startparams}"""
 
     PROC_START_COMMAND = {
@@ -58,11 +63,13 @@ class PostgreSQLExecutor(TCPExecutor):
         """
         self.pg_ctl = pg_ctl
         self.version = self.version()
+        self.datadir = datadir
+        self.unixsocketdir = unixsocketdir
         command = self.PROC_START_COMMAND[self.version].format(
-            postgresql_ctl=self.pg_ctl,
-            datadir=datadir,
+            pg_ctl=self.pg_ctl,
+            datadir=self.datadir,
             port=port,
-            unixsocketdir=unixsocketdir,
+            unixsocketdir=self.unixsocketdir,
             logfile=logfile,
             startparams=startparams,
         )
@@ -74,3 +81,25 @@ class PostgreSQLExecutor(TCPExecutor):
         version_string = subprocess.check_output([self.pg_ctl, '--version'])
         matches = re.search('.* (?P<version>\d\.\d)\.\d', version_string)
         return matches.groupdict()['version']
+
+    def running(self):
+        """Check if server is still running."""
+        output = subprocess.check_output(
+            '{pg_ctl} status -D {datadir}'.format(
+                pg_ctl=self.pg_ctl,
+                datadir=self.datadir
+            ),
+            shell=True
+        )
+        return "pg_ctl: server is running" in output
+
+    def stop(self):
+        """Issues a stop request to pg_ctl"""
+        subprocess.check_output(
+            '{pg_ctl} stop -D {datadir} -m f'.format(
+                pg_ctl=self.pg_ctl,
+                datadir=self.datadir,
+                port=self.port,
+                unixsocketdir=self.unixsocketdir
+            ),
+            shell=True)
