@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+unreleased
+-------
+
+* syntax fixes for python 3
+* moved postgresql starting code into it's own executor
+
 0.5.1
 -------
 
