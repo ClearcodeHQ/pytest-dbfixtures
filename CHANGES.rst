@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-unreleased
+0.5.2
 -------
 
 * syntax fixes for python 3
