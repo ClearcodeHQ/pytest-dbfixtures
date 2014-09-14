@@ -23,13 +23,14 @@ from pytest_dbfixtures import factories
 
 
 ROOT_DIR = path(__file__).parent.parent.abspath()
+CONF_DIR = ROOT_DIR / 'pytest_dbfixtures' / 'conf'
 
 
 def pytest_addoption(parser):
     parser.addoption(
         '--dbfixtures-config',
         action='store',
-        default=ROOT_DIR / 'pytest_dbfixtures' / 'conf' / 'dbfixtures.conf',
+        default=str(CONF_DIR / 'dbfixtures.conf'),
         metavar='path',
         dest='db_conf',
     )
@@ -37,7 +38,7 @@ def pytest_addoption(parser):
     parser.addoption(
         '--redis-config',
         action='store',
-        default=ROOT_DIR / 'pytest_dbfixtures' / 'conf' / 'redis.conf',
+        default=str(CONF_DIR / 'redis.conf'),
         metavar='path',
         dest='redis_conf',
     )
@@ -45,7 +46,7 @@ def pytest_addoption(parser):
     parser.addoption(
         '--rabbit-config',
         action='store',
-        default=ROOT_DIR / 'pytest_dbfixtures' / 'conf' / 'rabbit.conf',
+        default=str(CONF_DIR / 'rabbit.conf'),
         metavar='path',
         dest='rabbit_conf',
     )
