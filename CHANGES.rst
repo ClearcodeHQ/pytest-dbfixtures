@@ -1,11 +1,12 @@
 CHANGES
 =======
 
-unreleased
+0.5.2
 -------
 
 * syntax fixes for python 3
 * moved postgresql starting code into it's own executor
+* xdist distributed hosts testing bugfix (but xdist parallelization on one host won't work)
 
 0.5.1
 -------

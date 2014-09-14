@@ -1,15 +1,15 @@
 pytest-dbfixtures
 =================
 
-.. image:: https://travis-ci.org/ClearcodeHQ/pytest-dbfixtures.png?branch=master
+.. image:: https://travis-ci.org/ClearcodeHQ/pytest-dbfixtures.png?branch=master&cache_buster=0.5.2
     :target: https://travis-ci.org/ClearcodeHQ/pytest-dbfixtures
     :alt: Tests for pytest-dbfixtures
 
-.. image:: https://pypip.in/v/pytest-dbfixtures/badge.png?cache_buster=0.5
+.. image:: https://pypip.in/v/pytest-dbfixtures/badge.png?cache_buster=0.5.2
     :target: https://crate.io/packages/pytest-dbfixtures/
     :alt: Latest PyPI version
 
-.. image:: https://pypip.in/d/pytest-dbfixtures/badge.png?cache_buster=0.5
+.. image:: https://pypip.in/d/pytest-dbfixtures/badge.png?cache_buster=0.5.2
     :target: https://crate.io/packages/pytest-dbfixtures/
     :alt: Number of PyPI downloads
 
