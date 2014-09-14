@@ -62,7 +62,18 @@ setup(
     include_package_data=True,
     extras_require={
         'documentation': ["Sphinx", ],
-        'tests': ['pytest-cov']
+        'tests': [
+            'pytest-cov',
+            'pytest-xdist',
+            'coveralls',
+            'pylama',
+        ],
+        'mysql': ['MySQL-python'],
+        'postgresql': ['psycopg2'],
+        'mongodb': ['pymongo'],
+        'elasticsearch': ['elasticsearch'],
+        'redis': ['redis'],
+        'rabbitmq': ['pika'],
     },
     entry_points={
         'pytest11': [
