@@ -58,7 +58,7 @@ class GentleKillingExecutor(Executor):
         os.killpg(self.process.pid, signal.SIGTERM)
 
         exited = False
-        for x in xrange(wait_for_kill):
+        for x in range(wait_for_kill):
             if self.process.poll() is None:
                 time.sleep(1)
                 continue
