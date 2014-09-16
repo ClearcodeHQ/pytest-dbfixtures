@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+unreleased
+-------
+
+- replaced MySQLdb with it's mysqlclient - compatibility with python3
+- renamed mysqldb fixture to mysql to keep it consistent with other client fixtures.
+
 0.5.2
 -------
 
