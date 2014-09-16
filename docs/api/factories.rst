@@ -48,8 +48,8 @@ Mysql factories
         :special-members:
         :show-inheritance:
 
-    .. automodule:: pytest_dbfixtures.factories.mysqldb
-        :members: mysqldb
+    .. automodule:: pytest_dbfixtures.factories.mysql
+        :members: mysql
         :undoc-members:
         :private-members:
         :special-members:
