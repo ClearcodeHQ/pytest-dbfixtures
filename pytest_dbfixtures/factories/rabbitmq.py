@@ -30,8 +30,8 @@ class RabbitMqExecutor(TCPExecutor):
         self.env = environ
 
     def set_environ(self):
-        for env, value in self.env.iteritems():
-            os.environ[env] = value
+        """Update RabbitMQ enviroment variables for configuration."""
+        os.environ.update(self.env)
 
     def start(self):
         self.set_environ()
