@@ -78,7 +78,8 @@ class PostgreSQLExecutor(TCPExecutor):
 
     def version(self):
         """Detect postgresql version."""
-        version_string = subprocess.check_output([self.pg_ctl, '--version'])
+        version_string = subprocess.check_output(
+            [self.pg_ctl, '--version']).decode('utf-8')
         matches = re.search('.* (?P<version>\d\.\d)\.\d', version_string)
         return matches.groupdict()['version']
 
@@ -90,7 +91,7 @@ class PostgreSQLExecutor(TCPExecutor):
                 datadir=self.datadir
             ),
             shell=True
-        )
+        ).decode('utf-8')
         return "pg_ctl: server is running" in output
 
     def stop(self):
