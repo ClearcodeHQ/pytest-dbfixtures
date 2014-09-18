@@ -73,7 +73,7 @@ setup(
         'mongodb': ['pymongo'],
         'elasticsearch': ['elasticsearch'],
         'redis': ['redis'],
-        'rabbitmq': ['pika'],
+        'rabbitmq': ['rabbitpy'],
     },
     entry_points={
         'pytest11': [

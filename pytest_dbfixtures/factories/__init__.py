@@ -21,7 +21,8 @@ from pytest_dbfixtures.factories.redis import redis_proc, redisdb
 from pytest_dbfixtures.factories.postgresql import postgresql_proc, postgresql
 from pytest_dbfixtures.factories.mysql import mysql_proc
 from pytest_dbfixtures.factories.mysql_client import mysql
-from pytest_dbfixtures.factories.rabbitmq import rabbitmq, rabbitmq_proc
+from pytest_dbfixtures.factories.rabbitmq import rabbitmq_proc
+from pytest_dbfixtures.factories.rabbitmq_client import rabbitmq
 from pytest_dbfixtures.factories.mongo import mongodb, mongo_proc
 from pytest_dbfixtures.factories.elasticsearch import (
     elasticsearch,
