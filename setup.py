@@ -83,7 +83,7 @@ setup(
              ' rabbit rabbitmq mysql postgres postgresql'
              ' elasticsearch',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'Operating System :: POSIX',
         'Operating System :: MacOS :: MacOS X',
@@ -91,5 +91,8 @@ setup(
         'Topic :: Software Development :: Testing',
         'Topic :: Utilities',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7']
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+    ]
 )
