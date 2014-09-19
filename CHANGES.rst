@@ -4,8 +4,9 @@ CHANGES
 unreleased
 -------
 
-- replaced MySQLdb with it's mysqlclient - compatibility with python3
+- replaced MySQLdb with it's fork mysqlclient - compatibility with python3
 - renamed mysqldb fixture to mysql to keep it consistent with other client fixtures.
+- replaced pika with python 3 compatible rabbitpy
 
 0.5.2
 -------
