@@ -68,12 +68,12 @@ setup(
             'coveralls',
             'pylama',
         ],
-        'mysql': ['MySQL-python'],
+        'mysql': ['mysqlclient'],
         'postgresql': ['psycopg2'],
         'mongodb': ['pymongo'],
         'elasticsearch': ['elasticsearch'],
         'redis': ['redis'],
-        'rabbitmq': ['pika'],
+        'rabbitmq': ['rabbitpy'],
     },
     entry_points={
         'pytest11': [

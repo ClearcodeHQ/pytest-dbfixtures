@@ -1,6 +1,8 @@
 language: python
 python:
 - '2.7'
+- '3.3'
+- '3.4'
 install:
 - "python setup.py develop"
 - "pip install pytest_dbfixtures[mongodb,redis,rabbitmq,mysql,postgresql,elasticsearch,tests]"

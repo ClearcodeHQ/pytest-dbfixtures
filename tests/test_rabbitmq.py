@@ -1,10 +1,10 @@
 from pytest_dbfixtures import factories
-from pytest_dbfixtures.factories.rabbitmq import clear_rabbitmq
+from pytest_dbfixtures.factories.rabbitmq_client import clear_rabbitmq
 
 
 def test_rabbitmq(rabbitmq):
     channel = rabbitmq.channel()
-    assert channel.is_open
+    assert channel.state == channel.OPEN
 
 
 rabbitmq_proc2 = factories.rabbitmq_proc(port=5674, node_name='rabbitmqtest2')
@@ -15,25 +15,27 @@ def test_second_rabbitmq(rabbitmq, rabbitmq2):
 
     print('checking first channel')
     channel = rabbitmq.channel()
-    assert channel.is_open
+    assert channel.state == channel.OPEN
 
     print('checking second channel')
     channel2 = rabbitmq2.channel()
-    assert channel2.is_open
+    assert channel2.state == channel.OPEN
 
 
 def test_rabbitmq_clear_exchanges(rabbitmq, rabbitmq_proc):
     """
     Declare exchange, and clear it by clear_rabbitmq.
     """
+    from rabbitpy import Exchange
     channel = rabbitmq.channel()
-    assert channel.is_open
+    assert channel.state == channel.OPEN
 
     # list exchanges
     no_exchanges = rabbitmq_proc.list_exchanges()
 
     # declare exchange and list exchanges afterwards
-    channel.exchange_declare(exchange='cache-in')
+    exchange = Exchange(channel, 'cache-in')
+    exchange.declare()
     exchanges = rabbitmq_proc.list_exchanges()
 
     # make sure it differs
@@ -49,15 +51,17 @@ def test_rabbitmq_clear_queues(rabbitmq, rabbitmq_proc):
     """
     Declare queue, and clear it by clear_rabbitmq.
     """
+    from rabbitpy import Queue
     channel = rabbitmq.channel()
-    assert channel.is_open
+    assert channel.state == channel.OPEN
 
     # list queues
     no_queues = rabbitmq_proc.list_queues()
     assert not no_queues
 
     # declare queue, and get new output
-    channel.queue_declare(queue='fastlane')
+    queue = Queue(channel, 'fastlane')
+    queue.declare()
     queues = rabbitmq_proc.list_queues()
     assert len(queues) > 0
 

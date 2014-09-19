@@ -15,9 +15,11 @@
 
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
+import warnings
 
 
 from path import path
+import pytest
 
 from pytest_dbfixtures import factories
 
@@ -78,8 +80,28 @@ postgresql_proc = factories.postgresql_proc()
 postgresql = factories.postgresql('postgresql_proc')
 
 mysql_proc = factories.mysql_proc()
-mysqldb = factories.mysqldb('mysql_proc')
-mysqldb_session = factories.mysqldb('mysql_proc', scope='session')
+mysql = factories.mysql('mysql_proc')
+mysql_session = factories.mysql('mysql_proc', scope='session')
+
+
+@pytest.fixture
+def mysqldb(mysql):
+    warnings.warn(
+        '`mysqldb` fixture is deprecated. Please use `mysql` instead.',
+        DeprecationWarning,
+        2
+    )
+    return mysql
+
+
+@pytest.fixture(scope='session')
+def mysqldb_session(mysql_session):
+    warnings.warn(
+        '`mysqldb` fixture is deprecated. Please use `mysql` instead.',
+        DeprecationWarning,
+        2
+    )
+    return mysql_session
 
 elasticsearch_proc = factories.elasticsearch_proc()
 elasticsearch = factories.elasticsearch('elasticsearch_proc')

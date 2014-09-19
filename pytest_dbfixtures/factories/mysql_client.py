@@ -21,10 +21,10 @@ import pytest
 from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
 
 
-def mysqldb(process_fixture_name, scope=None,
-            user=None, passwd=None, db=None,
-            host=None, port=None,
-            charset='utf8', collation='utf8_general_ci'):
+def mysql(process_fixture_name, scope=None,
+          user=None, passwd=None, db=None,
+          host=None, port=None,
+          charset='utf8', collation='utf8_general_ci'):
     """
     Factory. Create connection to mysql. If you want you can give a scope,
     default is 'session'.
@@ -49,7 +49,7 @@ def mysqldb(process_fixture_name, scope=None,
     :param str collation: MySQL collation to use by default
         for *tests* database
 
-    :returns: function ``mysqldb_fixture`` with suit scope
+    :returns: function ``mysql_fixture`` with suit scope
     :rtype: func
     """
     if scope:
@@ -65,7 +65,7 @@ def mysqldb(process_fixture_name, scope=None,
         scope = 'function'
 
     @pytest.fixture(scope)
-    def mysqldb_fixture(request):
+    def mysql_fixture(request):
         """
         #. Get config.
         #. Try to import MySQLdb package.
@@ -91,7 +91,7 @@ def mysqldb(process_fixture_name, scope=None,
         unixsocket = '/tmp/mysql.{port}.sock'.format(port=mysql_port)
 
         MySQLdb, config = try_import(
-            'MySQLdb', request, pypi_package='MySQL-python'
+            'MySQLdb', request, pypi_package='mysqlclient'
         )
 
         mysql_conn = MySQLdb.connect(
@@ -119,4 +119,4 @@ def mysqldb(process_fixture_name, scope=None,
 
         return mysql_conn
 
-    return mysqldb_fixture
+    return mysql_fixture

@@ -39,14 +39,14 @@ MySQL
 
 .. sourcecode:: python
 
-    def test_using_mysql(mysqldb):
-        mysqldb.query("SELECT CURRENT_USER()")
+    def test_using_mysql(mysql):
+        mysql.query("SELECT CURRENT_USER()")
 
 
     @pytest.fixture(scope='session')
-    def some_session_fixture(mysqldb_session):
-        mysqldb_session.query("CREATE DATABASE xyz")
-        rows = mysqldb_session.query("USE xyz")
+    def some_session_fixture(mysql_session):
+        mysql_session.query("CREATE DATABASE xyz")
+        rows = mysql_session.query("USE xyz")
 
     # second database
     from pytest_dbfixtures import factories
@@ -55,22 +55,22 @@ MySQL
     species VARCHAR(20), sex CHAR(1), birth DATE, death DATE);'''
 
     mysql_proc2 = factories.mysql_proc(port=3308, params='--skip-sync-frm')
-    mysqldb2 = factories.mysqldb('mysql_proc2', port=3308)
+    mysql2 = factories.mysql('mysql_proc2', port=3308)
 
-    def test_mysql_newfixture(mysqldb, mysqldb2):
-        cursor = mysqldb.cursor()
+    def test_mysql_newfixture(mysql, mysql2):
+        cursor = mysql.cursor()
         cursor.execute(query)
-        mysqldb.commit()
+        mysql.commit()
         cursor.close()
 
-        cursor = mysqldb2.cursor()
+        cursor = mysql2.cursor()
         cursor.execute(query)
-        mysqldb2.commit()
+        mysql2.commit()
         cursor.close()
 
 
-Rabbit
-------
+RabbitMQ
+--------
 
 .. sourcecode:: python
 

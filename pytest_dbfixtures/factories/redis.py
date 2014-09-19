@@ -65,7 +65,8 @@ def redis_proc(executable=None, params=None, config_file=None,
             '''{redis_exec} {config}
             --pidfile {pidfile} --unixsocket {unixsocket}
             --dbfilename {dbfilename} --logfile {logfile}
-            --port {port} {params}'''.format(
+            --port {port} {params}'''
+            .format(
                 redis_exec=redis_exec,
                 params=redis_params,
                 config=redis_conf,
@@ -119,7 +120,8 @@ def redisdb(process_fixture_name, host=None, port=None, db=None):
         redis_port = port or config.redis.port
         redis_db = db or config.redis.db
 
-        redis_client = redis.Redis(redis_host, redis_port, redis_db)
+        redis_client = redis.Redis(
+            redis_host, redis_port, redis_db, decode_responses=True)
         request.addfinalizer(redis_client.flushall)
 
         return redis_client

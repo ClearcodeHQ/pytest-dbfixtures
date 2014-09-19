@@ -1,10 +1,29 @@
+# Copyright (C) 2014 by Clearcode <http://clearcode.cc>
+# and associates (see AUTHORS).
+
+# This file is part of pytest-dbfixtures.
+
+# pytest-dbfixtures is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# pytest-dbfixtures is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+
+# You should have received a copy of the GNU Lesser General Public License
+# along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
+"""RabbitMQ process fixture factory."""
+
 import os
 import subprocess
 
 import pytest
 from path import path
 
-from pytest_dbfixtures.utils import try_import, get_config
+from pytest_dbfixtures.utils import get_config
 from pytest_dbfixtures.executors import TCPExecutor
 
 
@@ -30,8 +49,8 @@ class RabbitMqExecutor(TCPExecutor):
         self.env = environ
 
     def set_environ(self):
-        for env, value in self.env.iteritems():
-            os.environ[env] = value
+        """Update RabbitMQ enviroment variables for configuration."""
+        os.environ.update(self.env)
 
     def start(self):
         self.set_environ()
@@ -46,7 +65,7 @@ class RabbitMqExecutor(TCPExecutor):
         self.set_environ()
         ctl_command = [self.rabbit_ctl]
         ctl_command.extend(args)
-        return subprocess.check_output(ctl_command)
+        return subprocess.check_output(ctl_command).decode('utf-8')
 
     def list_exchanges(self):
         """Get exchanges defined on given rabbitmq."""
@@ -185,103 +204,3 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
         return rabbit_executor
 
     return rabbitmq_proc_fixture
-
-
-def clear_rabbitmq(process, pika_connection):
-    """
-    Clear queues and exchanges from given rabbitmq process.
-
-    :param RabbitMqExecutor process: rabbitmq process
-    :param pika.BlockingConnection pika_connection: connection to rabbitmq
-
-    """
-    channel = pika_connection.channel()
-    process.set_environ()
-
-    for exchange in process.list_exchanges():
-        if exchange.startswith('amq.'):
-            # ----------------------------------------------------------------
-            # From rabbit docs:
-            # https://www.rabbitmq.com/amqp-0-9-1-reference.html
-            # ----------------------------------------------------------------
-            # Exchange names starting with "amq." are reserved for pre-declared
-            # and standardised exchanges. The client MAY declare an exchange
-            # starting with "amq." if the passive option is set, or the
-            # exchange already exists. Error code: access-refused
-            # ----------------------------------------------------------------
-            continue
-        channel.exchange_delete(exchange)
-
-    for queue in process.list_queues():
-        if queue.startswith('amq.'):
-            # ----------------------------------------------------------------
-            # From rabbit docs:
-            # https://www.rabbitmq.com/amqp-0-9-1-reference.html
-            # ----------------------------------------------------------------
-            # Queue names starting with "amq." are reserved for pre-declared
-            # and standardised queues. The client MAY declare a queue starting
-            # with "amq." if the passive option is set, or the queue already
-            # exists. Error code: access-refused
-            # ----------------------------------------------------------------
-            continue
-        channel.queue_delete(queue)
-
-
-def rabbitmq(
-        process_fixture_name, host=None, port=None, teardown=clear_rabbitmq):
-    """
-    Connects with RabbitMQ server
-
-    :param str process_fixture_name: name of RabbitMQ process variable
-        returned by rabbitmq_proc
-    :param str host: RabbitMQ server host
-    :param int port: RabbitMQ server port
-    :param callable teardown: custom callable that clears rabbitmq
-
-    .. note::
-
-        calls to rabbitmqctl might be as slow or even slower
-        as restarting process. To speed up, provide Your own teardown function,
-        to remove queues and exchanges of your choosing, without querying
-        rabbitmqctl underneath.
-
-    :returns RabbitMQ connection
-    """
-
-    @pytest.fixture
-    def rabbitmq_factory(request):
-        """
-        #. Get module and config.
-        #. Connect to RabbitMQ using the parameters from config.
-
-        :param TCPExecutor rabbitmq_proc: tcp executor
-        :param FixtureRequest request: fixture request object
-        :rtype: pika.adapters.blocking_connection.BlockingConnection
-        :returns: instance of :class:`BlockingConnection`
-        """
-
-        # load required process fixture
-        process = request.getfuncargvalue(process_fixture_name)
-
-        pika, config = try_import('pika', request)
-
-        rabbit_params = pika.connection.ConnectionParameters(
-            host=host or config.rabbit.host,
-            port=port or config.rabbit.port,
-            connection_attempts=3,
-            retry_delay=2,
-        )
-
-        try:
-            rabbit_connection = pika.BlockingConnection(rabbit_params)
-        except pika.adapters.blocking_connection.exceptions.ConnectionClosed:
-            print("Be sure that you're connecting rabbitmq-server >= 2.8.4")
-
-        def finalizer():
-            teardown(process, rabbit_connection)
-
-        request.addfinalizer(finalizer)
-
-        return rabbit_connection
-
-    return rabbitmq_factory

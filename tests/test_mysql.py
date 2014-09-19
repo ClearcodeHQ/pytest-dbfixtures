@@ -9,24 +9,24 @@ def test_proc(mysql_proc):
     pass
 
 
-def test_mysql(mysqldb):
-    cursor = mysqldb.cursor()
+def test_mysql(mysql):
+    cursor = mysql.cursor()
     cursor.execute(query)
-    mysqldb.commit()
+    mysql.commit()
     cursor.close()
 
 
 mysql_proc2 = factories.mysql_proc(port=3308, params='--skip-sync-frm')
-mysqldb2 = factories.mysqldb('mysql_proc2', port=3308)
+mysql2 = factories.mysql('mysql_proc2', port=3308)
 
 
-def test_mysql_newfixture(mysqldb, mysqldb2):
-    cursor = mysqldb.cursor()
+def test_mysql_newfixture(mysql, mysql2):
+    cursor = mysql.cursor()
     cursor.execute(query)
-    mysqldb.commit()
+    mysql.commit()
     cursor.close()
 
-    cursor = mysqldb2.cursor()
+    cursor = mysql2.cursor()
     cursor.execute(query)
-    mysqldb2.commit()
+    mysql2.commit()
     cursor.close()
