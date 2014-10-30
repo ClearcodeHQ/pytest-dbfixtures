@@ -81,7 +81,6 @@ postgresql = factories.postgresql('postgresql_proc')
 
 mysql_proc = factories.mysql_proc()
 mysql = factories.mysql('mysql_proc')
-mysql_session = factories.mysql('mysql_proc', scope='session')
 
 
 @pytest.fixture
@@ -92,16 +91,6 @@ def mysqldb(mysql):
         2
     )
     return mysql
-
-
-@pytest.fixture(scope='session')
-def mysqldb_session(mysql_session):
-    warnings.warn(
-        '`mysqldb` fixture is deprecated. Please use `mysql` instead.',
-        DeprecationWarning,
-        2
-    )
-    return mysql_session
 
 elasticsearch_proc = factories.elasticsearch_proc()
 elasticsearch = factories.elasticsearch('elasticsearch_proc')

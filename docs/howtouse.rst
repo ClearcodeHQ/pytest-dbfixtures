@@ -43,11 +43,6 @@ MySQL
         mysql.query("SELECT CURRENT_USER()")
 
 
-    @pytest.fixture(scope='session')
-    def some_session_fixture(mysql_session):
-        mysql_session.query("CREATE DATABASE xyz")
-        rows = mysql_session.query("USE xyz")
-
     # second database
     from pytest_dbfixtures import factories
 
