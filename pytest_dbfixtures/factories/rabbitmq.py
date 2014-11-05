@@ -75,7 +75,7 @@ class RabbitMqExecutor(TCPExecutor):
 
         for exchange in output.split('\n'):
             if exchange and exchange not in unwanted_exchanges:
-                exchanges.append(exchange)
+                exchanges.append(str(exchange))
 
         return exchanges
 
@@ -87,7 +87,7 @@ class RabbitMqExecutor(TCPExecutor):
 
         for queue in output.split('\n'):
             if queue and queue not in unwanted_queues:
-                queues.append(queue)
+                queues.append(str(queue))
 
         return queues
 
