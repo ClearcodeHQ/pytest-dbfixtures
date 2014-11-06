@@ -74,7 +74,7 @@ setup(
         'elasticsearch': ['elasticsearch'],
         'redis': ['redis'],
         'rabbitmq': ['rabbitpy'],
-        'deploy': ['bumpversion'], 
+        'deploy': ['bumpversion'],
     },
     entry_points={
         'pytest11': [
