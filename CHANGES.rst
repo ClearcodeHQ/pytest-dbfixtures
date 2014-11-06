@@ -8,6 +8,7 @@ unreleased
 - renamed mysqldb fixture to mysql to keep it consistent with other client fixtures.
 - replaced *pika* with python 3 compatible rabbitpy
 - removed deprecated mysqldb_session/mysql_session
+- bugfix of rabbitmq fixture: cast rabbitmq queues and exchanges to str due to pamq having problems
 
 0.5.2
 -------
