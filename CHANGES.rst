@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-unreleased
+0.5.3
 -------
 
 - replaced *MySQLdb* with it's fork *mysqlclient* - compatibility with python3
