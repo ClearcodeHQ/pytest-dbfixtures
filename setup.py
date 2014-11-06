@@ -61,7 +61,7 @@ setup(
     ],
     include_package_data=True,
     extras_require={
-        'documentation': ["Sphinx", ],
+        'documentation': ['Sphinx', ],
         'tests': [
             'pytest-cov',
             'pytest-xdist',
@@ -74,6 +74,7 @@ setup(
         'elasticsearch': ['elasticsearch'],
         'redis': ['redis'],
         'rabbitmq': ['rabbitpy'],
+        'deploy': ['bumpversion'], 
     },
     entry_points={
         'pytest11': [
