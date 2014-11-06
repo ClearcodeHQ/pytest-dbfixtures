@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-0.5.3
+0.6.0
 -------
 
 - replaced *MySQLdb* with it's fork *mysqlclient* - compatibility with python3
@@ -9,6 +9,7 @@ CHANGES
 - replaced *pika* with python 3 compatible rabbitpy
 - removed deprecated mysqldb_session/mysql_session
 - bugfix of rabbitmq fixture: cast rabbitmq queues and exchanges to str due to pamq having problems
+- internal changes: removed GentleKillingExecutor as mirakuru already implements same functionality
 
 0.5.2
 -------
