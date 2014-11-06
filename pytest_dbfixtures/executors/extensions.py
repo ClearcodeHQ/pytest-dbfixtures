@@ -15,9 +15,6 @@
 
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
-import os
-import time
-import signal
 
 from mirakuru import Executor
 
@@ -36,42 +33,3 @@ class StartTimeoutExecutor(Executor):
         if kwargs.get('timeout') is None:
             kwargs['timeout'] = DEFAULT_TIMEOUT
         super(StartTimeoutExecutor, self).__init__(*args, **kwargs)
-
-
-class GentleKillingExecutor(Executor):
-
-    def kill(self, wait=True, wait_for_kill=10):
-        """
-        Overrides Executor's `kill()` behaviour with a try of more
-        gentle terminating subprocess before killing it. Also now we wait
-        for subprocess to exit by default.
-
-        :param bool wait: set to `True` to wait (OS call)
-                              for the process to end. (default: True)
-        :param int wait_for_kill: seconds to wait after terminate call
-                                  failed and before we actually kill()
-                                  a subprocess. (default: 10)
-        """
-        if not self.running():
-            return
-
-        os.killpg(self.process.pid, signal.SIGTERM)
-
-        exited = False
-        for x in range(wait_for_kill):
-            if self.process.poll() is None:
-                time.sleep(1)
-                continue
-            exited = True
-            break
-
-        if not exited:
-            super(GentleKillingExecutor, self).kill(wait)
-            return
-
-        self.process = None
-        self._endtime = None
-
-
-class ExtendedExecutor(StartTimeoutExecutor, GentleKillingExecutor):
-    pass

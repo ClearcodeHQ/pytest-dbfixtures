@@ -21,12 +21,12 @@ from mirakuru import (
     HTTPExecutor as HTTPExecutorMirakuru,
 )
 
-from pytest_dbfixtures.executors.extensions import ExtendedExecutor
+from pytest_dbfixtures.executors.extensions import StartTimeoutExecutor
 
 
-class TCPExecutor(ExtendedExecutor, TCPExecutorMirakuru):
+class TCPExecutor(StartTimeoutExecutor, TCPExecutorMirakuru):
     pass
 
 
-class HTTPExecutor(ExtendedExecutor, HTTPExecutorMirakuru):
+class HTTPExecutor(StartTimeoutExecutor, HTTPExecutorMirakuru):
     pass
