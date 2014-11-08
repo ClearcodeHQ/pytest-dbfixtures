@@ -54,10 +54,11 @@ setup(
     packages=find_packages(),
     install_requires=[
         'pytest>=2.3.4',
-        'mirakuru>=0.2',
+        'mirakuru>=0.2',  # test executors helpers
         'pyaml>=3.10',
         'pymlconf>=0.2.10a',
         'path.py>=4.2',
+        'port-for>=0.3.1',  # needed for random port selection
     ],
     include_package_data=True,
     extras_require={

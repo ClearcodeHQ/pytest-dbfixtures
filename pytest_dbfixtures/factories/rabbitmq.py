@@ -24,6 +24,7 @@ import pytest
 from path import path
 
 from pytest_dbfixtures.utils import get_config
+from pytest_dbfixtures.port import get_port
 from pytest_dbfixtures.executors import TCPExecutor
 
 
@@ -135,7 +136,11 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
         :param str config_file: path to config file
         :param str server: path to rabbitmq-server command
         :param str host: server host
-        :param int port: server port
+        :param int|str port: exact server port (e.g. '8000')
+            or randomly selected port:
+                '?' - any random available port
+                '2000-3000' - random available port from a given range
+                '4002,4003' - random of 4002 or 4003 ports
         :param str node_name: RabbitMQ node name used for setting environment
                               variable RABBITMQ_NODENAME
         :param str rabbit_ctl_file: path to rabbitmqctl file
@@ -174,7 +179,7 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
         rabbit_ctl = rabbit_ctl_file or config.rabbit.rabbit_ctl
         rabbit_server = server or config.rabbit.rabbit_server
         rabbit_host = host or config.rabbit.host
-        rabbit_port = port or config.rabbit.port
+        rabbit_port = get_port(port or config.rabbit.port)
 
         rabbit_path = path('/tmp/rabbitmq.{0}/'.format(rabbit_port))
         rabbit_log = rabbit_path + 'log'

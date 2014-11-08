@@ -21,7 +21,6 @@ from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
 
 
 def mysql(process_fixture_name, user=None, passwd=None, db=None,
-          host=None, port=None,
           charset='utf8', collation='utf8_general_ci'):
     """
     Factory. Create connection to mysql. If you want you can give a scope,
@@ -32,11 +31,9 @@ def mysql(process_fixture_name, user=None, passwd=None, db=None,
     <https://dev.mysql.com/doc/refman/5.5/en/charset-database.html>`_
 
     :param str process_fixture_name: process fixture name
-    :param str host: hostname
     :param str user: mysql server user
     :param str passwd: mysql server's password
     :param str db: database's name
-    :param str port: port
     :param str charset: MySQL characterset to use by default
         for *tests* database
     :param str collation: MySQL collation to use by default
@@ -61,11 +58,11 @@ def mysql(process_fixture_name, user=None, passwd=None, db=None,
         :rtype: MySQLdb.connections.Connection
         :returns: connection to database
         """
-        get_process_fixture(request, process_fixture_name)
+        proc_fixture = get_process_fixture(request, process_fixture_name)
 
         config = get_config(request)
-        mysql_port = port or config.mysql.port
-        mysql_host = host or config.mysql.host
+        mysql_port = proc_fixture.port
+        mysql_host = proc_fixture.host
         mysql_user = user or config.mysql.user
         mysql_passwd = passwd or config.mysql.password
         mysql_db = db or config.mysql.db

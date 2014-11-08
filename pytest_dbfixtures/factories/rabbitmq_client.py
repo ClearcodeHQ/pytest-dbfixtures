@@ -65,15 +65,12 @@ def clear_rabbitmq(process, rabbitmq_connection):
         qu.delete()
 
 
-def rabbitmq(
-        process_fixture_name, host=None, port=None, teardown=clear_rabbitmq):
+def rabbitmq(process_fixture_name, teardown=clear_rabbitmq):
     """
     Connects with RabbitMQ server
 
     :param str process_fixture_name: name of RabbitMQ process variable
         returned by rabbitmq_proc
-    :param str host: RabbitMQ server host
-    :param int port: RabbitMQ server port
     :param callable teardown: custom callable that clears rabbitmq
 
     .. note::

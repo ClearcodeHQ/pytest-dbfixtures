@@ -17,7 +17,7 @@ Mongo
 
     from pytest_dbfixtures import factories
     mongo_proc2 = factories.mongo_proc(port=27070, params='--nojournal --noauth --nohttpinterface --noprealloc')
-    mongodb2 = factories.mongodb('mongo_proc2', port=27070)
+    mongodb2 = factories.mongodb('mongo_proc2')
 
     def test_second_mongo(mongodb, mongodb2):
         test_data_one = {
@@ -50,7 +50,7 @@ MySQL
     species VARCHAR(20), sex CHAR(1), birth DATE, death DATE);'''
 
     mysql_proc2 = factories.mysql_proc(port=3308, params='--skip-sync-frm')
-    mysql2 = factories.mysql('mysql_proc2', port=3308)
+    mysql2 = factories.mysql('mysql_proc2')
 
     def test_mysql_newfixture(mysql, mysql2):
         cursor = mysql.cursor()
@@ -84,7 +84,7 @@ Redis
     from pytest_dbfixtures import factories
 
     redis_proc2 = factories.redis_proc(port=6381)
-    redisdb2 = factories.redisdb('redis_proc2', port=6381)
+    redisdb2 = factories.redisdb('redis_proc2')
 
     def test_using_two_redis(redisdb, redisdb2):
         redisdb.set('woof1', 'woof1')
@@ -92,3 +92,20 @@ Redis
 
         woof1 = redisdb.get('woof1')
         woof2 = redisdb2.get('woof2')
+
+
+Random process port
+-------------------
+
+Instead of specifing precice port that process will be bound to you can pass '?' in port argument or specify port range e.g. '2000-3000' or comma-separated list or ranges e.g. '2000-3000,4000-4500,5000'. Library will randomly choose a port that is not used by any other application.
+
+.. sourcecode:: python
+
+    from pytest_dbfixtures import factories
+
+    redis_rand_proc = factories.redis_proc(port='?')
+    redisdb_rand = factories.redisdb('redis_rand_proc')
+
+    def test_using_random_ports(redisdb_rand, redisdb):
+        print redisdb_rand.port  # will print randomly selected redis port
+        print redisdb.port  # will print default redis port
