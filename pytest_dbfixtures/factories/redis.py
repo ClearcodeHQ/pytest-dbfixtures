@@ -96,6 +96,7 @@ def redisdb(process_fixture_name, host=None, port=None, db=None, strict=True):
     :param str host: hostname
     :param int port: port
     :param int db: number of database
+    :param bool strict: if true, uses StrictRedis client class
     :rtype: func
     :returns: function which makes a connection to redis
     """
