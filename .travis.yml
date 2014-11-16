@@ -9,7 +9,7 @@ install:
 # manually install wheel for deployment
 - "pip install wheel"
 script:
-- py.test -n 1 --showlocals --verbose --cov pytest_dbfixtures tests
+- py.test -n 1 --showlocals --verbose --cov pytest_dbfixtures tests -p no:dbfixtures
 - pylama
 after_success:
     - coveralls
