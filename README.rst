@@ -1,17 +1,44 @@
 pytest-dbfixtures
 =================
 
-.. image:: https://travis-ci.org/ClearcodeHQ/pytest-dbfixtures.png?branch=master&cache_buster=0.5.2
-    :target: https://travis-ci.org/ClearcodeHQ/pytest-dbfixtures
-    :alt: Tests for pytest-dbfixtures
-
-.. image:: https://pypip.in/v/pytest-dbfixtures/badge.png?cache_buster=0.5.2
-    :target: https://crate.io/packages/pytest-dbfixtures/
+.. image:: https://pypip.in/v/pytest-dbfixtures/badge.png
+    :target: https://pypi.python.org/pypi/pytest-dbfixtures/
     :alt: Latest PyPI version
 
-.. image:: https://pypip.in/d/pytest-dbfixtures/badge.png?cache_buster=0.5.2
-    :target: https://crate.io/packages/pytest-dbfixtures/
+.. image:: https://readthedocs.org/projects/pytest-dbfixtures/badge/?version=v0.6.0
+    :target: https://readthedocs.org/projects/pytest-dbfixtures/?badge=v0.6.0
+    :alt: Documentation Status
+
+.. image:: https://pypip.in/d/pytest-dbfixtures/badge.png
+    :target: https://pypi.python.org/pypi/pytest-dbfixtures/
     :alt: Number of PyPI downloads
+
+.. image:: https://pypip.in/wheel/pytest-dbfixtures/badge.png
+    :target: https://pypi.python.org/pypi/pytest-dbfixtures/
+    :alt: Wheel Status
+
+.. image:: https://pypip.in/egg/pytest-dbfixtures/badge.png
+    :target: https://pypi.python.org/pypi/pytest-dbfixtures/
+    :alt: Egg Status
+
+.. image:: https://pypip.in/license/pytest-dbfixtures/badge.png
+    :target: https://pypi.python.org/pypi/pytest-dbfixtures/
+    :alt: License
+
+Package status
+--------------
+
+.. image:: https://travis-ci.org/ClearcodeHQ/pytest-dbfixtures.svg?branch=v0.6.0
+    :target: https://travis-ci.org/ClearcodeHQ/pytest-dbfixtures
+    :alt: Tests
+
+.. image:: https://coveralls.io/repos/ClearcodeHQ/pytest-dbfixtures/badge.png?branch=v0.6.0
+    :target: https://coveralls.io/r/ClearcodeHQ/pytest-dbfixtures?branch=v0.6.0
+    :alt: Coverage Status
+
+.. image:: https://requires.io/github/ClearcodeHQ/pytest-dbfixtures/requirements.svg?tag=v0.6.0
+     :target: https://requires.io/github/ClearcodeHQ/pytest-dbfixtures/requirements/?tag=v0.6.0
+     :alt: Requirements Status
 
 Overview
 --------
