@@ -1,15 +1,14 @@
 CHANGES
 =======
 
-Unreleased
-----------
+0.7.0
+-----
 
 - redisdb fixture allows to specify client connection class
 - redisdb fixture uses now StrictRedis by default (backward incompatible)
 
 0.6.0
--------
--------
+-----
 
 - replaced *MySQLdb* with it's fork *mysqlclient* - compatibility with python3
 - renamed mysqldb fixture to mysql to keep it consistent with other client fixtures.
@@ -19,19 +18,19 @@ Unreleased
 - internal changes: removed GentleKillingExecutor as mirakuru already implements same functionality
 
 0.5.2
--------
+-----
 
 * syntax fixes for python 3
 * moved postgresql starting code into it's own executor
 * xdist distributed hosts testing bugfix (but xdist parallelization on one host won't work)
 
 0.5.1
--------
+-----
 
 * make rabbitmq logs persistent
 
 0.5.0
-------
+-----
 
 * update mirakuru to min 0.2
 * os.killpg to terminate process
