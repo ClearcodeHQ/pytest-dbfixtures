@@ -88,7 +88,7 @@ def redis_proc(executable=None, params=None, config_file=None,
     return redis_proc_fixture
 
 
-def redisdb(process_fixture_name, host=None, port=None, db=None):
+def redisdb(process_fixture_name, host=None, port=None, db=None, strict=True):
     """
     Redis database factory.
 
@@ -96,6 +96,7 @@ def redisdb(process_fixture_name, host=None, port=None, db=None):
     :param str host: hostname
     :param int port: port
     :param int db: number of database
+    :param bool strict: if true, uses StrictRedis client class
     :rtype: func
     :returns: function which makes a connection to redis
     """
@@ -119,8 +120,9 @@ def redisdb(process_fixture_name, host=None, port=None, db=None):
         redis_host = host or config.redis.host
         redis_port = port or config.redis.port
         redis_db = db or config.redis.db
+        redis_class = redis.StrictRedis if strict else redis.Redis
 
-        redis_client = redis.Redis(
+        redis_client = redis_class(
             redis_host, redis_port, redis_db, decode_responses=True)
         request.addfinalizer(redis_client.flushall)
 
