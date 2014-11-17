@@ -9,6 +9,7 @@ Unreleased
 
 0.6.0
 -------
+-------
 
 - replaced *MySQLdb* with it's fork *mysqlclient* - compatibility with python3
 - renamed mysqldb fixture to mysql to keep it consistent with other client fixtures.
