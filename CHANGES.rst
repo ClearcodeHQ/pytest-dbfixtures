@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+Unreleased
+----------
+
+- redisdb fixture allows to specify client connection class
+- redisdb fixture uses now StrictRedis by default (backward incompatible)
+
 0.6.0
 -------
 
