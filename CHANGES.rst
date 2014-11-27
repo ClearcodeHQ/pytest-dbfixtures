@@ -1,6 +1,15 @@
 CHANGES
 =======
 
+0.8.0
+-----
+
+- Feature: random ports selection
+  Adds a possibility of passing '?' in port= argument of process fixtures.
+- Removes 'port' from db fixtures
+- Fixes postgres missing host - previously using config.postgresql.unixsocketdir
+
+
 0.7.0
 -----
 
