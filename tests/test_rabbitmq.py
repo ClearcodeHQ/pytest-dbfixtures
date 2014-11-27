@@ -7,8 +7,8 @@ def test_rabbitmq(rabbitmq):
     assert channel.state == channel.OPEN
 
 
-rabbitmq_proc2 = factories.rabbitmq_proc(port=5674, node_name='rabbitmqtest2')
-rabbitmq2 = factories.rabbitmq('rabbitmq_proc2', port=5674)
+rabbitmq_proc2 = factories.rabbitmq_proc(port=5674, node_name='test2')
+rabbitmq2 = factories.rabbitmq('rabbitmq_proc2')
 
 
 def test_second_rabbitmq(rabbitmq, rabbitmq2):
@@ -72,3 +72,13 @@ def test_rabbitmq_clear_queues(rabbitmq, rabbitmq_proc):
     # list_queues again and make sure it's empty
     cleared_queues = rabbitmq_proc.list_queues()
     assert no_queues == cleared_queues
+
+
+rabbitmq_rand_proc = factories.rabbitmq_proc(port='?', node_name='test3')
+rabbitmq_rand = factories.rabbitmq('rabbitmq_rand_proc')
+
+
+def test_random_port(rabbitmq_rand):
+    """Tests if rabbit fixture can be started on random port"""
+    channel = rabbitmq_rand.channel()
+    assert channel.state == channel.OPEN

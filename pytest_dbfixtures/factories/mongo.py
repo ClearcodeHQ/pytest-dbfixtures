@@ -22,6 +22,7 @@ from path import path
 from tempfile import mkdtemp
 
 from pytest_dbfixtures.executors import TCPExecutor
+from pytest_dbfixtures.port import get_port
 from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
 
 
@@ -32,7 +33,11 @@ def mongo_proc(executable=None, params=None, host=None, port=None):
     :param str executable: path to mongod
     :param str params: params
     :param str host: hostname
-    :param str port: port
+    :param str port: exact port (e.g. '8000')
+        or randomly selected port:
+            '?' - any random available port
+            '2000-3000' - random available port from a given range
+            '4002,4003' - random of 4002 or 4003 ports
     :rtype: func
     :returns: function which makes a mongo process
     """
@@ -62,7 +67,7 @@ def mongo_proc(executable=None, params=None, host=None, port=None):
         mongo_params = params or config.mongo.params
 
         mongo_host = host or config.mongo.host
-        mongo_port = port or config.mongo.port
+        mongo_port = get_port(port or config.mongo.port)
 
         mongo_logpath = '/tmp/mongo.{port}.log'.format(port=mongo_port)
 
@@ -87,14 +92,11 @@ def mongo_proc(executable=None, params=None, host=None, port=None):
     return mongo_proc_fixture
 
 
-def mongodb(process_fixture_name, host=None, port=None):
+def mongodb(process_fixture_name):
     """
     Mongo database factory.
 
     :param str process_fixture_name: name of the process fixture
-    :param str host: hostname
-    :param int port: port
-    :param int db: number of database
     :rtype: func
     :returns: function which makes a connection to mongo
     """
@@ -110,12 +112,12 @@ def mongodb(process_fixture_name, host=None, port=None):
         :rtype: pymongo.connection.Connection
         :returns: connection to mongo database
         """
-        get_process_fixture(request, process_fixture_name)
+        proc_fixture = get_process_fixture(request, process_fixture_name)
 
         pymongo, config = try_import('pymongo', request)
 
-        mongo_host = host or config.mongo.host
-        mongo_port = port or config.mongo.port
+        mongo_host = proc_fixture.host
+        mongo_port = proc_fixture.port
 
         mongo_conn = pymongo.Connection(
             mongo_host,

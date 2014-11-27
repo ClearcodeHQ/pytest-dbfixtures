@@ -23,6 +23,7 @@ import subprocess
 import pytest
 
 from pytest_dbfixtures.executors import TCPExecutor
+from pytest_dbfixtures.port import get_port
 from pytest_dbfixtures.utils import get_config
 
 
@@ -65,8 +66,12 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
     :param str admin_executable: path to mysql_admin executable
     :param str init_executable: path to mysql_init executable
     :param str host: hostname
-    :param str port: port
-
+    :param str port: exact port (e.g. '8000')
+        or randomly selected port:
+            '?' - any random available port
+            '2000-3000' - random available port from a given range
+            '4002,4003' - random of 4002 or 4003 ports
+    :param str params: additional command-line mysqld parameters
     :rtype: func
     :returns: function which makes a redis process
 
@@ -91,7 +96,7 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
         mysql_exec = executable or config.mysql.mysql_server
         mysql_admin_exec = admin_executable or config.mysql.mysql_admin
         mysql_init = init_executable or config.mysql.mysql_init
-        mysql_port = port or config.mysql.port
+        mysql_port = get_port(port or config.mysql.port)
         mysql_host = host or config.mysql.host
         mysql_params = params or config.mysql.params
 

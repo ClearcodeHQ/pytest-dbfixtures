@@ -13,11 +13,13 @@ def test_mongo(mongodb):
     assert db.test.find_one()['test1'] == 'test1'
 
 
-mongo_proc2 = factories.mongo_proc(port=27070, params='--nojournal --noauth --nohttpinterface --noprealloc')  # noqa
-mongodb2 = factories.mongodb('mongo_proc2', port=27070)
+mongo_params = '--nojournal --noauth --nohttpinterface --noprealloc'
 
-mongo_proc3 = factories.mongo_proc(port=27071, params='--nojournal --noauth --nohttpinterface --noprealloc')  # noqa
-mongodb3 = factories.mongodb('mongo_proc3', port=27071)
+mongo_proc2 = factories.mongo_proc(port=27070, params=mongo_params)
+mongodb2 = factories.mongodb('mongo_proc2')
+
+mongo_proc3 = factories.mongo_proc(port=27071, params=mongo_params)
+mongodb3 = factories.mongodb('mongo_proc3')
 
 
 def test_third_mongo(mongodb, mongodb2, mongodb3):
@@ -46,3 +48,12 @@ def test_third_mongo(mongodb, mongodb2, mongodb3):
 def test_mongo_proc(mongo_proc, mongo_proc2, mongo_proc3):
     for m in (mongo_proc, mongo_proc2, mongo_proc3):
         assert path('/tmp/mongo.{port}.log'.format(port=m.port)).isfile()
+
+
+mongo_proc_rand = factories.mongo_proc(port='?', params=mongo_params)
+mongodb_rand = factories.mongodb('mongo_proc_rand')
+
+
+def test_random_port(mongodb_rand):
+    """Tests if mongo fixture can be started on random port"""
+    assert mongodb_rand.alive() is True

@@ -24,6 +24,7 @@ import time
 import pytest
 
 from pytest_dbfixtures.executors.postgresql import PostgreSQLExecutor
+from pytest_dbfixtures.port import get_port
 from pytest_dbfixtures.utils import get_config, try_import
 
 
@@ -128,7 +129,11 @@ def postgresql_proc(executable=None, host=None, port=None):
 
     :param str executable: path to postgresql_ctl
     :param str host: hostname
-    :param str port: port
+    :param str port: exact port (e.g. '8000')
+        or randomly selected port:
+            '?' - any random available port
+            '2000-3000' - random available port from a given range
+            '4002,4003' - random of 4002 or 4003 ports
     :rtype: func
     :returns: function which makes a postgresql process
     """
@@ -158,7 +163,7 @@ def postgresql_proc(executable=None, host=None, port=None):
             postgresql_ctl = os.path.join(pg_bindir, 'pg_ctl')
 
         pg_host = host or config.postgresql.host
-        pg_port = port or config.postgresql.port
+        pg_port = get_port(port or config.postgresql.port)
         datadir = '/tmp/postgresqldata.{0}'.format(pg_port)
         logfile = '/tmp/postgresql.{0}.log'.format(pg_port)
 
@@ -191,13 +196,11 @@ def postgresql_proc(executable=None, host=None, port=None):
     return postgresql_proc_fixture
 
 
-def postgresql(process_fixture_name, host=None, port=None, db=None):
+def postgresql(process_fixture_name, db=None):
     """
     postgresql database factory.
 
     :param str process_fixture_name: name of the process fixture
-    :param str host: hostname
-    :param int port: port
     :param int db: database name
     :rtype: func
     :returns: function which makes a connection to postgresql
@@ -215,11 +218,11 @@ def postgresql(process_fixture_name, host=None, port=None, db=None):
         :rtype: psycopg2.connection
         :returns: postgresql client
         """
-        request.getfuncargvalue(process_fixture_name)
+        proc_fixture = request.getfuncargvalue(process_fixture_name)
 
         psycopg2, config = try_import('psycopg2', request)
-        pg_host = host or config.postgresql.unixsocketdir
-        pg_port = port or config.postgresql.port
+        pg_host = proc_fixture.host
+        pg_port = proc_fixture.port
         pg_db = db or config.postgresql.db
 
         init_postgresql_database(

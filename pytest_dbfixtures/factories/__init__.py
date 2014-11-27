@@ -36,5 +36,5 @@ __all__ = [
     mysql_proc, mysql,
     rabbitmq, rabbitmq_proc,
     mongodb, mongo_proc,
-    elasticsearch_proc, elasticsearch
+    elasticsearch_proc, elasticsearch,
 ]

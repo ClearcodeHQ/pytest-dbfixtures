@@ -21,6 +21,7 @@ import pytest
 
 from pytest_dbfixtures.executors import TCPExecutor
 from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
+from pytest_dbfixtures.port import get_port
 
 
 def redis_proc(executable=None, params=None, config_file=None,
@@ -32,7 +33,11 @@ def redis_proc(executable=None, params=None, config_file=None,
     :param str params: params
     :param str config_file: path to config file
     :param str host: hostname
-    :param str port: port
+    :param str port: exact port (e.g. '8000')
+        or randomly selected port:
+            '?' - any random available port
+            '2000-3000' - random available port from a given range
+            '4002,4003' - random of 4002 or 4003 ports
     :rtype: func
     :returns: function which makes a redis process
     """
@@ -54,7 +59,7 @@ def redis_proc(executable=None, params=None, config_file=None,
         redis_params = params or config.redis.params
         redis_conf = config_file or request.config.getvalue('redis_conf')
         redis_host = host or config.redis.host
-        redis_port = port or config.redis.port
+        redis_port = get_port(port or config.redis.port)
 
         pidfile = 'redis-server.{port}.pid'.format(port=redis_port)
         unixsocket = 'redis.{port}.sock'.format(port=redis_port)
@@ -88,13 +93,11 @@ def redis_proc(executable=None, params=None, config_file=None,
     return redis_proc_fixture
 
 
-def redisdb(process_fixture_name, host=None, port=None, db=None, strict=True):
+def redisdb(process_fixture_name, db=None, strict=True):
     """
     Redis database factory.
 
     :param str process_fixture_name: name of the process fixture
-    :param str host: hostname
-    :param int port: port
     :param int db: number of database
     :param bool strict: if true, uses StrictRedis client class
     :rtype: func
@@ -113,12 +116,12 @@ def redisdb(process_fixture_name, host=None, port=None, db=None, strict=True):
         :rtype: redis.client.Redis
         :returns: Redis client
         """
-        get_process_fixture(request, process_fixture_name)
+        proc_fixture = get_process_fixture(request, process_fixture_name)
 
         redis, config = try_import('redis', request)
 
-        redis_host = host or config.redis.host
-        redis_port = port or config.redis.port
+        redis_host = proc_fixture.host
+        redis_port = proc_fixture.port
         redis_db = db or config.redis.db
         redis_class = redis.StrictRedis if strict else redis.Redis
 

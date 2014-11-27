@@ -21,6 +21,7 @@ import pytest
 
 from pytest_dbfixtures.executors import HTTPExecutor
 from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
+from pytest_dbfixtures.port import get_port
 
 
 def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
@@ -35,7 +36,11 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
         This fixture requires at least version 1.0 of elasticsearch to work.
 
     :param str host: host that the instance listens on
-    :param int port: port that the instance listens on
+    :param int|str port: exact port that the instance listens on (e.g. 8000),
+        or randomly selected port:
+            '?' - any random available port
+            '2000-3000' - random available port from a given range
+            '4002,4003' - random of 4002 or 4003 ports
     :param str cluster_name: name of a cluser this node should work on.
         Used for autodiscovery. By default each node is in it's own cluser.
     :param str network_publish_host: host to publish itself within cluser
@@ -52,14 +57,14 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
         Elasticsearch process starting fixture.
         """
         config = get_config(request)
+        elasticsearch_port = get_port(port)
 
-        pidfile = '/tmp/elasticsearch.{0}.pid'.format(port)
-        home_path = '/tmp/elasticsearch_{0}'.format(port)
-        logs_path = '/tmp/elasticsearch_{0}_logs'.format(port)
-        work_path = '/tmp/elasticsearch_{0}_tmp'.format(port)
-        cluster = cluster_name or 'dbfixtures.{0}'.format(port)
-        multicast_enabled =\
-            'true' if discovery_zen_ping_multicast_enabled else 'false'
+        pidfile = '/tmp/elasticsearch.{0}.pid'.format(elasticsearch_port)
+        home_path = '/tmp/elasticsearch_{0}'.format(elasticsearch_port)
+        logs_path = '/tmp/elasticsearch_{0}_logs'.format(elasticsearch_port)
+        work_path = '/tmp/elasticsearch_{0}_tmp'.format(elasticsearch_port)
+        cluster = cluster_name or 'dbfixtures.{0}'.format(elasticsearch_port)
+        multicast_enabled = str(discovery_zen_ping_multicast_enabled).lower()
 
         command_exec = '''
             {deamon} -p {pidfile} --http.port={port}
@@ -73,7 +78,7 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
             '''.format(
             deamon=config.elasticsearch.deamon,
             pidfile=pidfile,
-            port=port,
+            port=elasticsearch_port,
             home_path=home_path,
             logs_path=logs_path,
             work_path=work_path,
@@ -87,7 +92,7 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
         elasticsearch_executor = HTTPExecutor(
             command_exec, 'http://{host}:{port}'.format(
                 host=host,
-                port=port
+                port=elasticsearch_port
             ),
         )
 
@@ -103,20 +108,20 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
     return elasticsearch_proc_fixture
 
 
-def elasticsearch(process_fixture_name, hosts='127.0.0.1:9201'):
+def elasticsearch(process_fixture_name):
     """
     Creates Elasticsearch client fixture.
 
     :param str process_fixture_name: elasticsearch process fixture name
-    :param hosts: elasticsearch hosts list. See
-        http://elasticsearch-py.readthedocs.org/en/master/api.html#elasticsearch.Elasticsearch for details. # noqa
     """
 
     @pytest.fixture
     def elasticsearch_fixture(request):
         """Elasticsearch client fixture."""
 
-        get_process_fixture(request, process_fixture_name)
+        proc_fixture = get_process_fixture(request, process_fixture_name)
+
+        hosts = '%s:%s' % (proc_fixture.host, proc_fixture.port)
 
         elasticsearch, _ = try_import('elasticsearch', request)
 
