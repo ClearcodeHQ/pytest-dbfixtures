@@ -1,7 +1,8 @@
 CHANGES
 =======
 
-0.7.0
+0.8.0
+-------
 -----
 
 - redisdb fixture allows to specify client connection class
