@@ -97,7 +97,7 @@ Redis
 Random process port
 -------------------
 
-Instead of specifing precice port that process will be bound to you can pass '?' in port argument or specify port range e.g. '2000-3000' or comma-separated list or ranges e.g. '2000-3000,4000-4500,5000'. Library will randomly choose a port that is not used by any other application.
+Instead of specifing precise port that process will be bound to you can pass '?' in port argument or specify port range e.g. '2000-3000' or comma-separated list or ranges e.g. '2000-3000,4000-4500,5000'. Library will randomly choose a port that is not used by any other application.
 
 .. sourcecode:: python
 
