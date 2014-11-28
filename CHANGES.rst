@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-0.8.0
+0.8.1
 -----
 
 - Feature: random ports selection
