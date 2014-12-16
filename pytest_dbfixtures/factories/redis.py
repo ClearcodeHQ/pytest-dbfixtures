@@ -15,13 +15,18 @@
 
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
-
-
 import pytest
+import os
 
 from pytest_dbfixtures.executors import TCPExecutor
-from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
+from pytest_dbfixtures.utils import get_config, try_import,\
+    get_process_fixture, extract_version, compare_version
 from pytest_dbfixtures.port import get_port
+
+REQUIRED_VERSION = '2.6'
+"""
+Minimum required version of redis that is accepted by pytest-dbfixtures.
+"""
 
 
 def redis_proc(executable=None, params=None, config_file=None,
@@ -84,8 +89,17 @@ def redis_proc(executable=None, params=None, config_file=None,
             host=redis_host,
             port=redis_port,
         )
+        redis_version = extract_version(
+            os.popen('{0} --version'.format(redis_exec)).read()
+        )
+        cv_result = compare_version(redis_version, REQUIRED_VERSION)
+        if redis_version and cv_result < 0:
+            raise RedisUnsupported(
+                'Your version of Redis is not supported. '
+                'Consider updating to Redis {0} at least. '
+                'The currently installed version of Redis: {1}.'
+                .format(REQUIRED_VERSION, redis_version))
         redis_executor.start()
-
         request.addfinalizer(redis_executor.stop)
 
         return redis_executor
@@ -132,6 +146,10 @@ def redisdb(process_fixture_name, db=None, strict=True):
         return redis_client
 
     return redisdb_factory
+
+
+class RedisUnsupported(Exception):
+    pass
 
 
 __all__ = [redisdb, redis_proc]
