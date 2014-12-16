@@ -17,6 +17,7 @@
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
 import importlib
+import re
 
 from pymlconf import ConfigManager
 
@@ -73,3 +74,38 @@ def get_process_fixture(request, process_name):
     if not process.running():
         process.start()
     return process
+
+
+def compare_version(version1, version2):
+    """
+    This function compares two version numbers.
+
+    :param str version1: first version to compare
+    :param str version2: second version to compare
+    :rtype: int
+    :returns: return value is negative if version1 < version2,
+        zero if version1 == version2
+        and strictly positive if version1 > version2
+    """
+    def normalize(v):
+        return [int(x) for x in re.sub(r'(\.0+)*$', '', v).split(".")]
+
+    def cmp_v(v1, v2):
+        return (v1 > v2) - (v1 < v2)
+    return cmp_v(normalize(version1), normalize(version2))
+
+
+def extract_version(text):
+    """
+    This function extracts version number from text.
+
+    :param str text: text that contains the version number
+    :rtype: str
+    :returns: version number, e.g., "2.4.14"
+    """
+    match_object = re.search('\d+(?:\.\d+)+', text)
+    if match_object:
+        extracted_version = match_object.group(0)
+    else:
+        extracted_version = None
+    return extracted_version
