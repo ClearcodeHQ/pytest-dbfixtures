@@ -142,7 +142,9 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
                 '2000-3000' - random available port from a given range
                 '4002,4003' - random of 4002 or 4003 ports
         :param str node_name: RabbitMQ node name used for setting environment
-                              variable RABBITMQ_NODENAME
+                              variable RABBITMQ_NODENAME (the default depends
+                              on the port number, so multiple nodes are not
+                              clustered)
         :param str rabbit_ctl_file: path to rabbitmqctl file
 
         :returns pytest fixture with RabbitMQ process executor
@@ -186,13 +188,15 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
         rabbit_mnesia = rabbit_path + 'mnesia'
         rabbit_plugins = rabbit_path + 'plugins'
 
+        # Use the port number in node name, so multiple instances started
+        # at different ports will work separately instead of clustering.
+        chosen_node_name = node_name or 'rabbitmq-test-{0}'.format(rabbit_port)
+
         environ['RABBITMQ_LOG_BASE'] = rabbit_log
         environ['RABBITMQ_MNESIA_BASE'] = rabbit_mnesia
         environ['RABBITMQ_ENABLED_PLUGINS_FILE'] = rabbit_plugins
         environ['RABBITMQ_NODE_PORT'] = str(rabbit_port)
-
-        if node_name:
-            environ['RABBITMQ_NODENAME'] = node_name
+        environ['RABBITMQ_NODENAME'] = chosen_node_name
 
         rabbit_executor = RabbitMqExecutor(
             rabbit_server,
