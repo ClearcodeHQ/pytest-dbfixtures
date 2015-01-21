@@ -1,6 +1,19 @@
 CHANGES
 =======
 
+0.8.2
+-----
+
+- Use port number in default RabbitMQ node name.
+        
+    This allows using just the port='?' argument to rabbitmq_proc to run multiple
+    independent RabbitMQ instances for use with xdist to parallelize tests on a
+    single machine.
+
+- Old versions of Redis notification
+    
+    displays a message about old version of redis
+
 0.8.1
 -----
 
