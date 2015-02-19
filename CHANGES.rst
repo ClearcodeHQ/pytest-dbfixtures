@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+0.9.0
+-------
+
+- add ability to set custom location for logs (might be useful for analysing logs from tests)
+- added postgresql 9.4 to supported versions.
+
 0.8.2
 -----
 
