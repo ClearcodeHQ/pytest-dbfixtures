@@ -15,8 +15,10 @@
 
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
-import pytest
 import os
+
+import pytest
+from path import path
 
 from pytest_dbfixtures.executors import TCPExecutor
 from pytest_dbfixtures.utils import get_config, try_import,\
@@ -30,7 +32,7 @@ Minimum required version of redis that is accepted by pytest-dbfixtures.
 
 
 def redis_proc(executable=None, params=None, config_file=None,
-               host=None, port=None):
+               host=None, port=None, logs_prefix=''):
     """
     Redis process factory.
 
@@ -43,6 +45,7 @@ def redis_proc(executable=None, params=None, config_file=None,
             '?' - any random available port
             '2000-3000' - random available port from a given range
             '4002,4003' - random of 4002 or 4003 ports
+    :param str logs_prefix: prefix for log filename
     :rtype: func
     :returns: function which makes a redis process
     """
@@ -69,12 +72,16 @@ def redis_proc(executable=None, params=None, config_file=None,
         pidfile = 'redis-server.{port}.pid'.format(port=redis_port)
         unixsocket = 'redis.{port}.sock'.format(port=redis_port)
         dbfilename = 'dump.{port}.rdb'.format(port=redis_port)
-        logfile = 'redis-server.{port}.log'.format(port=redis_port)
+        logsdir = path(request.config.getvalue('logsdir'))
+        logfile_path = logsdir / '{prefix}redis-server.{port}.log'.format(
+            prefix=logs_prefix,
+            port=redis_port
+        )
 
         redis_executor = TCPExecutor(
             '''{redis_exec} {config}
             --pidfile {pidfile} --unixsocket {unixsocket}
-            --dbfilename {dbfilename} --logfile {logfile}
+            --dbfilename {dbfilename} --logfile {logfile_path}
             --port {port} {params}'''
             .format(
                 redis_exec=redis_exec,
@@ -83,7 +90,7 @@ def redis_proc(executable=None, params=None, config_file=None,
                 pidfile=pidfile,
                 unixsocket=unixsocket,
                 dbfilename=dbfilename,
-                logfile=logfile,
+                logfile_path=logfile_path,
                 port=redis_port
             ),
             host=redis_host,

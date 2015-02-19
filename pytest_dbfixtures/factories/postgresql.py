@@ -22,6 +22,7 @@ import subprocess
 import time
 
 import pytest
+from path import path
 
 from pytest_dbfixtures.executors.postgresql import PostgreSQLExecutor
 from pytest_dbfixtures.port import get_port
@@ -123,7 +124,7 @@ def drop_postgresql_database(psycopg2, user, host, port, db):
     conn.close()
 
 
-def postgresql_proc(executable=None, host=None, port=None):
+def postgresql_proc(executable=None, host=None, port=None, logs_prefix=''):
     """
     postgresql process factory.
 
@@ -134,6 +135,7 @@ def postgresql_proc(executable=None, host=None, port=None):
             '?' - any random available port
             '2000-3000' - random available port from a given range
             '4002,4003' - random of 4002 or 4003 ports
+    :param str logs_prefix: prefix for log filename
     :rtype: func
     :returns: function which makes a postgresql process
     """
@@ -165,7 +167,11 @@ def postgresql_proc(executable=None, host=None, port=None):
         pg_host = host or config.postgresql.host
         pg_port = get_port(port or config.postgresql.port)
         datadir = '/tmp/postgresqldata.{0}'.format(pg_port)
-        logfile = '/tmp/postgresql.{0}.log'.format(pg_port)
+        logsdir = path(request.config.getvalue('logsdir'))
+        logfile_path = logsdir / '{prefix}postgresql.{port}.log'.format(
+            prefix=logs_prefix,
+            port=pg_port
+        )
 
         init_postgresql_directory(
             postgresql_ctl, config.postgresql.user, datadir
@@ -176,7 +182,7 @@ def postgresql_proc(executable=None, host=None, port=None):
             port=pg_port,
             datadir=datadir,
             unixsocketdir=config.postgresql.unixsocketdir,
-            logfile=logfile,
+            logfile=logfile_path,
             startparams=config.postgresql.startparams,
         )
 
@@ -189,7 +195,7 @@ def postgresql_proc(executable=None, host=None, port=None):
         # start server
         postgresql_executor.start()
         if '-w' in config.postgresql.startparams:
-            wait_for_postgres(logfile, START_INFO)
+            wait_for_postgres(logfile_path, START_INFO)
 
         return postgresql_executor
 

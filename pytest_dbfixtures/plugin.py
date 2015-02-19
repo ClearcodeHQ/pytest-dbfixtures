@@ -53,6 +53,14 @@ def pytest_addoption(parser):
         dest='rabbit_conf',
     )
 
+    parser.addoption(
+        '--dbfixtures-logsdir',
+        action='store',
+        default='/tmp',
+        metavar='path',
+        dest='logsdir',
+    )
+
 
 def pytest_load_initial_conftests(early_config, parser, args):
     """Validate paths passed to py.test."""

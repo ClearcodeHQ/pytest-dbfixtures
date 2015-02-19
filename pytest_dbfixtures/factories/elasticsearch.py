@@ -18,6 +18,7 @@
 import shutil
 
 import pytest
+from path import path
 
 from pytest_dbfixtures.executors import HTTPExecutor
 from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
@@ -27,7 +28,7 @@ from pytest_dbfixtures.port import get_port
 def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
                        network_publish_host='127.0.0.1',
                        discovery_zen_ping_multicast_enabled=False,
-                       index_store_type='memory'):
+                       index_store_type='memory', logs_prefix=''):
     """
     Creates elasticsearch process fixture.
 
@@ -50,6 +51,7 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
         http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-discovery-zen.html
     :param str index_store_type: index.store.type setting. *memory* by default
         to speed up tests
+    :param str logs_prefix: prefix for log filename
     """
     @pytest.fixture(scope='session')
     def elasticsearch_proc_fixture(request):
@@ -61,7 +63,11 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
 
         pidfile = '/tmp/elasticsearch.{0}.pid'.format(elasticsearch_port)
         home_path = '/tmp/elasticsearch_{0}'.format(elasticsearch_port)
-        logs_path = '/tmp/elasticsearch_{0}_logs'.format(elasticsearch_port)
+        logsdir = path(request.config.getvalue('logsdir'))
+        logs_path = logsdir / '{prefix}elasticsearch_{port}_logs'.format(
+            prefix=logs_prefix,
+            port=elasticsearch_port
+        )
         work_path = '/tmp/elasticsearch_{0}_tmp'.format(elasticsearch_port)
         cluster = cluster_name or 'dbfixtures.{0}'.format(elasticsearch_port)
         multicast_enabled = str(discovery_zen_ping_multicast_enabled).lower()
