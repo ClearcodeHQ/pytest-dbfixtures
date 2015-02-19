@@ -21,6 +21,7 @@ import shutil
 import subprocess
 
 import pytest
+from path import path
 
 from pytest_dbfixtures.executors import TCPExecutor
 from pytest_dbfixtures.port import get_port
@@ -58,7 +59,7 @@ def init_mysql_directory(mysql_init, datadir):
 
 
 def mysql_proc(executable=None, admin_executable=None, init_executable=None,
-               host=None, port=None, params=None):
+               host=None, port=None, params=None, logs_prefix=''):
     """
     Mysql server process factory.
 
@@ -72,6 +73,7 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
             '2000-3000' - random available port from a given range
             '4002,4003' - random of 4002 or 4003 ports
     :param str params: additional command-line mysqld parameters
+    :param str logs_prefix: prefix for log filename
     :rtype: func
     :returns: function which makes a redis process
 
@@ -103,14 +105,18 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
         datadir = '/tmp/mysqldata_{port}'.format(port=mysql_port)
         pidfile = '/tmp/mysql-server.{port}.pid'.format(port=mysql_port)
         unixsocket = '/tmp/mysql.{port}.sock'.format(port=mysql_port)
-        logfile = '/tmp/mysql-server.{port}.log'.format(port=mysql_port)
+        logsdir = path(request.config.getvalue('logsdir'))
+        logfile_path = logsdir / '{prefix}mysql-server.{port}.log'.format(
+            prefix=logs_prefix,
+            port=mysql_port
+        )
 
         init_mysql_directory(mysql_init, datadir)
 
         mysql_executor = TCPExecutor(
             '''
             {mysql_server} --datadir={datadir} --pid-file={pidfile}
-            --port={port} --socket={socket} --log-error={logfile}
+            --port={port} --socket={socket} --log-error={logfile_path}
             --skip-syslog {params}
             '''
             .format(
@@ -119,7 +125,7 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
                 datadir=datadir,
                 pidfile=pidfile,
                 socket=unixsocket,
-                logfile=logfile,
+                logfile_path=logfile_path,
                 params=mysql_params,
             ),
             host=mysql_host,

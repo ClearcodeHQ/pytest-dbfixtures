@@ -26,7 +26,8 @@ from pytest_dbfixtures.port import get_port
 from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
 
 
-def mongo_proc(executable=None, params=None, host=None, port=None):
+def mongo_proc(executable=None, params=None, host=None, port=None,
+               logs_prefix=''):
     """
     Mongo process factory.
 
@@ -38,6 +39,7 @@ def mongo_proc(executable=None, params=None, host=None, port=None):
             '?' - any random available port
             '2000-3000' - random available port from a given range
             '4002,4003' - random of 4002 or 4003 ports
+    :param str logs_prefix: prefix for log filename
     :rtype: func
     :returns: function which makes a mongo process
     """
@@ -69,7 +71,11 @@ def mongo_proc(executable=None, params=None, host=None, port=None):
         mongo_host = host or config.mongo.host
         mongo_port = get_port(port or config.mongo.port)
 
-        mongo_logpath = '/tmp/mongo.{port}.log'.format(port=mongo_port)
+        logsdir = path(request.config.getvalue('logsdir'))
+        mongo_logpath = logsdir / '{prefix}mongo.{port}.log'.format(
+            prefix=logs_prefix,
+            port=mongo_port
+        )
 
         mongo_executor = TCPExecutor(
             '{mongo_exec} --bind_ip {host} --port {port} --dbpath {dbpath} --logpath {logpath} {params}'.format(  # noqa

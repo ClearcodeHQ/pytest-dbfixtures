@@ -129,7 +129,7 @@ def rabbit_path(name):
 
 
 def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
-                  node_name=None, rabbit_ctl_file=None):
+                  node_name=None, rabbit_ctl_file=None, logs_prefix=''):
     '''
         Starts RabbitMQ as a subprocess.
 
@@ -146,6 +146,7 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
                               on the port number, so multiple nodes are not
                               clustered)
         :param str rabbit_ctl_file: path to rabbitmqctl file
+        :param str logs_prefix: prefix for log directory
 
         :returns pytest fixture with RabbitMQ process executor
     '''
@@ -184,7 +185,13 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
         rabbit_port = get_port(port or config.rabbit.port)
 
         rabbit_path = path('/tmp/rabbitmq.{0}/'.format(rabbit_port))
-        rabbit_log = rabbit_path + 'log'
+
+        logsdir = path(request.config.getvalue('logsdir'))
+        rabbit_log = logsdir / '{prefix}rabbit-server.{port}.log'.format(
+            prefix=logs_prefix,
+            port=rabbit_port
+        )
+
         rabbit_mnesia = rabbit_path + 'mnesia'
         rabbit_plugins = rabbit_path + 'plugins'
 
