@@ -44,9 +44,7 @@ setup(
     version=package_version,
     description='Databases fixtures plugin for py.test.',
     long_description=(
-        read('README.rst')
-        + '\n\n' +
-        read('CHANGES.rst')
+        read('README.rst') + '\n\n' + read('CHANGES.rst')
     ),
     author='Clearcode - The A Room',
     author_email='thearoom@clearcode.cc',
