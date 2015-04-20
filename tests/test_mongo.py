@@ -56,4 +56,6 @@ mongodb_rand = factories.mongodb('mongo_proc_rand')
 
 def test_random_port(mongodb_rand):
     """Tests if mongo fixture can be started on random port"""
-    assert mongodb_rand.alive() is True
+    server_info = mongodb_rand.server_info()
+    assert 'ok' in server_info
+    assert server_info['ok'] == 1.0

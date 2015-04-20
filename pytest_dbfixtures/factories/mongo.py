@@ -125,10 +125,12 @@ def mongodb(process_fixture_name):
         mongo_host = proc_fixture.host
         mongo_port = proc_fixture.port
 
-        mongo_conn = pymongo.Connection(
-            mongo_host,
-            mongo_port,
-        )
+        try:
+            client = pymongo.MongoClient
+        except AttributeError:
+            client = pymongo.Connection
+
+        mongo_conn = client(mongo_host, mongo_port)
 
         def drop():
             for db in mongo_conn.database_names():
