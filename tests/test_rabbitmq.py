@@ -93,5 +93,5 @@ def test_random_port_node_names(rabbitmq_rand_proc2, rabbitmq_rand_proc3):
     Test that rabbitmq_proc fixtures with random ports get different node
     names.
     """
-    assert (rabbitmq_rand_proc2.env['RABBITMQ_NODENAME']
-            != rabbitmq_rand_proc3.env['RABBITMQ_NODENAME'])
+    assert (rabbitmq_rand_proc2.env['RABBITMQ_NODENAME'] !=
+            rabbitmq_rand_proc3.env['RABBITMQ_NODENAME'])
