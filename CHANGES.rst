@@ -1,6 +1,14 @@
 CHANGES
 =======
 
+unreleased
+-------
+
+- fix W503 pep8 errors, that appeared after new pylama got released
+- update to be able to use pytest-dbfixtures with pymongo 3
+- ability to properly use also beta versions of postgresql releases. (previously only stable versions were targeted)
+
+
 0.9.0
 -------
 
