@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-unreleased
+0.10.0
 -------
 
 - fix W503 pep8 errors, that appeared after new pylama got released
