@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-unreleased
+0.11.0
 ----------
 
 - make pytest-dbfixtures compatible with mirakuru 0.5.0
