@@ -1,39 +1,38 @@
-language: python
+language:
+- python
 python:
 - '2.7'
 - '3.3'
 - '3.4'
 before_install:
-  - wget -O redis-2.4.14.tar.gz https://redis.googlecode.com/files/redis-2.4.14.tar.gz
-  - tar xzf redis-2.4.14.tar.gz
-  - cd redis-2.4.14
-  - make
-  - make test
-  - sudo make install
-  - cd utils
-  - yes | sudo ./install_server.sh
-  - cd ../../
-  - /usr/local/bin/redis-server --version
-  - /usr/bin/redis-server --version
+- wget -O redis-2.4.14.tar.gz https://redis.googlecode.com/files/redis-2.4.14.tar.gz
+- tar xzf redis-2.4.14.tar.gz
+- cd redis-2.4.14
+- make
+- make test
+- sudo make install
+- cd utils
+- yes | sudo ./install_server.sh
+- cd ../../
+- /usr/local/bin/redis-server --version
+- /usr/bin/redis-server --version
 install:
-- "python setup.py develop"
-- "pip install -e .[mongodb,redis,rabbitmq,mysql,postgresql,elasticsearch,tests]"
-# manually install wheel for deployment
-- "pip install wheel"
+- python setup.py develop
+- pip install -e .[mongodb,redis,rabbitmq,mysql,postgresql,elasticsearch,tests]
+- pip install wheel
 script:
 - py.test -n 1 --showlocals --verbose --cov pytest_dbfixtures tests -p no:dbfixtures
 - pylama
 after_success:
-    - coveralls
-
+- coveralls
 deploy:
   provider: pypi
   user:
-    secure: U82/Eiq193tV67k0QgXtJ8FGQvKTf9l4AuIis8jpAXrhWYGVH+GfASKFb9lGN8M/3tiXmCPZSP+WxEgSbBtcAIiDWiYkfVPnDf66AWf8glImyv/QOU+d8eSsP4dWrSpxo7mq+g94lhQ6cHSZtTCngU33VDCMu5RB+n27/AkS6co=
+    secure: vF/LpPzIKxwyh84p0K7+U10DdzsykA21hdR394Gy37OQo2N48R4jR7+P/ft8jwWgLWwhsz8QEqpYdqHTMSM/Wzf9kHtCAZjU67IZzcmH7T1dcV6LDIxtVEpozRmwFekF6ekP00AvNlUJjUiLVVoVi4KmjM0oX+OWBBff0LpXb6SKq0Y99XAS4GMqQslAn+6t+ROMxu+wFqN6SqdVZRqusf73md1KMBvmGgAs50/bBsMJZPSO7Nr6lUzrXTLvgEBjf4mJEdjBWv7AqW3CJLCKWWL+qaTEI3PRqL4xweRVIExlpClWVeClyhzshTCe/2xTSFDT+6olCNn7cntN6MVljCfSqadyF1jRQQ2vqvgGJFqtkA2uatww9U1iE2GV+YXC77/e61Vdx+A94/33tSMQTi8HUweJxfeFIJGK/CVW2MZ6CuqcDFZNh3qtjKaZv6tn1hp58Y0pCo/vv6FEt0UIxeJESgY0YFv/sXor652aXmw0flwnE6+1Z/eq30XuT0EO5ztkaGYR+vUHhQ3hfQQQk9h75xFMxj7i5hoEfmLdNIBXe4gUpau7vRac6XpvhHpT7a/mLIyxOeVOuK7muTwFTwJgvizUxdhbnyOTh6mbgbHiSmi8miXxGrXMzFuCJKMACP5vfcS8y9uCF/H8ea+LR2im+GrETZE/Ub3xsN7qwLM=
   password:
-    secure: DRWW+buXoDjLjMDCiUKnnWiCVLUaei6iQsUTwU/3+UOPgd2htzAHo59X7GhF49N6cYG98qXZNayeM+a4QkHFnSCyzwFvlqrPpwnuINQtb0Bucoh9jnjKFq1OwAjaTdKz61YlRq6qaSXEGOKka08CN9Aj2UIUz/lNgMkZjkFmAIQ=
+    secure: T/hNift28jPaiRHoDAu8K2wrAy0n/hvnif7gL6mlQw3snD3bZIJHtERYwyhA9jronCSsdDTjgMkl4HZTa8J3WULewpXbhg07QHgdT/DJk0ihpNf3QqLpqxWnP4CIKa0G+g8Z6EIGbhl5v6Nmy+7KzYVj5aYFochbA0aj2KyBLi4pqG3p2sq7wvfJzezKj02p/PI04CePGbjACsIJ0P/kkt0Xr63kphCPTINpejkdpceD4hGGIqMIYD7mvxe2qlou+sQrHyUHZz2X1i2wow+VgBRDf7lEVv5VxE730lk+YTF+HXNyFmV4zkHkMK/p8YTShCYbkh3GNkwvv/DuFI/h52nKIO4jfs52MbZtJSGH84bsu4qpLWojEkGa6tqwhQXMMi/coH77Ua+nA79FfhUIBWjspMHD+7nEW2jyjtu3VJeQ6M/UACpKp5tVDzZG46CfoAYepuo4E+38XJGWhC/+rGgZ7eo3VA8KFYDDIPdil33sG8YTVLMWz+s/uf9ryCC2FNZJ97lXXGRb6tPJSCvi0TJysxBueC5h/K2MQ1H+7vEaLXHQUm0nx5MSD6T/Kp787MCZC0IZzWOWb0nPPx6PuWptzc4cTxH7hdcBiiBYUpKaOhmeyG/F4o+J6Zt3oemHFt+1W+fQ7lTGdL8o6VZjWl8pdoG97dOMUm+8qGFpj4E=
   on:
     tags: true
     all_branches: true
     repo: ClearcodeHQ/pytest-dbfixtures
-  distributions: "sdist bdist_wheel"
+  distributions: sdist bdist_wheel
