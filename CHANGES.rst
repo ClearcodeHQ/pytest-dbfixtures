@@ -5,6 +5,7 @@ unreleased
 ----------
 
 - [bugfix] mongodb fixture no longer removes any of system.* collections
+- [bugfix] configured pytest-dbfixtures to work with pymlconf versions compatible with Python 3
 
 0.11.0
 ----------
