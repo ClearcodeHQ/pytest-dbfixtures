@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+unreleased
+----------
+
+- [bugfix] mongodb fixture no longer removes any of system.* collections
+
 0.11.0
 ----------
 

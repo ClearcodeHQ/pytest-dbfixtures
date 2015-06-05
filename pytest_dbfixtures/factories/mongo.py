@@ -135,7 +135,8 @@ def mongodb(process_fixture_name):
         def drop():
             for db in mongo_conn.database_names():
                 for collection_name in mongo_conn[db].collection_names():
-                    if collection_name != 'system.indexes':
+                    # Do not delete any of Mongo "system" collections
+                    if not collection_name.startswith('system.'):
                         mongo_conn[db][collection_name].drop()
 
         drop()
