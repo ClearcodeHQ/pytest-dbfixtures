@@ -35,7 +35,8 @@ class PostgreSQLExecutor(TCPExecutor):
     """
 
     BASE_PROC_START_COMMAND = """{pg_ctl} start -D {datadir}
-    -o "-F -p {port} -c %s='{unixsocketdir}'" -l {logfile} {startparams}"""
+    -o "-F -p {port} -c log_destination='stderr' -c %s='{unixsocketdir}'"
+    -l {logfile} {startparams}"""
 
     PROC_START_COMMAND = {
         '8.4': BASE_PROC_START_COMMAND % 'unix_socket_directory',
