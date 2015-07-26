@@ -17,6 +17,7 @@
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import platform
 import shutil
 import subprocess
 import time
@@ -176,6 +177,11 @@ def postgresql_proc(executable=None, host=None, port=None, logs_prefix=''):
         init_postgresql_directory(
             postgresql_ctl, config.postgresql.user, datadir
         )
+
+        if 'FreeBSD' == platform.system():
+            with open(os.path.join(datadir, 'pg_hba.conf'), 'a') as f:
+                f.write('host all all 0.0.0.0/0 trust\n')
+
         postgresql_executor = PostgreSQLExecutor(
             pg_ctl=postgresql_ctl,
             host=pg_host,
