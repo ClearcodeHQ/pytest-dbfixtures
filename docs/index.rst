@@ -8,8 +8,9 @@ Welcome to pytest dbfixtures's documentation!
 
 Pytest dbfixtures is a pytest plugin that makes it a lot easier
 to set up proper database or storage engine for testing. Simply use one of
-provided fixtures that start clean database server for your tests or create
-yours by using one of provided factories.
+provided fixtures that start predefined clean database server for your
+tests or creates server more tailored for your application by using
+one of provided factories.
 
 Contents:
 
