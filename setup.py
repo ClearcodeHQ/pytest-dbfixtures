@@ -22,7 +22,9 @@ from setuptools import setup, find_packages
 
 
 here = os.path.dirname(__file__)
-with open(os.path.join(here, 'pytest_dbfixtures', '__init__.py')) as v_file:
+with open(
+        os.path.join(here, 'src', 'pytest_dbfixtures', '__init__.py')
+) as v_file:
     package_version = re.compile(
         r".*__version__ = '(.*?)'", re.S).match(v_file.read()).group(1)
 
@@ -49,7 +51,6 @@ setup(
     author='Clearcode - The A Room',
     author_email='thearoom@clearcode.cc',
     url='https://github.com/ClearcodeHQ/pytest-dbfixtures',
-    packages=find_packages(),
     install_requires=[
         'pytest>=2.3.4',
         'mirakuru>=0.2',  # test executors helpers
@@ -58,6 +59,8 @@ setup(
         'path.py>=4.2',
         'port-for>=0.3.1',  # needed for random port selection
     ],
+    package_dir={'': 'src'},
+    packages=find_packages('src'),
     include_package_data=True,
     extras_require={
         'documentation': ['Sphinx', ],
