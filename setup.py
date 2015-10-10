@@ -66,6 +66,7 @@ setup(
             'pytest-xdist',
             'coveralls',
             'pylama',
+            'Mock',
         ],
         'mysql': ['mysqlclient'],
         'postgresql': ['psycopg2'],
