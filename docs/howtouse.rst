@@ -75,6 +75,8 @@ RabbitMQ
 Redis
 -----
 
+Minimum supported version is 2.6
+
 .. sourcecode:: python
 
     def test_using_redis(redisdb):
@@ -92,6 +94,57 @@ Redis
 
         woof1 = redisdb.get('woof1')
         woof2 = redisdb2.get('woof2')
+
+PostgreSQL
+----------
+
+Minimum supported version is 8.4
+
+.. code-block:: python
+
+    def test_main_postgres(postgresql):
+        cur = postgresql.cursor()
+        cur.execute('CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);')
+        postgresql.commit()
+        cur.close()
+
+    from pytest_dbfixtures import factories
+
+
+    postgresql_proc2 = factories.postgresql_proc(port=9876)
+    postgresql2 = factories.postgresql('postgresql_proc2')
+
+
+    def test_two_postgreses(postgresql, postgresql2):
+        cur = postgresql.cursor()
+        cur.execute('CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);')
+        postgresql.commit()
+        cur.close()
+
+        cur = postgresql2.cursor()
+        cur.execute('CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);')
+        postgresql2.commit()
+        cur.close()
+
+
+PostgreSQL factory is based on psycopg2
+
+
+Elasticsearch
+-------------
+
+.. code-block:: python
+
+    def test_elastic_process(elasticsearch_proc):
+        """Simple test for starting elasticsearch_proc."""
+        assert elasticsearch_proc.running() is True
+
+
+    def test_elasticsarch(elasticsearch):
+        """Tests if elasticsearch fixtures connects to process."""
+
+        info = elasticsearch.info()
+        assert info['status'] == 200
 
 
 Random process port
