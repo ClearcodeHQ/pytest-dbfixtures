@@ -1,4 +1,7 @@
+from io import StringIO
+
 import pytest
+import mock
 
 from pytest_dbfixtures import factories
 from pytest_dbfixtures.factories.redis import RedisUnsupported
@@ -46,16 +49,23 @@ def test_random_port(redisdb_random):
     assert redisdb_random.keys('*') == []
 
 
-redis_proc_old_redis = factories.redis_proc(
-    executable='/usr/local/bin/redis-server',
-    port='?')
-redisdb_old_redis = factories.redisdb('redis_proc_old_redis')
+redis_proc_to_mock = factories.redis_proc(port='?')
 
 
-@pytest.mark.xfail(raises=RedisUnsupported)
-def test_old_redis(redisdb_old_redis):
+@pytest.mark.parametrize('version', (
+    u'Redis server version 2.4.14 (e9935407:0)',
+    u'Redis server version 2.4.13 (e0935407:0)'
+    u'Redis server version 2.5.0 (e9035407:0)'
+    u'Redis server version 2.3.10 (e9933407:0)'
+))
+def test_old_redis(request, version):
     """Tests how fixture behaves in case of old redis version"""
-    pass
+    with mock.patch(
+            'os.popen',
+            lambda *args: StringIO(version)
+    ):
+        with pytest.raises(RedisUnsupported):
+            request.getfuncargvalue('redis_proc_to_mock')
 
 
 @pytest.mark.parametrize("versions,result", [

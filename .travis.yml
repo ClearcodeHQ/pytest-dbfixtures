@@ -1,22 +1,11 @@
 language:
 - python
+sudo: false
 python:
 - '2.7'
 - '3.3'
 - '3.4'
 - '3.5'
-before_install:
-- wget -O redis-2.4.14.tar.gz https://redis.googlecode.com/files/redis-2.4.14.tar.gz
-- tar xzf redis-2.4.14.tar.gz
-- cd redis-2.4.14
-- make
-- make test
-- sudo make install
-- cd utils
-- yes | sudo ./install_server.sh
-- cd ../../
-- /usr/local/bin/redis-server --version
-- /usr/bin/redis-server --version
 install:
 - python setup.py develop
 - pip install -e .[mongodb,redis,rabbitmq,mysql,postgresql,elasticsearch,tests]
