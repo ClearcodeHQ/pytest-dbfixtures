@@ -21,6 +21,7 @@ Contents:
    howtouse
    configure
    api
+   contributing
    changelog
 
 
