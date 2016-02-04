@@ -1,6 +1,41 @@
 CHANGES
 =======
 
+unreleased
+----------
+
+- [feature] support for postgresql 9.5
+- [docs] add contribute guidelines
+- [feature] add info about minimal version supported - closes #132
+- [enhancements] - moved source code into src folder
+- [feature] python3.5 compatibility
+- [docs] enhance docs - refs #126
+- [feature]  PGsql connection error on FreeBSD jailed environments
+
+    In FreeBSD jailed environments the loopback interface can not be used to
+    connect to pgsql, because it points to the loopback interface of the host and
+    not the jail.
+
+    Thus, it seems to pgsql like the connection is comming from the ip address
+    assigned to the jail.
+
+    This ensures that pgsql can be connected to from any host, when
+    run on a FreeBSD systems. This this package can be used in FreeBSD
+    jailed environments
+
+- [feature] Use log destination param for pgsql
+
+    This commit ensures that `stderr` is used for logging, by
+    specifying the command line parameter.
+
+    On FreeBSD this is very important otherwise syslog will be used and
+    the db-fixtures will hang as it looks in the expected log file and
+    loops forever waiting for a "database is ready" entry to appear...
+    `log_destination=stderr` is default on most systems and can be set in
+    `postgresql.conf` or given as an command line argument.
+
+    `Read more <http://www.postgresql.org/docs/9.1/static/runtime-config-logging.html>`_
+
 0.12.0
 ----------
 
