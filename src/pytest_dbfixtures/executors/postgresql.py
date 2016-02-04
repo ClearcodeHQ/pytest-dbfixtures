@@ -45,6 +45,7 @@ class PostgreSQLExecutor(TCPExecutor):
         '9.2': BASE_PROC_START_COMMAND % 'unix_socket_directory',
         '9.3': BASE_PROC_START_COMMAND % 'unix_socket_directories',
         '9.4': BASE_PROC_START_COMMAND % 'unix_socket_directories',
+        '9.5': BASE_PROC_START_COMMAND % 'unix_socket_directories',
     }
 
     def __init__(self, pg_ctl, host, port,
