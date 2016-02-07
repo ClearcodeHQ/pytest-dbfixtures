@@ -38,16 +38,6 @@ class PostgreSQLExecutor(TCPExecutor):
     -o "-F -p {port} -c log_destination='stderr' -c %s='{unixsocketdir}'"
     -l {logfile} {startparams}"""
 
-    PROC_START_COMMAND = {
-        '8.4': BASE_PROC_START_COMMAND % 'unix_socket_directory',
-        '9.0': BASE_PROC_START_COMMAND % 'unix_socket_directory',
-        '9.1': BASE_PROC_START_COMMAND % 'unix_socket_directory',
-        '9.2': BASE_PROC_START_COMMAND % 'unix_socket_directory',
-        '9.3': BASE_PROC_START_COMMAND % 'unix_socket_directories',
-        '9.4': BASE_PROC_START_COMMAND % 'unix_socket_directories',
-        '9.5': BASE_PROC_START_COMMAND % 'unix_socket_directories',
-    }
-
     def __init__(self, pg_ctl, host, port,
                  datadir, unixsocketdir, logfile, startparams,
                  shell=False, timeout=None, sleep=0.1):
@@ -70,7 +60,7 @@ class PostgreSQLExecutor(TCPExecutor):
         self.version = self.version()
         self.datadir = path(datadir)
         self.unixsocketdir = unixsocketdir
-        command = self.PROC_START_COMMAND[self.version].format(
+        command = self.proc_start_command().format(
             pg_ctl=self.pg_ctl,
             datadir=self.datadir,
             port=port,
@@ -80,6 +70,14 @@ class PostgreSQLExecutor(TCPExecutor):
         )
         super(PostgreSQLExecutor, self).__init__(
             command, host, port, shell=shell, timeout=timeout, sleep=sleep)
+
+    def proc_start_command(self):
+        """Based on postgres version return proper start command."""
+        if float(self.version) > 9.2:
+            unix_socket_dir_arg_name = 'unix_socket_directories'
+        else:
+            unix_socket_dir_arg_name = 'unix_socket_directory'
+        return self.BASE_PROC_START_COMMAND % unix_socket_dir_arg_name
 
     def version(self):
         """Detect postgresql version."""
