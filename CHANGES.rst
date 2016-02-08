@@ -4,6 +4,7 @@ CHANGES
 unreleased
 ----------
 
+- [feature] make it easier to support future postgresql out of the box
 - [feature] support for postgresql 9.5
 - [docs] add contribute guidelines
 - [feature] add info about minimal version supported - closes #132
