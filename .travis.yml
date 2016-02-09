@@ -17,11 +17,10 @@ after_success:
 - coveralls
 deploy:
   provider: pypi
-  user: thearooom
+  user: thearoom
   password:
-    secure: "nxq7NY1SM4aX2SIj7Y1dNGcvY6HCn4/2SKeBrwYS+7XvyPvbhXgoYLY+2w1vrL9QXcjCNeFhJjyX3iI6yC/WfLM0nF/JskdD3npWpP+heul+IOECce0RRy1FqVa0cpcqrmYUuO6FsPFj76aSAJNT9edqjVPlISViRnTX955hebE="
+    secure: NA9uR63mHKFvh3Z5suAz3KKkWw8Mw/XF6QGsUJWPFOyPRiu4Ya4Kvc533XTXxqvImO/R17THuZ3TzzKz7OwbIPdz9kyQP/wpEuPAeYlGCZqEu2kzuKgPWFK/4udphB6k0irunf96KdQ1IExZao6ERKljpc8WSqA95BhZ2qHwduo=
   on:
     tags: true
-    all_branches: true
+    distributions: sdist bdist_wheel
     repo: ClearcodeHQ/pytest-dbfixtures
-  distributions: sdist bdist_wheel
