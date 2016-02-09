@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-unreleased
+0.13.1
 ----------
 
 - [bugfix] fix dbfixtures packaging
