@@ -6,12 +6,16 @@ python:
 - '3.3'
 - '3.4'
 - '3.5'
+env:
+  - INSTALLATION="python setup.py develop" XDIST=1
+  # unfortunatelly, xdist hangs if there's any error in the slave threads, and there, pytest fires all the hooks
+  - INSTALLATION="pip install ." XDIST=0
 install:
-- python setup.py develop
-- pip install -e .[mongodb,redis,rabbitmq,mysql,postgresql,elasticsearch,tests]
+- $INSTALLATION
+- pip install pytest_dbfixtures[mongodb,redis,rabbitmq,mysql,postgresql,elasticsearch,tests]
 - pip install wheel
 script:
-- py.test -n 1 --showlocals --verbose --cov pytest_dbfixtures tests -p no:dbfixtures
+- py.test -n $XDIST --max-slave-restart=0 --showlocals --verbose --cov pytest_dbfixtures tests -p no:dbfixtures
 - pylama
 after_success:
 - coveralls
