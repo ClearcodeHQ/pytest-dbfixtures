@@ -19,7 +19,7 @@ deploy:
   provider: pypi
   user: thearooom
   password:
-    secure: A5I74CT7ZT6Ah8XUuAkKCgnCqPEdSnUJgQ+yb1v8D8kAS/FJA97e1fLt+iicVhgxzyYaP4nHtnq9t1evLEAHwnw6/L6KPAcSi5jDKTIuSPgSDTZfFtf9+GsLSaL1D3/9Og3u1zgo1tUwQBCz4HkwfeK1y0ZnezSMz6eFC1U2BvUAOO8hD/yxM/0svV2oSQIz3nMOZh877aG9RcCzDx+LvUE83v2WrrMnp9QFSjm7HvVl9BDglGHm/+rJ+0u+qLk9kXp17DN/VXDJn1DrueGyHgWtHfO5DCmSCD4akXgVvtiFRMRNgSBBkW636hu3jXZLw7L45c1WRxWRXxbrJr9qSLNLbOhkhr4Ms1YDtKoRfuJB7+vlesAc9/OpODuUNOcqyUhEQF0n3waKL8ocGIpiKogBvEtxgHmHqKjiyoNI/rlKsZKvLeWn/HHfzDlTngnhKQ7ryKMBy7WZrb3z2I9nRZ1Rw6P59ZYFl6z6rjfGmiQTcOR8tp/IrsAvlOhVDXd+FlgHG5WBoXLFFwVvTJRPJnwFbMr4tKvQIGnbRJp6YrxA9o1GDXXTc/rtsLKyr6AIMxQgajpubFTDbKcQfBRFJuxSmpJE0CI+MMDD/b0HaN2izkJ+2mO9m4MVV8LBMJeUS7WRr/t6Q7weQN1dDYXZtefQhyNsakWntq9cTx1FnLs=
+    secure: "nxq7NY1SM4aX2SIj7Y1dNGcvY6HCn4/2SKeBrwYS+7XvyPvbhXgoYLY+2w1vrL9QXcjCNeFhJjyX3iI6yC/WfLM0nF/JskdD3npWpP+heul+IOECce0RRy1FqVa0cpcqrmYUuO6FsPFj76aSAJNT9edqjVPlISViRnTX955hebE="
   on:
     tags: true
     all_branches: true

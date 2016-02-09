@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-unreleased
+0.13.0
 ----------
 
 - [feature] make it easier to support future postgresql out of the box
