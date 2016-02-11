@@ -1,29 +1,27 @@
 pytest-dbfixtures
 =================
 
-.. image:: https://pypip.in/v/pytest-dbfixtures/badge.png
+
+.. image:: https://img.shields.io/pypi/v/pytest-dbfixtures.svg
     :target: https://pypi.python.org/pypi/pytest-dbfixtures/
     :alt: Latest PyPI version
 
-.. image:: https://readthedocs.org/projects/pytest-dbfixtures/badge/?version=v0.13.1
-    :target: https://readthedocs.org/projects/pytest-dbfixtures/?badge=v0.13.1
+.. image:: https://readthedocs.org/projects/matchbox/pytest-dbfixtures/?version=v0.2.0
+    :target: http://pytest-dbfixtures.readthedocs.org/en/v0.2.0/
     :alt: Documentation Status
 
-.. image:: https://pypip.in/d/pytest-dbfixtures/badge.png
-    :target: https://pypi.python.org/pypi/pytest-dbfixtures/
-    :alt: Number of PyPI downloads
-
-.. image:: https://pypip.in/wheel/pytest-dbfixtures/badge.png
+.. image:: https://img.shields.io/pypi/wheel/pytest-dbfixtures.svg
     :target: https://pypi.python.org/pypi/pytest-dbfixtures/
     :alt: Wheel Status
 
-.. image:: https://pypip.in/egg/pytest-dbfixtures/badge.png
+.. image:: https://img.shields.io/pypi/pyversions/pytest-dbfixtures.svg
     :target: https://pypi.python.org/pypi/pytest-dbfixtures/
-    :alt: Egg Status
+    :alt: Supported Python Versions
 
-.. image:: https://pypip.in/license/pytest-dbfixtures/badge.png
+.. image:: https://img.shields.io/pypi/l/pytest-dbfixtures.svg
     :target: https://pypi.python.org/pypi/pytest-dbfixtures/
     :alt: License
+
 
 Package status
 --------------
