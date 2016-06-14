@@ -65,11 +65,10 @@ setup(
     extras_require={
         'documentation': ['Sphinx', ],
         'tests': [
-            'pytest-cov',
-            'pytest-xdist',
-            'coveralls',
-            'pylama',
-            'Mock',
+            'pytest-cov==2.2.1',
+            'pytest-xdist==1.14',
+            'pylama==7.0.9',
+            'Mock==2.0.0',
         ],
         'mysql': ['mysqlclient'],
         'postgresql': ['psycopg2'],
