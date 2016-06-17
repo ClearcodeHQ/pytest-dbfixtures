@@ -13,7 +13,7 @@ env:
 install:
 - "pip install -r requirements-test.txt"
 - $INSTALLATION
-- pip install pytest_dbfixtures[mongodb,redis,rabbitmq,mysql,postgresql,elasticsearch,tests] coveralls wheel
+- pip install pytest_dbfixtures[mongodb,redis,rabbitmq,mysql,postgresql,elasticsearch,boto3,tests] coveralls wheel
 - mkdir /tmp/dynamodb
 - wget -O - http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest | tar xz --directory /tmp/dynamodb
 script:
