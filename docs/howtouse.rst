@@ -147,6 +147,49 @@ Elasticsearch
         assert info['status'] == 200
 
 
+DynamoDB
+--------
+
+How to install DynamoDB locally: http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html?shortFooter=true
+
+.. code-block:: python
+
+    dynamodb_proc = factories.dynamodb_proc(
+        jar_path='/path/to/dynamodb/DynamoDBLocal.jar',
+        port=8000  # default port
+    )
+    dynamodb = factories.dynamodb('dynamodb_proc')
+
+    def test_my_dynamodb(dynamodb):
+        table = dynamodb.create_table(
+            TableName='Test',
+            KeySchema=[
+                {
+                    'AttributeName': 'id',
+                    'KeyType': 'HASH'
+                }
+            ],
+            AttributeDefinitions=[
+                {
+                    'AttributeName': 'id',
+                    'AttributeType': 'N'
+                }
+
+            ],
+            ProvisionedThroughput={
+                'ReadCapacityUnits': 10,
+                'WriteCapacityUnits': 10
+            }
+        )
+
+        table.put_item(
+            Item={
+                'id': 9784398743,
+                'test_key': 'test_value'
+            }
+        )
+
+
 Random process port
 -------------------
 

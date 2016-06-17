@@ -18,14 +18,16 @@
 import pytest
 
 from pytest_dbfixtures.executors import TCPExecutor
+from pytest_dbfixtures.port import get_port
 from pytest_dbfixtures.utils import try_import, get_process_fixture
 
 
-def dynamodb_proc(jar_path=None, host=None, port=None):
+def dynamodb_proc(jar_path=None, host='localhost', port=8000):
     """
     DynamoDB process factory.
 
-    :param str jar_path: path to jar file (http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html?shortFooter=true)
+    :param str jar_path: path to jar file
+        http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html?shortFooter=true
     :param str host: hostname
     :param int port: port
     :return: function which makes a DynamoDB process
@@ -40,6 +42,7 @@ def dynamodb_proc(jar_path=None, host=None, port=None):
         :rtype: pytest_dbfixtures.executors.TCPExecutor
         :returns: tcp executor
         """
+        dynamodb_port = get_port(port)
         dynamodb_executor = TCPExecutor(
             '''java
             -Djava.library.path=./DynamoDBLocal_lib
@@ -48,10 +51,10 @@ def dynamodb_proc(jar_path=None, host=None, port=None):
             -port {port}'''
             .format(
                 jar_path=jar_path,
-                port=port
+                port=dynamodb_port
             ),
             host=host,
-            port=port,
+            port=dynamodb_port,
         )
         dynamodb_executor.start()
         request.addfinalizer(dynamodb_executor.stop)

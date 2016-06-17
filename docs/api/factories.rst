@@ -27,6 +27,17 @@ Mongo factories
         :show-inheritance:
 
 
+DynamoDB factories
+---------------
+
+    .. automodule:: pytest_dbfixtures.factories.dynamodb
+        :members: dynamodb_proc, dynamodb
+        :undoc-members:
+        :private-members:
+        :special-members:
+        :show-inheritance:
+
+
 Postgresql factories
 --------------------
 
