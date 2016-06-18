@@ -1,4 +1,4 @@
-# Copyright (C) 2013 by Clearcode <http://clearcode.cc>
+# Copyright (C) 2016 by Clearcode <http://clearcode.cc>
 # and associates (see AUTHORS).
 
 # This file is part of pytest-dbfixtures.
@@ -17,19 +17,30 @@
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 import pytest
 
+from path import path
+
 from pytest_dbfixtures.executors import TCPExecutor
 from pytest_dbfixtures.port import get_port
 from pytest_dbfixtures.utils import try_import, get_process_fixture
 
 
-def dynamodb_proc(jar_path=None, host='localhost', port=8000):
+class JarPathException(Exception):
+    """We do not know where user has dynamodb jar file.
+    So, we want to tell him that he has to provide a path to dynamodb dir.
+
+    We raise the exception when we won't find this file."""
+    pass
+
+
+def dynamodb_proc(dynamodb_dir=None, host='localhost', port='?'):
     """
     DynamoDB process factory.
 
-    :param str jar_path: path to jar file
-        http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html?shortFooter=true
+    :param str dynamodb_dir: a path to dynamodb dir (without spaces).
+        http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html
     :param str host: hostname
     :param int port: port
+
     :return: function which makes a DynamoDB process
     """
     @pytest.fixture(scope='session')
@@ -42,15 +53,24 @@ def dynamodb_proc(jar_path=None, host='localhost', port=8000):
         :rtype: pytest_dbfixtures.executors.TCPExecutor
         :returns: tcp executor
         """
+        path_dynamodb_jar = path(
+            dynamodb_dir or request.config.getvalue('dynamodbdir')
+        ) / 'DynamoDBLocal.jar'
+
+        if not path_dynamodb_jar.exists():
+            raise JarPathException(
+                'You have to provide a path to the dir with dynamodb jar file.'
+            )
+
         dynamodb_port = get_port(port)
         dynamodb_executor = TCPExecutor(
             '''java
             -Djava.library.path=./DynamoDBLocal_lib
-            -jar {jar_path}
+            -jar {path_dynamodb_jar}
             -inMemory
             -port {port}'''
             .format(
-                jar_path=jar_path,
+                path_dynamodb_jar=path_dynamodb_jar,
                 port=dynamodb_port
             ),
             host=host,
@@ -78,6 +98,7 @@ def dynamodb(process_fixture_name):
 
         :param FixtureRequest request: fixture request object
         :rtype: Subclass of :py:class:`~boto3.resources.base.ServiceResource`
+            https://boto3.readthedocs.io/en/latest/reference/services/dynamodb.html#DynamoDB.Client
         :returns: connection to DynamoDB database
         """
         proc_fixture = get_process_fixture(request, process_fixture_name)
@@ -94,6 +115,12 @@ def dynamodb(process_fixture_name):
             aws_access_key_id='',
             aws_secret_access_key='',
         )
+
+        # remove all tables
+        request.addfinalizer(
+            lambda: [t.delete() for t in dynamo_db.tables.all()]
+        )
+
         return dynamo_db
     return dynamodb_factory
 

@@ -150,13 +150,20 @@ Elasticsearch
 DynamoDB
 --------
 
-How to install DynamoDB locally: http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html?shortFooter=true
+How to install DynamoDB locally: http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html
+
+You can use the flag "--dynamodb-dir", then you have not to pass this dir in tests.
+
+
+.. code-block:: bash
+
+    py.test tests --dynamodb-dir="/nothing"
+
 
 .. code-block:: python
 
     dynamodb_proc = factories.dynamodb_proc(
-        jar_path='/path/to/dynamodb/DynamoDBLocal.jar',
-        port=8000  # default port
+        jar_path='/path/to/dynamodb'
     )
     dynamodb = factories.dynamodb('dynamodb_proc')
 

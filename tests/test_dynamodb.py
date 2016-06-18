@@ -1,15 +1,4 @@
-from pytest_dbfixtures import factories
-
-dynamodb_proc = factories.dynamodb_proc(
-    jar_path='/tmp/dynamodb/DynamoDBLocal.jar'
-)
-dynamodb = factories.dynamodb('dynamodb_proc')
-
-dynamodb_proc_random_port = factories.dynamodb_proc(
-    jar_path='/tmp/dynamodb/DynamoDBLocal.jar',
-    port='?',
-)
-dynamodb_random_port = factories.dynamodb('dynamodb_proc_random_port')
+import uuid
 
 
 def test_dynamodb(dynamodb):
@@ -27,74 +16,12 @@ def test_dynamodb(dynamodb):
             {
                 'AttributeName': 'id',
                 'KeyType': 'HASH'
-            },
-            {
-                'AttributeName': 'data',
-                'KeyType': 'RANGE'
             }
         ],
         AttributeDefinitions=[
             {
                 'AttributeName': 'id',
-                'AttributeType': 'N'
-            },
-            {
-                'AttributeName': 'data',
                 'AttributeType': 'S'
-            },
-
-        ],
-        ProvisionedThroughput={
-            'ReadCapacityUnits': 10,
-            'WriteCapacityUnits': 10
-        }
-    )
-
-    _id = 89734943
-    data = "test1 test2 test3"
-
-    # put an item into db
-    table.put_item(
-        Item={
-            'id': _id,
-            'data': data,
-            'test_key': 'test_value'
-        }
-    )
-
-    # get the item
-    item = table.get_item(
-        Key={
-            'id': _id,
-            'data': data,
-        }
-    )
-
-    # check the content of the item
-    assert item['Item']['test_key'] == 'test_value'
-
-
-def test_dynamodb_random_port(dynamodb_random_port):
-    """
-    Test random port for DynamoDB.
-
-    # Create a table
-    # Put an item
-    # Get the item and check the content of this item
-    """
-    # create a table
-    table = dynamodb_random_port.create_table(
-        TableName='Test',
-        KeySchema=[
-            {
-                'AttributeName': 'id',
-                'KeyType': 'HASH'
-            }
-        ],
-        AttributeDefinitions=[
-            {
-                'AttributeName': 'id',
-                'AttributeType': 'N'
             }
 
         ],
@@ -104,14 +31,14 @@ def test_dynamodb_random_port(dynamodb_random_port):
         }
     )
 
-    _id = 1111111
+    _id = str(uuid.uuid4())
 
     # put an item into db
     table.put_item(
         Item={
             'id': _id,
             'test_key': 'test_value'
-        }
+        },
     )
 
     # get the item
@@ -123,3 +50,15 @@ def test_dynamodb_random_port(dynamodb_random_port):
 
     # check the content of the item
     assert item['Item']['test_key'] == 'test_value'
+
+
+def test_if_tables_does_not_exist(dynamodb):
+    """
+    We should clear this fixture (remove all tables).
+
+    .. note::
+        `all` method on tables object creates an iterable of all
+        Table resources in the collection.
+    """
+    table_names = [t for t in dynamodb.tables.all()]
+    assert len(table_names) == 0
