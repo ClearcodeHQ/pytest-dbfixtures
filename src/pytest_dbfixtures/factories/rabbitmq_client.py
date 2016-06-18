@@ -101,7 +101,7 @@ def rabbitmq(process_fixture_name, teardown=clear_rabbitmq):
         rabbitpy, config = try_import('rabbitpy', request)
 
         connection = rabbitpy.Connection(
-            'amqp://{host}:{port}/%2F'.format(
+            'amqp://guest:guest@{host}:{port}/%2F'.format(
                 host=process.host,
                 port=process.port
             )
