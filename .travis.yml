@@ -1,24 +1,27 @@
 language:
-- python
+  - python
 sudo: false
 python:
-- '2.7'
-- '3.3'
-- '3.4'
-- '3.5'
+  - '2.7'
+  - '3.3'
+  - '3.4'
+  - '3.5'
 env:
   - INSTALLATION="python setup.py develop" XDIST=1
   # unfortunatelly, xdist hangs if there's any error in the slave threads, and there, pytest fires all the hooks
   - INSTALLATION="pip install ." XDIST=0
+before_install:
+  - mkdir /tmp/dynamodb # create the folder for dynamodb package
+  - wget -O - http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest | tar xz --directory /tmp/dynamodb # download the package and unpack it
 install:
-- "pip install -r requirements-test.txt"
-- $INSTALLATION
-- pip install pytest_dbfixtures[mongodb,redis,rabbitmq,mysql,postgresql,elasticsearch,tests] coveralls wheel
+  - "pip install -r requirements-test.txt"
+  - $INSTALLATION
+  - pip install pytest_dbfixtures[mongodb,redis,rabbitmq,mysql,postgresql,elasticsearch,dynamodb,tests] coveralls wheel
 script:
-- py.test -n $XDIST --max-slave-restart=0 --showlocals --verbose --cov pytest_dbfixtures tests -p no:dbfixtures
-- pylama
+  - py.test -n $XDIST --max-slave-restart=0 --showlocals --verbose --cov pytest_dbfixtures tests -p no:dbfixtures
+  - pylama
 after_success:
-- coveralls
+  - coveralls
 deploy:
   provider: pypi
   user: thearoom

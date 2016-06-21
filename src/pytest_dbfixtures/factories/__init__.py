@@ -28,6 +28,7 @@ from pytest_dbfixtures.factories.elasticsearch import (
     elasticsearch,
     elasticsearch_proc,
 )
+from pytest_dbfixtures.factories.dynamodb import dynamodb, dynamodb_proc
 
 
 __all__ = [
@@ -37,4 +38,5 @@ __all__ = [
     rabbitmq, rabbitmq_proc,
     mongodb, mongo_proc,
     elasticsearch_proc, elasticsearch,
+    dynamodb, dynamodb_proc,
 ]
