@@ -6,8 +6,8 @@ pytest-dbfixtures
     :target: https://pypi.python.org/pypi/pytest-dbfixtures/
     :alt: Latest PyPI version
 
-.. image:: https://readthedocs.org/projects/matchbox/pytest-dbfixtures/?version=v0.14.1
-    :target: http://pytest-dbfixtures.readthedocs.org/en/v0.14.1/
+.. image:: https://readthedocs.org/projects/matchbox/pytest-dbfixtures/?version=v0.14.2
+    :target: http://pytest-dbfixtures.readthedocs.org/en/v0.14.2/
     :alt: Documentation Status
 
 .. image:: https://img.shields.io/pypi/wheel/pytest-dbfixtures.svg
@@ -26,16 +26,16 @@ pytest-dbfixtures
 Package status
 --------------
 
-.. image:: https://travis-ci.org/ClearcodeHQ/pytest-dbfixtures.svg?branch=v0.14.1
+.. image:: https://travis-ci.org/ClearcodeHQ/pytest-dbfixtures.svg?branch=v0.14.2
     :target: https://travis-ci.org/ClearcodeHQ/pytest-dbfixtures
     :alt: Tests
 
-.. image:: https://coveralls.io/repos/ClearcodeHQ/pytest-dbfixtures/badge.png?branch=v0.14.1
-    :target: https://coveralls.io/r/ClearcodeHQ/pytest-dbfixtures?branch=v0.14.1
+.. image:: https://coveralls.io/repos/ClearcodeHQ/pytest-dbfixtures/badge.png?branch=v0.14.2
+    :target: https://coveralls.io/r/ClearcodeHQ/pytest-dbfixtures?branch=v0.14.2
     :alt: Coverage Status
 
-.. image:: https://requires.io/github/ClearcodeHQ/pytest-dbfixtures/requirements.svg?tag=v0.14.1
-     :target: https://requires.io/github/ClearcodeHQ/pytest-dbfixtures/requirements/?tag=v0.14.1
+.. image:: https://requires.io/github/ClearcodeHQ/pytest-dbfixtures/requirements.svg?tag=v0.14.2
+     :target: https://requires.io/github/ClearcodeHQ/pytest-dbfixtures/requirements/?tag=v0.14.2
      :alt: Requirements Status
 
 Overview

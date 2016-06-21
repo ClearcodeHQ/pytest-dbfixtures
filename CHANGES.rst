@@ -1,6 +1,10 @@
 CHANGES
 =======
 
+0.14.2
+------
+
+- [fix] Update DynamoDB in howtouse
 
 0.14.1
 ------
