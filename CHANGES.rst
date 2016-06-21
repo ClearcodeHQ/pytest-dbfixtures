@@ -1,13 +1,18 @@
 CHANGES
 =======
 
+unreleased
+------
+
+- [feature] add fixture for DynamoDB
+
 0.13.1
-----------
+------
 
 - [bugfix] fix dbfixtures packaging
 
 0.13.0
-----------
+------
 
 - [feature] make it easier to support future postgresql out of the box
 - [feature] support for postgresql 9.5
@@ -43,19 +48,19 @@ CHANGES
     `Read more <http://www.postgresql.org/docs/9.1/static/runtime-config-logging.html>`_
 
 0.12.0
-----------
+------
 
 - [bugfix] mongodb fixture no longer removes any of system.* collections
 - [bugfix] configured pytest-dbfixtures to work with pymlconf versions compatible with Python 3
 
 0.11.0
-----------
+------
 
 - make pytest-dbfixtures compatible with mirakuru 0.5.0
 
 
 0.10.0
--------
+------
 
 - fix W503 pep8 errors, that appeared after new pylama got released
 - update to be able to use pytest-dbfixtures with pymongo 3
@@ -63,7 +68,7 @@ CHANGES
 
 
 0.9.0
--------
+-----
 
 - add ability to set custom location for logs (might be useful for analysing logs from tests)
 - added postgresql 9.4 to supported versions.
