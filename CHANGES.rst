@@ -6,7 +6,8 @@ unreleased
 
 - [feature] add fixture for DynamoDB
 
-0.13.1
+0.14.0
+-------
 ------
 
 - [bugfix] fix dbfixtures packaging
