@@ -1,13 +1,18 @@
 CHANGES
 =======
 
-unreleased
+
+0.14.1
+------
+
+- [fix] packaging/changelog fix
+
+0.14.0
 ------
 
 - [feature] add fixture for DynamoDB
 
-0.14.0
--------
+0.13.1
 ------
 
 - [bugfix] fix dbfixtures packaging
