@@ -163,7 +163,8 @@ You can use the flag "--dynamodb-dir", then you have not to pass this dir in tes
 .. code-block:: python
 
     dynamodb_proc = factories.dynamodb_proc(
-        jar_path='/path/to/dynamodb'
+        dynamodb_dir='/path/to/dynamodb',
+        port=8383,
     )
     dynamodb = factories.dynamodb('dynamodb_proc')
 
