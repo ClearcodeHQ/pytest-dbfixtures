@@ -41,7 +41,7 @@ Package status
 Overview
 --------
 
-py.test clean fixtures for: ``postgresql``, ``mysql``, ``redis``, ``mongo``, ``elasticsearch`` and ``rabbitmq``.
+py.test clean fixtures for: ``postgresql``, ``mysql``, ``redis``, ``mongo``, ``elasticsearch``, ``dynamodb`` and ``rabbitmq``.
 
 Starts specific database deamon and cleanup all data produced during tests.
 
