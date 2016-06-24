@@ -32,14 +32,19 @@ class JarPathException(Exception):
     pass
 
 
-def dynamodb_proc(dynamodb_dir=None, host='localhost', port='?'):
+def dynamodb_proc(dynamodb_dir=None, host='localhost', port='?', delay=False):
     """
     DynamoDB process factory.
 
-    :param str dynamodb_dir: a path to dynamodb dir (without spaces).
-        http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html
+    :param str dynamodb_dir: a path to dynamodb dir (without spaces)
     :param str host: hostname
     :param int port: port
+    :param bool delay: causes DynamoDB to introduce delays for certain
+        operations
+
+    .. note::
+        For more information visit:
+            http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html
 
     :return: function which makes a DynamoDB process
     """
@@ -63,15 +68,18 @@ def dynamodb_proc(dynamodb_dir=None, host='localhost', port='?'):
             )
 
         dynamodb_port = get_port(port)
+        delay_arg = '-delayTransientStatuses' if delay else ''
         dynamodb_executor = TCPExecutor(
             '''java
             -Djava.library.path=./DynamoDBLocal_lib
             -jar {path_dynamodb_jar}
             -inMemory
+            {delay}
             -port {port}'''
             .format(
                 path_dynamodb_jar=path_dynamodb_jar,
-                port=dynamodb_port
+                port=dynamodb_port,
+                delay=delay_arg,
             ),
             host=host,
             port=dynamodb_port,
