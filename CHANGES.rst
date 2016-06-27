@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+0.14.3
+------
+
+- [feature] Add support for delayTransientStatuses flag (DynamoDB)
+
 0.14.2
 ------
 
