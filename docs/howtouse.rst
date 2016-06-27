@@ -198,6 +198,22 @@ You can use the flag "--dynamodb-dir", then you have not to pass this dir in tes
         )
 
 
+In DynamoDB you can use "delayTransientStatuses" flag
+(http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html).
+If you want to do this in the fixture, you can pass an argument "delay".
+
+
+.. code-block:: python
+
+    dynamodb_proc = factories.dynamodb_proc(
+        delay=True
+    )
+    dynamodb = factories.dynamodb('dynamodb_proc')
+
+    def test_my_dynamodb(dynamodb):
+        ...
+
+
 Random process port
 -------------------
 
