@@ -6,7 +6,7 @@ path.py==8.2.1
 port-for==0.3.1
 psycopg2==2.6.1
 pyaml==15.8.2
-pymlconf==0.3.21
+pymlconf==0.4.0
 pymongo==3.2.2
 pytest==2.8.7
 rabbitpy==0.26.2
