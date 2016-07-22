@@ -32,7 +32,7 @@ class JarPathException(Exception):
     pass
 
 
-def dynamodb_proc(dynamodb_dir=None, host='localhost', port='?', delay=False):
+def dynamodb_proc(dynamodb_dir=None, host='localhost', port=None, delay=False):
     """
     DynamoDB process factory.
 

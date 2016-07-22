@@ -32,7 +32,7 @@ def test_mysql_newfixture(mysql, mysql2):
     cursor.close()
 
 
-mysql_rand_proc = factories.mysql_proc(port='?', params='--skip-sync-frm')
+mysql_rand_proc = factories.mysql_proc(port=None, params='--skip-sync-frm')
 mysql_rand = factories.mysql('mysql_proc2')
 
 
