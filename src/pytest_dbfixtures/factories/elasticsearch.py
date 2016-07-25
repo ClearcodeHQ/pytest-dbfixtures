@@ -37,11 +37,12 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
         This fixture requires at least version 1.0 of elasticsearch to work.
 
     :param str host: host that the instance listens on
-    :param int|str port: exact port that the instance listens on (e.g. 8000),
-        or randomly selected port:
-            '?' - any random available port
-            '2000-3000' - random available port from a given range
-            '4002,4003' - random of 4002 or 4003 ports
+    :param str|int|tuple|set|list port:
+        exact port (e.g. '8000', 8000)
+        randomly selected port (None) - any random available port
+        [(2000,3000)] or (2000,3000) - random available port from a given range
+        [{4002,4003}] or {4002,4003} - random of 4002 or 4003 ports
+        [(2000,3000), {4002,4003}] -random of given orange and set
     :param str cluster_name: name of a cluser this node should work on.
         Used for autodiscovery. By default each node is in it's own cluser.
     :param str network_publish_host: host to publish itself within cluser

@@ -128,27 +128,28 @@ def rabbit_path(name):
     return path(env)
 
 
-def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
+def rabbitmq_proc(config_file=None, server=None, host=None, port=-1,
                   node_name=None, rabbit_ctl_file=None, logs_prefix=''):
     '''
-        Starts RabbitMQ as a subprocess.
+    Starts RabbitMQ as a subprocess.
 
-        :param str config_file: path to config file
-        :param str server: path to rabbitmq-server command
-        :param str host: server host
-        :param int|str port: exact server port (e.g. '8000')
-            or randomly selected port:
-                '?' - any random available port
-                '2000-3000' - random available port from a given range
-                '4002,4003' - random of 4002 or 4003 ports
-        :param str node_name: RabbitMQ node name used for setting environment
-                              variable RABBITMQ_NODENAME (the default depends
-                              on the port number, so multiple nodes are not
-                              clustered)
-        :param str rabbit_ctl_file: path to rabbitmqctl file
-        :param str logs_prefix: prefix for log directory
+    :param str config_file: path to config file
+    :param str server: path to rabbitmq-server command
+    :param str host: server host
+    :param str|int|tuple|set|list port:
+        exact port (e.g. '8000', 8000)
+        randomly selected port (None) - any random available port
+        [(2000,3000)] or (2000,3000) - random available port from a given range
+        [{4002,4003}] or {4002,4003} - random of 4002 or 4003 ports
+        [(2000,3000), {4002,4003}] -random of given range and set
+    :param str node_name: RabbitMQ node name used for setting environment
+                          variable RABBITMQ_NODENAME (the default depends
+                          on the port number, so multiple nodes are not
+                          clustered)
+    :param str rabbit_ctl_file: path to rabbitmqctl file
+    :param str logs_prefix: prefix for log directory
 
-        :returns pytest fixture with RabbitMQ process executor
+    :returns pytest fixture with RabbitMQ process executor
     '''
 
     @pytest.fixture(scope='session')
@@ -182,7 +183,7 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
         rabbit_ctl = rabbit_ctl_file or config.rabbit.rabbit_ctl
         rabbit_server = server or config.rabbit.rabbit_server
         rabbit_host = host or config.rabbit.host
-        rabbit_port = get_port(port or config.rabbit.port)
+        rabbit_port = get_port(port) or get_port(config.rabbit.port)
 
         rabbit_path = path('/tmp/rabbitmq.{0}/'.format(rabbit_port))
 

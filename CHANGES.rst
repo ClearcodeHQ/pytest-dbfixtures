@@ -5,6 +5,7 @@ unreleased
 ------
 
 - [fix] support for rabbitpy 0.27.x
+- [feature] Random port selection ports accept tuples and sets. replace string representation [backward incompatible]
 
 
 0.14.3

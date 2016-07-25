@@ -26,7 +26,7 @@ from pytest_dbfixtures.port import get_port
 from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
 
 
-def mongo_proc(executable=None, params=None, host=None, port=None,
+def mongo_proc(executable=None, params=None, host=None, port=-1,
                logs_prefix=''):
     """
     Mongo process factory.
@@ -34,11 +34,12 @@ def mongo_proc(executable=None, params=None, host=None, port=None,
     :param str executable: path to mongod
     :param str params: params
     :param str host: hostname
-    :param str port: exact port (e.g. '8000')
-        or randomly selected port:
-            '?' - any random available port
-            '2000-3000' - random available port from a given range
-            '4002,4003' - random of 4002 or 4003 ports
+    :param str|int|tuple|set|list port:
+        exact port (e.g. '8000', 8000)
+        randomly selected port (None) - any random available port
+        [(2000,3000)] or (2000,3000) - random available port from a given range
+        [{4002,4003}] or {4002,4003} - random of 4002 or 4003 ports
+        [(2000,3000), {4002,4003}] -random of given range and set
     :param str logs_prefix: prefix for log filename
     :rtype: func
     :returns: function which makes a mongo process
@@ -69,7 +70,7 @@ def mongo_proc(executable=None, params=None, host=None, port=None,
         mongo_params = params or config.mongo.params
 
         mongo_host = host or config.mongo.host
-        mongo_port = get_port(port or config.mongo.port)
+        mongo_port = get_port(port) or get_port(config.mongo.port)
 
         logsdir = path(request.config.getvalue('logsdir'))
         mongo_logpath = logsdir / '{prefix}mongo.{port}.log'.format(

@@ -50,7 +50,7 @@ def test_mongo_proc(mongo_proc, mongo_proc2, mongo_proc3):
         assert path('/tmp/mongo.{port}.log'.format(port=m.port)).isfile()
 
 
-mongo_proc_rand = factories.mongo_proc(port='?', params=mongo_params)
+mongo_proc_rand = factories.mongo_proc(port=None, params=mongo_params)
 mongodb_rand = factories.mongodb('mongo_proc_rand')
 
 

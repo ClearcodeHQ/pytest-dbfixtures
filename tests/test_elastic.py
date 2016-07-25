@@ -13,7 +13,7 @@ def test_elasticsarch(elasticsearch):
     assert info['status'] == 200
 
 
-elasticsearch_proc_random = factories.elasticsearch_proc(port='?')
+elasticsearch_proc_random = factories.elasticsearch_proc(port=None)
 elasticsearch_random = factories.elasticsearch('elasticsearch_proc_random')
 
 

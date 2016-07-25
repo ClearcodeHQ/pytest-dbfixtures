@@ -32,7 +32,7 @@ Minimum required version of redis that is accepted by pytest-dbfixtures.
 
 
 def redis_proc(executable=None, params=None, config_file=None,
-               host=None, port=None, logs_prefix=''):
+               host=None, port=-1, logs_prefix=''):
     """
     Redis process factory.
 
@@ -40,11 +40,12 @@ def redis_proc(executable=None, params=None, config_file=None,
     :param str params: params
     :param str config_file: path to config file
     :param str host: hostname
-    :param str port: exact port (e.g. '8000')
-        or randomly selected port:
-            '?' - any random available port
-            '2000-3000' - random available port from a given range
-            '4002,4003' - random of 4002 or 4003 ports
+    :param str|int|tuple|set|list port:
+        exact port (e.g. '8000', 8000)
+        randomly selected port (None) - any random available port
+        [(2000,3000)] or (2000,3000) - random available port from a given range
+        [{4002,4003}] or {4002,4003} - random of 4002 or 4003 ports
+        [(2000,3000), {4002,4003}] -random of given orange and set
     :param str logs_prefix: prefix for log filename
     :rtype: func
     :returns: function which makes a redis process
@@ -67,7 +68,7 @@ def redis_proc(executable=None, params=None, config_file=None,
         redis_params = params or config.redis.params
         redis_conf = config_file or request.config.getvalue('redis_conf')
         redis_host = host or config.redis.host
-        redis_port = get_port(port or config.redis.port)
+        redis_port = get_port(port) or get_port(config.redis.port)
 
         pidfile = 'redis-server.{port}.pid'.format(port=redis_port)
         unixsocket = 'redis.{port}.sock'.format(port=redis_port)

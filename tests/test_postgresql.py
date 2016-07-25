@@ -46,7 +46,7 @@ def test_two_postgreses(postgresql, postgresql2):
     cur.close()
 
 
-postgresql_rand_proc = factories.postgresql_proc(port='?')
+postgresql_rand_proc = factories.postgresql_proc(port=None)
 postgresql_rand = factories.postgresql('postgresql_rand_proc')
 
 

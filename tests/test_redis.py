@@ -40,7 +40,7 @@ def test_second_redis(redisdb, redisdb2):
     assert redisdb2.get('test2') == 'test_other'
 
 
-redis_proc_random = factories.redis_proc(port='?')
+redis_proc_random = factories.redis_proc(port=None)
 redisdb_random = factories.redisdb('redis_proc_random')
 
 
@@ -49,7 +49,7 @@ def test_random_port(redisdb_random):
     assert redisdb_random.keys('*') == []
 
 
-redis_proc_to_mock = factories.redis_proc(port='?')
+redis_proc_to_mock = factories.redis_proc(port=None)
 
 
 @pytest.mark.parametrize('version', (

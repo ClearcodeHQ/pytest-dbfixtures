@@ -125,17 +125,18 @@ def drop_postgresql_database(psycopg2, user, host, port, db):
     conn.close()
 
 
-def postgresql_proc(executable=None, host=None, port=None, logs_prefix=''):
+def postgresql_proc(executable=None, host=None, port=-1, logs_prefix=''):
     """
     postgresql process factory.
 
     :param str executable: path to postgresql_ctl
     :param str host: hostname
-    :param str port: exact port (e.g. '8000')
-        or randomly selected port:
-            '?' - any random available port
-            '2000-3000' - random available port from a given range
-            '4002,4003' - random of 4002 or 4003 ports
+    :param str|int|tuple|set|list port:
+        exact port (e.g. '8000', 8000)
+        randomly selected port (None) - any random available port
+        [(2000,3000)] or (2000,3000) - random available port from a given range
+        [{4002,4003}] or {4002,4003} - random of 4002 or 4003 ports
+        [(2000,3000), {4002,4003}] - random of given range and set
     :param str logs_prefix: prefix for log filename
     :rtype: func
     :returns: function which makes a postgresql process
@@ -166,7 +167,7 @@ def postgresql_proc(executable=None, host=None, port=None, logs_prefix=''):
             postgresql_ctl = os.path.join(pg_bindir, 'pg_ctl')
 
         pg_host = host or config.postgresql.host
-        pg_port = get_port(port or config.postgresql.port)
+        pg_port = get_port(port) or get_port(config.postgresql.port)
         datadir = '/tmp/postgresqldata.{0}'.format(pg_port)
         logsdir = path(request.config.getvalue('logsdir'))
         logfile_path = logsdir / '{prefix}postgresql.{port}.log'.format(
