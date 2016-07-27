@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-unreleased
+0.15.0
 ------
 
 - [fix] support for rabbitpy 0.27.x
