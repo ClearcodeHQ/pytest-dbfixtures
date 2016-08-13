@@ -4,7 +4,8 @@ CHANGES
 unreleased
 ------
 
-[feature] use tmpfile.gettempdir instead of hardcoded /tmp directory
+- [enhancement] - split out elasticsearch into separate package
+- [feature] use tmpfile.gettempdir instead of hardcoded /tmp directory
 
 0.15.0
 ------

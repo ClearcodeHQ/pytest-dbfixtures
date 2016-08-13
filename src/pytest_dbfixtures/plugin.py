@@ -108,9 +108,6 @@ def mysqldb(mysql):
     )
     return mysql
 
-elasticsearch_proc = factories.elasticsearch_proc()
-elasticsearch = factories.elasticsearch('elasticsearch_proc')
-
 rabbitmq_proc = factories.rabbitmq_proc()
 rabbitmq = factories.rabbitmq('rabbitmq_proc')
 
