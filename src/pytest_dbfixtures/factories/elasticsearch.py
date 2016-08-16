@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 import shutil
+from tempfile import gettempdir
 
 import pytest
 from path import path
@@ -62,14 +63,15 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
         config = get_config(request)
         elasticsearch_port = get_port(port)
 
-        pidfile = '/tmp/elasticsearch.{0}.pid'.format(elasticsearch_port)
-        home_path = '/tmp/elasticsearch_{0}'.format(elasticsearch_port)
+        tmpdir = path(gettempdir())
+        pidfile = tmpdir / 'elasticsearch.{0}.pid'.format(elasticsearch_port)
+        home_path = tmpdir / 'elasticsearch_{0}'.format(elasticsearch_port)
         logsdir = path(request.config.getvalue('logsdir'))
         logs_path = logsdir / '{prefix}elasticsearch_{port}_logs'.format(
             prefix=logs_prefix,
             port=elasticsearch_port
         )
-        work_path = '/tmp/elasticsearch_{0}_tmp'.format(elasticsearch_port)
+        work_path = tmpdir / 'elasticsearch_{0}_tmp'.format(elasticsearch_port)
         cluster = cluster_name or 'dbfixtures.{0}'.format(elasticsearch_port)
         multicast_enabled = str(discovery_zen_ping_multicast_enabled).lower()
 

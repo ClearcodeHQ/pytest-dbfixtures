@@ -19,6 +19,7 @@
 import os
 import shutil
 import subprocess
+from tempfile import gettempdir
 
 import pytest
 from path import path
@@ -103,9 +104,10 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
         mysql_host = host or config.mysql.host
         mysql_params = params or config.mysql.params
 
-        datadir = '/tmp/mysqldata_{port}'.format(port=mysql_port)
-        pidfile = '/tmp/mysql-server.{port}.pid'.format(port=mysql_port)
-        unixsocket = '/tmp/mysql.{port}.sock'.format(port=mysql_port)
+        tmpdir = path(gettempdir())
+        datadir = tmpdir / 'mysqldata_{port}'.format(port=mysql_port)
+        pidfile = tmpdir / 'mysql-server.{port}.pid'.format(port=mysql_port)
+        unixsocket = tmpdir / 'mysql.{port}.sock'.format(port=mysql_port)
         logsdir = path(request.config.getvalue('logsdir'))
         logfile_path = logsdir / '{prefix}mysql-server.{port}.log'.format(
             prefix=logs_prefix,
@@ -132,6 +134,7 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
             host=mysql_host,
             port=mysql_port,
         )
+        mysql_executor.socket_path = unixsocket
         mysql_executor.start()
 
         def stop_server_and_remove_directory():

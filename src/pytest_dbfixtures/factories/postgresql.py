@@ -20,6 +20,7 @@ import os
 import platform
 import shutil
 import subprocess
+from tempfile import gettempdir
 import time
 
 import pytest
@@ -168,7 +169,7 @@ def postgresql_proc(executable=None, host=None, port=-1, logs_prefix=''):
 
         pg_host = host or config.postgresql.host
         pg_port = get_port(port) or get_port(config.postgresql.port)
-        datadir = '/tmp/postgresqldata.{0}'.format(pg_port)
+        datadir = path(gettempdir()) / 'postgresqldata.{0}'.format(pg_port)
         logsdir = path(request.config.getvalue('logsdir'))
         logfile_path = logsdir / '{prefix}postgresql.{port}.log'.format(
             prefix=logs_prefix,
@@ -180,7 +181,7 @@ def postgresql_proc(executable=None, host=None, port=-1, logs_prefix=''):
         )
 
         if 'FreeBSD' == platform.system():
-            with open(os.path.join(datadir, 'pg_hba.conf'), 'a') as f:
+            with (datadir / 'pg_hba.conf').open(mode='a') as f:
                 f.write('host all all 0.0.0.0/0 trust\n')
 
         postgresql_executor = PostgreSQLExecutor(
