@@ -86,6 +86,7 @@ setup(
     keywords='tests py.test pytest fixture redis mongo mongodb'
              ' rabbit rabbitmq mysql postgres postgresql'
              ' elasticsearch',
+    license='LGPLv3+',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
@@ -94,6 +95,8 @@ setup(
         'Topic :: Software Development :: Quality Assurance',
         'Topic :: Software Development :: Testing',
         'Topic :: Utilities',
+        'License :: OSI Approved :: '
+        'GNU Lesser General Public License v3 or later (LGPLv3+)',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
