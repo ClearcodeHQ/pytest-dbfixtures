@@ -6,7 +6,7 @@ pytest-dbfixtures
     :target: https://pypi.python.org/pypi/pytest-dbfixtures/
     :alt: Latest PyPI version
 
-.. image:: https://readthedocs.org/projects/matchbox/pytest-dbfixtures/?version=v0.15.0
+.. image:: https://readthedocs.org/projects/pytest-dbfixtures/badge/?version=v0.15.0
     :target: http://pytest-dbfixtures.readthedocs.org/en/v0.15.0/
     :alt: Documentation Status
 
