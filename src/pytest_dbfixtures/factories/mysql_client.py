@@ -61,13 +61,12 @@ def mysql(process_fixture_name, user=None, passwd=None, db=None,
         proc_fixture = get_process_fixture(request, process_fixture_name)
 
         config = get_config(request)
-        mysql_port = proc_fixture.port
         mysql_host = proc_fixture.host
         mysql_user = user or config.mysql.user
         mysql_passwd = passwd or config.mysql.password
         mysql_db = db or config.mysql.db
 
-        unixsocket = '/tmp/mysql.{port}.sock'.format(port=mysql_port)
+        unixsocket = proc_fixture.socket_path
 
         MySQLdb, config = try_import(
             'MySQLdb', request, pypi_package='mysqlclient'

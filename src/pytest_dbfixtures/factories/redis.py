@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 import os
+from tempfile import gettempdir
 
 import pytest
 from path import path
@@ -83,7 +84,7 @@ def redis_proc(executable=None, params=None, config_file=None,
             '''{redis_exec} {config}
             --pidfile {pidfile} --unixsocket {unixsocket}
             --dbfilename {dbfilename} --logfile {logfile_path}
-            --port {port} {params}'''
+            --port {port} --dir {tmpdir} {params}'''
             .format(
                 redis_exec=redis_exec,
                 params=redis_params,
@@ -92,7 +93,8 @@ def redis_proc(executable=None, params=None, config_file=None,
                 unixsocket=unixsocket,
                 dbfilename=dbfilename,
                 logfile_path=logfile_path,
-                port=redis_port
+                port=redis_port,
+                tmpdir=gettempdir(),
             ),
             host=redis_host,
             port=redis_port,

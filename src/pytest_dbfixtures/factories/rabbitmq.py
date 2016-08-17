@@ -19,6 +19,7 @@
 
 import os
 import subprocess
+from tempfile import gettempdir
 
 import pytest
 from path import path
@@ -185,7 +186,7 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=-1,
         rabbit_host = host or config.rabbit.host
         rabbit_port = get_port(port) or get_port(config.rabbit.port)
 
-        rabbit_path = path('/tmp/rabbitmq.{0}/'.format(rabbit_port))
+        rabbit_path = path(gettempdir()) / 'rabbitmq.{0}/'.format(rabbit_port)
 
         logsdir = path(request.config.getvalue('logsdir'))
         rabbit_log = logsdir / '{prefix}rabbit-server.{port}.log'.format(
