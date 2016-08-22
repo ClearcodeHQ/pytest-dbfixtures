@@ -16,7 +16,7 @@ before_install:
 install:
   - "pip install -r requirements-test.txt"
   - $INSTALLATION
-  - pip install pytest_dbfixtures[mongodb,redis,rabbitmq,mysql,postgresql,elasticsearch,dynamodb,tests] coveralls wheel
+  - pip install pytest_dbfixtures[mongodb,redis,rabbitmq,mysql,postgresql,dynamodb,tests] coveralls wheel
 script:
   - py.test -n $XDIST --max-slave-restart=0 --showlocals --verbose --cov pytest_dbfixtures tests -p no:dbfixtures
   - pylama
