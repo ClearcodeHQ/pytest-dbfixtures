@@ -8,7 +8,7 @@ psycopg2==2.6.2
 pyaml==15.8.2
 pymlconf==0.5.6 #  rq.filter: !=0.5.0
 pymongo==3.3.0
-pytest==3.0.0 #  rq.filter: !=2.9.0,!=2.9.1,!=2.9.2
+pytest==3.0.1 #  rq.filter: !=2.9.0,!=2.9.1,!=2.9.2
 rabbitpy==0.27.1
 redis==2.10.5
 pyflakes==1.2.3
