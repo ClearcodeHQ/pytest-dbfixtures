@@ -6,7 +6,7 @@ path.py==8.2.1
 port-for==0.3.1
 psycopg2==2.6.2
 pyaml==15.8.2
-pymlconf==0.5.10 #  rq.filter: !=0.5.0
+pymlconf==0.5.11 #  rq.filter: !=0.5.0
 pymongo==3.3.0
 pytest==3.0.2 #  rq.filter: !=2.9.0,!=2.9.1,!=2.9.2
 rabbitpy==0.27.1
