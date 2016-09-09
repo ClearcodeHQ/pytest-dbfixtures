@@ -4,7 +4,7 @@ CHANGES
 unreleased
 ------
 
-- [enhancement] - split out elasticsearch into separate package
+- [enhancement] - split out elasticsearch fixtures into separate package. See `pytest-elasticsearch <https://pypi.python.org/pypi/pytest-elasticsearch/>`_
 - [feature] use tmpfile.gettempdir instead of hardcoded /tmp directory
 
 0.15.0
