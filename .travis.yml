@@ -19,8 +19,7 @@ install:
 - pip install pytest_dbfixtures[mongodb,redis,rabbitmq,mysql,postgresql,dynamodb,tests]
   coveralls wheel
 script:
-- py.test -n $XDIST --max-slave-restart=0 --showlocals --verbose --cov pytest_dbfixtures
-  tests -p no:dbfixtures
+- py.test -n $XDIST --cov pytest_dbfixtures tests
 - pylama
 after_success:
 - coveralls
