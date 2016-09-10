@@ -16,6 +16,7 @@ pytest-dbfixtures along it's history.
 * Dwayne Litzenberger
 * Karolina Blümke
 * Michał Masłowski
+* Georg Walther
 
 Great thanks to `Clearcode <http://clearcode.cc>`_ for allowing releasing
 pytest-dbfixtures as free software!
