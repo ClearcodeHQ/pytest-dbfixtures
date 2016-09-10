@@ -4,6 +4,7 @@ CHANGES
 unreleased
 ------
 
+- [enhancements] - use semicolon to terminate postgresql CREATE/DROP DATABASE statements
 - [bugfix] - removed unneded dependency
 - [enhancement] - split out elasticsearch fixtures into separate package. See `pytest-elasticsearch <https://pypi.python.org/pypi/pytest-elasticsearch/>`_
 - [feature] use tmpfile.gettempdir instead of hardcoded /tmp directory
