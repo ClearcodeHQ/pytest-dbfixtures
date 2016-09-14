@@ -40,7 +40,7 @@ def remove_mysql_directory(datadir):
         shutil.rmtree(datadir)
 
 
-def init_mysql_directory(mysql_init, datadir):
+def init_mysql_directory(mysql_init, datadir, tmpdir):
     """
     #. Remove mysql directory if exist.
     #. `Initialize MySQL data directory
@@ -55,6 +55,7 @@ def init_mysql_directory(mysql_init, datadir):
         mysql_init,
         '--user=%s' % os.getenv('USER'),
         '--datadir=%s' % datadir,
+        '--tmpdir=%s' % tmpdir,
     )
     subprocess.check_output(' '.join(init_directory), shell=True)
 
@@ -114,13 +115,13 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
             port=mysql_port
         )
 
-        init_mysql_directory(mysql_init, datadir)
+        init_mysql_directory(mysql_init, datadir, tmpdir)
 
         mysql_executor = TCPExecutor(
             '''
             {mysql_server} --datadir={datadir} --pid-file={pidfile}
             --port={port} --socket={socket} --log-error={logfile_path}
-            --skip-syslog {params}
+            --tmpdir={tmpdir} --skip-syslog {params}
             '''
             .format(
                 mysql_server=mysql_exec,
@@ -130,6 +131,7 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
                 socket=unixsocket,
                 logfile_path=logfile_path,
                 params=mysql_params,
+                tmpdir=tmpdir,
             ),
             host=mysql_host,
             port=mysql_port,
