@@ -19,7 +19,7 @@
 import os
 import shutil
 import subprocess
-from tempfile import gettempdir
+from tempfile import mkdtemp
 
 import pytest
 from path import path
@@ -104,7 +104,7 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
         mysql_host = host or config.mysql.host
         mysql_params = params or config.mysql.params
 
-        tmpdir = path(gettempdir())
+        tmpdir = path(mkdtemp(prefix="pytest-mysql-"))
         datadir = tmpdir / 'mysqldata_{port}'.format(port=mysql_port)
         pidfile = tmpdir / 'mysql-server.{port}.pid'.format(port=mysql_port)
         unixsocket = tmpdir / 'mysql.{port}.sock'.format(port=mysql_port)
@@ -146,7 +146,7 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
             )
             subprocess.check_output(' '.join(shutdown_server), shell=True)
             mysql_executor.stop()
-            remove_mysql_directory(datadir)
+            remove_mysql_directory(tmpdir)
 
         request.addfinalizer(stop_server_and_remove_directory)
 
