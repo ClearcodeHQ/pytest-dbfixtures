@@ -48,6 +48,7 @@ def init_mysql_directory(mysql_init, datadir, tmpdir):
 
     :param str mysql_init: mysql_init executable
     :param str datadir: path to datadir
+    :param str tmpdir: path to tmpdir
 
     """
     remove_mysql_directory(datadir)
