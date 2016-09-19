@@ -1,3 +1,4 @@
+# -*- mode: python; fill-column: 79 -*-
 # Copyright (C) 2013 by Clearcode <http://clearcode.cc>
 # and associates (see AUTHORS).
 
@@ -106,7 +107,7 @@ def init_postgresql_database(psycopg2, user, host, port, db):
     conn.close()
 
 
-def drop_postgresql_database(psycopg2, user, host, port, db):
+def drop_postgresql_database(psycopg2, user, host, port, db, version):
     """
     #. Connect to psql with proper isolation level
     #. Drop test database
@@ -117,10 +118,22 @@ def drop_postgresql_database(psycopg2, user, host, port, db):
     :param str host: postgresql host
     :param str port: postgresql port
     :param str db: database name
+    :param str version: postgresql version number
     """
     conn = psycopg2.connect(user=user, host=host, port=port)
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
+    # We cannot drop the database while there are connections to it, so we
+    # terminate all connections first.
+    if float(version) >= 9.2:
+        pid_column = 'pid'
+    else:
+        pid_column = 'procpid'
+    cur.execute(
+        'SELECT pg_terminate_backend(pg_stat_activity.{0})'
+        'FROM pg_stat_activity WHERE pg_stat_activity.datname = %s;'.format(
+            pid_column),
+        (db,))
     cur.execute('DROP DATABASE IF EXISTS {0};'.format(db))
     cur.close()
     conn.close()
@@ -252,7 +265,8 @@ def postgresql(process_fixture_name, db=None):
         def drop_database():
             conn.close()
             drop_postgresql_database(
-                psycopg2, config.postgresql.user, pg_host, pg_port, pg_db
+                psycopg2, config.postgresql.user, pg_host, pg_port, pg_db,
+                proc_fixture.version
             )
 
         request.addfinalizer(drop_database)
