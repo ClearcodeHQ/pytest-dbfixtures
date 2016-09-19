@@ -4,6 +4,7 @@ CHANGES
 unreleased
 ------
 
+- [enhancements] Postgresql client fixture closes other postgresql connection to the database before droping database
 - [enhancements] mysql to use unique tmpdir option for mysql_* commands
 - [enhancements] use semicolon to terminate postgresql CREATE/DROP DATABASE statements
 - [bugfix] removed unneded dependency
