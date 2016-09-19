@@ -1,10 +1,10 @@
 CHANGES
 =======
 
-unreleased
+0.16.0
 ------
 
-- [enhancements] Postgresql client fixture closes other postgresql connection to the database before droping database
+- [enhancements] Postgresql client fixture closes other postgresql connection to the database before droping database - prevents the fixture/tests from hanging in some cases
 - [enhancements] mysql to use unique tmpdir option for mysql_* commands
 - [enhancements] use semicolon to terminate postgresql CREATE/DROP DATABASE statements
 - [bugfix] removed unneded dependency
