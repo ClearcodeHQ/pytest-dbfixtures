@@ -23,7 +23,6 @@ from pytest_dbfixtures.factories.mysql import mysql_proc
 from pytest_dbfixtures.factories.mysql_client import mysql
 from pytest_dbfixtures.factories.rabbitmq import rabbitmq_proc
 from pytest_dbfixtures.factories.rabbitmq_client import rabbitmq
-from pytest_dbfixtures.factories.mongo import mongodb, mongo_proc
 from pytest_dbfixtures.factories.dynamodb import dynamodb, dynamodb_proc
 
 
@@ -32,6 +31,5 @@ __all__ = [
     postgresql, postgresql_proc,
     mysql_proc, mysql,
     rabbitmq, rabbitmq_proc,
-    mongodb, mongo_proc,
     dynamodb, dynamodb_proc,
 ]

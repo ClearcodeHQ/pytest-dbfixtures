@@ -71,7 +71,7 @@ setup(
         ],
         'mysql': ['mysqlclient'],
         'postgresql': ['psycopg2'],
-        'mongodb': ['pymongo'],
+        'mongodb': ['pytest-mongo'],
         'elasticsearch': ['pytest-elasticsearch'],
         'redis': ['redis'],
         'rabbitmq': ['rabbitpy'],

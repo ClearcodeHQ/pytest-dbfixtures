@@ -111,8 +111,5 @@ def mysqldb(mysql):
 rabbitmq_proc = factories.rabbitmq_proc()
 rabbitmq = factories.rabbitmq('rabbitmq_proc')
 
-mongo_proc = factories.mongo_proc()
-mongodb = factories.mongodb('mongo_proc')
-
 dynamodb_proc = factories.dynamodb_proc()
 dynamodb = factories.dynamodb('dynamodb_proc')
