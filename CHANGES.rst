@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+unreleased
+------
+
+- [enhancement] split out MongoDB fixtures into separate package. See `pytest-mongo <https://pypi.python.org/pypi/pytest-mongo/>`_
+
 0.16.0
 ------
 
