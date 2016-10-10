@@ -65,7 +65,7 @@ setup(
     extras_require={
         'documentation': ['Sphinx', ],
         'tests': [
-            'pytest-cov==2.3.1',
+            'pytest-cov==2.4.0',
             'pytest-xdist==1.15.0',
             'Mock==2.0.0',
         ],
