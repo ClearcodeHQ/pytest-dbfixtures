@@ -70,7 +70,7 @@ setup(
             'Mock==2.0.0',
         ],
         'mysql': ['mysqlclient'],
-        'postgresql': ['psycopg2'],
+        'postgresql': ['pytest-postgresql'],
         'mongodb': ['pytest-mongo'],
         'elasticsearch': ['pytest-elasticsearch'],
         'redis': ['redis'],
