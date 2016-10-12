@@ -92,9 +92,6 @@ def pytest_load_initial_conftests(early_config, parser, args):
 redis_proc = factories.redis_proc()
 redisdb = factories.redisdb('redis_proc')
 
-postgresql_proc = factories.postgresql_proc()
-postgresql = factories.postgresql('postgresql_proc')
-
 mysql_proc = factories.mysql_proc()
 mysql = factories.mysql('mysql_proc')
 
