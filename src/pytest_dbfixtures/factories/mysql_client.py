@@ -80,7 +80,7 @@ def mysql(process_fixture_name, user=None, passwd=None, db=None,
         )
 
         mysql_conn.query(
-            '''CREATE DATABASE {name}
+            '''CREATE DATABASE IF NOT EXISTS {name}
             DEFAULT CHARACTER SET {charset}
             DEFAULT COLLATE {collation}'''
             .format(
