@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-unreleased
+0.17.0
 ------
 
 - [enhancement] split out PostgreSQL fixtures into separate package. See `pytest-postgresql <https://pypi.python.org/pypi/pytest-postgresql/>`_
