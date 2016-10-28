@@ -61,14 +61,6 @@ def pytest_addoption(parser):
         dest='logsdir',
     )
 
-    parser.addoption(
-        '--dynamodb-dir',
-        action='store',
-        default='/tmp/dynamodb',
-        metavar='path',
-        dest='dynamodbdir',
-    )
-
 
 def pytest_load_initial_conftests(early_config, parser, args):
     """Validate paths passed to py.test."""
@@ -107,6 +99,3 @@ def mysqldb(mysql):
 
 rabbitmq_proc = factories.rabbitmq_proc()
 rabbitmq = factories.rabbitmq('rabbitmq_proc')
-
-dynamodb_proc = factories.dynamodb_proc()
-dynamodb = factories.dynamodb('dynamodb_proc')
