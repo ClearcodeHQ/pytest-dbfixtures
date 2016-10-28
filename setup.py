@@ -76,7 +76,7 @@ setup(
         'redis': ['redis'],
         'rabbitmq': ['rabbitpy'],
         'deploy': ['bumpversion'],
-        'dynamodb': ['boto3'],
+        'dynamodb': ['pytest-dynamodb'],
     },
     entry_points={
         'pytest11': [

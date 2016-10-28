@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+unreleased
+------
+
+- [enhancements] split out DynamoDB fixtures into separate package. See `pytest-dynamodb <https://pypi.python.org/pypi/pytest-dynamodb/>`_
+
 0.17.0
 ------
 
