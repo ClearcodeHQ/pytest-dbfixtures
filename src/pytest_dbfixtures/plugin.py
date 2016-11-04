@@ -97,5 +97,6 @@ def mysqldb(mysql):
     )
     return mysql
 
+
 rabbitmq_proc = factories.rabbitmq_proc()
 rabbitmq = factories.rabbitmq('rabbitmq_proc')
