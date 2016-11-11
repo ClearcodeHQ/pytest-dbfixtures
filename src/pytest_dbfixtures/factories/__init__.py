@@ -18,14 +18,11 @@
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 
 from pytest_dbfixtures.factories.redis import redis_proc, redisdb
-from pytest_dbfixtures.factories.mysql import mysql_proc
-from pytest_dbfixtures.factories.mysql_client import mysql
 from pytest_dbfixtures.factories.rabbitmq import rabbitmq_proc
 from pytest_dbfixtures.factories.rabbitmq_client import rabbitmq
 
 
 __all__ = [
     redis_proc, redisdb,
-    mysql_proc, mysql,
     rabbitmq, rabbitmq_proc,
 ]

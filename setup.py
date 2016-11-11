@@ -69,7 +69,7 @@ setup(
             'pytest-xdist==1.15.0',
             'Mock==2.0.0',
         ],
-        'mysql': ['mysqlclient'],
+        'mysql': ['pytest-mysql'],
         'postgresql': ['pytest-postgresql'],
         'mongodb': ['pytest-mongo'],
         'elasticsearch': ['pytest-elasticsearch'],
