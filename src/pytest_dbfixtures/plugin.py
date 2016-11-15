@@ -15,11 +15,7 @@
 
 # You should have received a copy of the GNU Lesser General Public License
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
-import warnings
-
-
 from path import path
-import pytest
 
 from pytest_dbfixtures import factories
 
@@ -83,19 +79,6 @@ def pytest_load_initial_conftests(early_config, parser, args):
 
 redis_proc = factories.redis_proc()
 redisdb = factories.redisdb('redis_proc')
-
-mysql_proc = factories.mysql_proc()
-mysql = factories.mysql('mysql_proc')
-
-
-@pytest.fixture
-def mysqldb(mysql):
-    warnings.warn(
-        '`mysqldb` fixture is deprecated. Please use `mysql` instead.',
-        DeprecationWarning,
-        2
-    )
-    return mysql
 
 
 rabbitmq_proc = factories.rabbitmq_proc()
