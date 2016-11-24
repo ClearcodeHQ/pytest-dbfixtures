@@ -74,8 +74,7 @@ setup(
         'mongodb': ['pytest-mongo'],
         'elasticsearch': ['pytest-elasticsearch'],
         'redis': ['redis'],
-        'rabbitmq': ['rabbitpy'],
-        'deploy': ['bumpversion'],
+        'rabbitmq': ['pytest-rabbitmq'],
         'dynamodb': ['pytest-dynamodb'],
     },
     entry_points={
