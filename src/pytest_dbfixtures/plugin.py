@@ -42,14 +42,6 @@ def pytest_addoption(parser):
     )
 
     parser.addoption(
-        '--rabbit-config',
-        action='store',
-        default=str(CONF_DIR / 'rabbit.conf'),
-        metavar='path',
-        dest='rabbit_conf',
-    )
-
-    parser.addoption(
         '--dbfixtures-logsdir',
         action='store',
         default='/tmp',
@@ -70,16 +62,7 @@ def pytest_load_initial_conftests(early_config, parser, args):
         raise ValueError(
             'argument passed to --redis-config is not a valid file path'
         )
-    rabbit_conf = early_config.getvalue('rabbit_conf')
-    if rabbit_conf and not path(rabbit_conf).isfile():
-        raise ValueError(
-            'argument passed to --rabbit-config is not a valid file path'
-        )
 
 
 redis_proc = factories.redis_proc()
 redisdb = factories.redisdb('redis_proc')
-
-
-rabbitmq_proc = factories.rabbitmq_proc()
-rabbitmq = factories.rabbitmq('rabbitmq_proc')
