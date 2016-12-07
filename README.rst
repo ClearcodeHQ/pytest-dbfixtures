@@ -22,39 +22,24 @@ pytest-dbfixtures
     :target: https://pypi.python.org/pypi/pytest-dbfixtures/
     :alt: License
 
-
-Package status
---------------
-
-.. image:: https://travis-ci.org/ClearcodeHQ/pytest-dbfixtures.svg?branch=v0.17.0
-    :target: https://travis-ci.org/ClearcodeHQ/pytest-dbfixtures
-    :alt: Tests
-
-.. image:: https://coveralls.io/repos/ClearcodeHQ/pytest-dbfixtures/badge.png?branch=v0.17.0
-    :target: https://coveralls.io/r/ClearcodeHQ/pytest-dbfixtures?branch=v0.17.0
-    :alt: Coverage Status
-
-.. image:: https://requires.io/github/ClearcodeHQ/pytest-dbfixtures/requirements.svg?tag=v0.17.0
-     :target: https://requires.io/github/ClearcodeHQ/pytest-dbfixtures/requirements/?tag=v0.17.0
-     :alt: Requirements Status
-
 Overview
 --------
 
-py.test clean fixtures for: ``postgresql``, ``mysql``, ``redis``, ``mongo``, ``elasticsearch``, ``dynamodb`` and ``rabbitmq``.
 
-Starts specific database deamon and cleanup all data produced during tests.
+Pytest dbfixtures was a pytest plugin that makes it a lot easier
+to set up proper database or storage engine for testing.
 
+As of version 1.0.0 every process fixture got moved into it's own pytest plugin for easier maintenance,
+and pytest-dbfixture itself got converted into metapacakge.
 
-Install
--------
+List of packages:
 
-.. sourcecode:: bash
+* `pytest-elasticsearch <https://pypi.python.org/pypi/pytest-elasticsearch/>`_
+* `pytest-postgresql <https://pypi.python.org/pypi/pytest-postgresql/>`_
+* `pytest-dynamodb <https://pypi.python.org/pypi/pytest-dynamodb/>`_
+* `pytest-rabbitmq <https://pypi.python.org/pypi/pytest-rabbitmq/>`_
+* `pytest-mysql <https://pypi.python.org/pypi/pytest-mysql/>`_
+* `pytest-redis <https://pypi.python.org/pypi/pytest-redis/>`_
+* `pytest-mongo <https://pypi.python.org/pypi/pytest-mongo/>`_
 
-    $ pip install --upgrade pytest-dbfixtures
-
-
-How to use
-----------
-
-Please see `documentation <http://pytest-dbfixtures.readthedocs.org/en/latest/howtouse.html>`_
+Please see individual packages on hot to use them, although their usage is pretty similar.

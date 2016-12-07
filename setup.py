@@ -51,29 +51,16 @@ setup(
     author='Clearcode - The A Room',
     author_email='thearoom@clearcode.cc',
     url='https://github.com/ClearcodeHQ/pytest-dbfixtures',
-    install_requires=[
-        'pytest>=2.3.4',
-        'mirakuru>=0.2',  # test executors helpers
-        'pyyaml>=3.10',
-        'pymlconf>=0.2.10a,!=0.3.12,!=0.3.13,!=0.3.14,!=0.5.0',
-        'path.py>=4.2',
-        'port-for>=0.3.1',  # needed for random port selection
-    ],
+    install_requires=[],
     package_dir={'': 'src'},
     packages=find_packages('src'),
     include_package_data=True,
     extras_require={
-        'documentation': ['Sphinx', ],
-        'tests': [
-            'pytest-cov==2.4.0',
-            'pytest-xdist==1.15.0',
-            'Mock==2.0.0',
-        ],
         'mysql': ['pytest-mysql'],
         'postgresql': ['pytest-postgresql'],
         'mongodb': ['pytest-mongo'],
         'elasticsearch': ['pytest-elasticsearch'],
-        'redis': ['redis'],
+        'redis': ['pytest-redis'],
         'rabbitmq': ['pytest-rabbitmq'],
         'dynamodb': ['pytest-dynamodb'],
     },

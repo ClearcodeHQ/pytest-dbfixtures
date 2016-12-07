@@ -4,8 +4,10 @@ CHANGES
 unreleased
 ------
 
-- [enhancements] split out RabbitMQ fixtures into separate package. See `pytest-dynamodb <https://pypi.python.org/pypi/pytest-rabbitmq/>`_
-- [enhancements] split out MySQL fixtures into separate package. See `pytest-dynamodb <https://pypi.python.org/pypi/pytest-mysql/>`_
+- [enhancements] removed all leftover code and limited documentation, directed to each indicidual packages.
+- [enhancements] split out Redis fixtures into separate package. See `pytest-redis <https://pypi.python.org/pypi/pytest-redis/>`_
+- [enhancements] split out RabbitMQ fixtures into separate package. See `pytest-rabbitmq <https://pypi.python.org/pypi/pytest-rabbitmq/>`_
+- [enhancements] split out MySQL fixtures into separate package. See `pytest-mysql <https://pypi.python.org/pypi/pytest-mysql/>`_
 - [enhancements] split out DynamoDB fixtures into separate package. See `pytest-dynamodb <https://pypi.python.org/pypi/pytest-dynamodb/>`_
 
 0.17.0
