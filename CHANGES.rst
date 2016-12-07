@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-unreleased
+1.0.0
 ------
 
 - [enhancements] removed all leftover code and limited documentation, directed to each indicidual packages.
