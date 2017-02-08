@@ -42,4 +42,4 @@ List of packages:
 * `pytest-redis <https://pypi.python.org/pypi/pytest-redis/>`_
 * `pytest-mongo <https://pypi.python.org/pypi/pytest-mongo/>`_
 
-Please see individual packages on hot to use them, although their usage is pretty similar.
+Please see individual packages on how to use them, although their usage is pretty similar.
