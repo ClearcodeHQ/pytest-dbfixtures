@@ -30,7 +30,7 @@ Pytest dbfixtures was a pytest plugin that makes it a lot easier
 to set up proper database or storage engine for testing.
 
 As of version 1.0.0 every process fixture got moved into it's own pytest plugin for easier maintenance,
-and pytest-dbfixture itself got converted into metapacakge.
+and pytest-dbfixture itself got converted into the meta-package.
 
 List of packages:
 
